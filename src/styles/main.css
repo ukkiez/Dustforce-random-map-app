@@ -1,0 +1,161 @@
+@import url( "https://fonts.googleapis.com/css2?family=ABeeZee&display=swap" );
+
+@font-face { font-family: Dosis; src: url( "../assets/fonts/Dosis.ttf" );}
+@font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
+@font-face { font-family: Technology; src: url( "../assets/fonts/Technology.ttf" );}
+
+html {
+  height: 100%;
+  margin: 1rem 0.5rem 0.5rem;
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX( -100% );
+  }
+  100% {
+    transform: translateX( 0 );
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+body {
+  /* animation: 0.3s ease-out 0s 1 slideInLeft; */
+  animation: fadeIn 0.4s;
+
+  /* font-family: "Dosis", sans-serif; */
+  /* font-family: "ABeeZee", sans-serif; */
+  font-family: "Caracteres", sans-serif;
+  /* font-family: "Technology", sans-serif; */
+
+  color: #95c4ec;
+  background: rgba(0, 0, 0, 0.40);
+
+  font-size: 1rem;
+
+  overflow: hidden;
+
+  /* make sure the body doesn't increase its height beyond the window size, so
+  we can have the split container actually resize itself based on the body
+  height */
+  height: 100%;
+
+  width: -webkit-fill-available;
+
+  display: inline-block;
+
+  margin: 0;
+  padding: 0;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* remove the annoying "selection outline" when clicking on buttons */
+button:focus {
+  outline: none;
+}
+
+#map-info {
+  color: #adadad;
+  font-size: 1rem;
+  position: relative;
+  left: 0.3rem;
+  margin-top: 0.25rem;
+}
+#map-info-name, #map-info-author {
+  margin: 0;
+}
+#map-info-author {
+  color: #989898;
+  font-size: 0.8rem;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate( 360deg );
+  }
+}
+@keyframes spin3d {
+  100% {
+    transform: rotate3d( 3, 2, 3, 2turn );
+  }
+}
+@keyframes scaleX {
+  50% {
+    transform: scaleX( -1 );
+  }
+  100% {
+    transform: scaleX( 1 );
+  }
+}
+@keyframes scaleY {
+  50% {
+    transform: scaleY( -1 );
+  }
+  100% {
+    transform: scaleY( 1 );
+  }
+}
+
+#icon-container {
+  margin-top: 1rem;
+}
+#icon {
+  width: 60px;
+  height: 60px;
+  /* animation: scaleX linear 0.5s, spin 1s; */
+  /* animation-delay: 0.1s; */
+
+  /* animation-name: scaleX, spin;
+  animation-duration: 0.2s, 1s;
+  animation-delay: 0.2s, 0.2s; */
+}
+#icon.animated {
+  animation: spin3d 0.75s;
+  /* animation: scaleX linear 0.5s, spin 1s; */
+  /* animation-delay: 0.1s; */
+
+  /* animation-name: scaleX, spin;
+  animation-duration: 0.2s, 1s;
+  animation-delay: 0.2s, 0.2s; */
+}
+#icon.animated2 {
+  animation: spin 0.5s;
+}
+#icon-text {
+  color: #95c4ec;
+  font-size: 2.5rem;
+  vertical-align: text-bottom;
+  position: relative;
+  bottom: 0.7rem;
+  left: 0.5rem;
+
+  animation: fadeIn 1s;
+}
+
+#skips-container {
+  margin-top: 0.75rem;
+}
+#skips {
+  font-size: 1.15rem;
+  position: relative;
+  left: 0.5rem;
+}
+
+.skip-class {
+  color: #dadada;
+}
+
+.none {
+  color: #4a4a4a;
+}

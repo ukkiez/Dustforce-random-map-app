@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/timers.css" />
+    <title>Random Map Challenge</title>
+  </head>
+
+  <template>
+    <div class="timers-container" id="timers-container">
+      <div class="timer" id="main-time">
+        0.00
+      </div>
+    </div>
+
+    <div id="map-info">
+      <div id="map-info-name">map</div>
+      <div id="map-info-author">author</div>
+    </div>
+
+    <div id="icon-container">
+      <img class="animated" id="icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
+
+      <span id="icon-text">0</span>
+    </div>
+
+    <div id="skips-container">
+      <span id="skips" class="skip-class">Skips remaining: 1</span>
+    </div>
+  </template>
+
+  <body>
+    <!-- when initializing (and resetting the timer), replace the children of
+    the body with the above template, and then fill in values as they should be
+    according to stored data and user configuration -->
+  </body>
+
+  <script src="../app/bundle/index.js"></script>
+</html>

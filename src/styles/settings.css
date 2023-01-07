@@ -1,0 +1,108 @@
+body {
+  overflow-y: scroll;
+}
+
+.settings-header {
+  -webkit-app-region: drag;
+  font-size: 2rem;
+}
+
+.settings-form {
+  margin-left: 0.1rem;
+}
+
+label {
+  color: aliceblue;
+  font-size: 0.9rem;
+  display: block;
+}
+
+input {
+  font-family: "Caracteres", sans-serif;
+
+  width: 7.5rem;
+  margin-bottom: 1rem;
+  margin-top: 0.3rem;
+
+  /* have the input box cut off at the form containers padding, instead of
+  slightly further beyond */
+  box-sizing: border-box;
+
+  background-color: #708396;
+  color: aliceblue;
+
+  border-radius: 0.15rem;
+  border-style: none;
+
+  /* remove the native outline around selected inputs */
+  outline: none;
+}
+input::placeholder {
+  font-style: italic;
+  color:#92a8bd;
+  font-size: 0.65rem;
+}
+input[type="checkbox"] {
+  /* align checkboxes to the left */
+  width: auto;
+}
+
+#seed-input {
+  width: 12rem;
+}
+
+#fastestSSTime-formatted {
+  font-size: 0.85rem;
+}
+
+#back-button {
+  font-size: 0.9rem;
+  font-family: "Caracteres", sans-serif;
+
+  border-radius: 0.1rem;
+  border-style: none;
+
+  background-color: #95c4ec;
+
+  margin-bottom: 0.5rem;
+}
+#back-button:hover {
+  color: #13435f;
+  background-color: #9bccf6;
+}
+#back-button:active {
+  color: #0e3851;
+  background-color: #80a9cd;
+}
+
+button {
+  margin-right: 0.25rem;
+}
+
+#save-button {
+  font-size: 0.9rem;
+  font-family: "Caracteres", sans-serif;
+
+  border-radius: 0.1rem;
+  border-style: none;
+
+  color: #03694d;
+  background-color: #06d6a0;
+
+  margin-bottom: 0.5rem;
+}
+#save-button:hover {
+  color: #027a5a;
+  background-color: #04efb1;
+}
+#save-button:active {
+  color: #025c44;
+  background-color: #05b486;
+}
+
+#saved-message {
+  display: none;
+  font-size: 1rem;
+  font-style: italic;
+  color: #287661;
+}

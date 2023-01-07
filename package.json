@@ -1,0 +1,18 @@
+{
+  "name": "random-map-challenge",
+  "version": "1.0.0",
+  "main": "src/app/bundle/index.js",
+  "scripts": {
+    "dev": "cd src/ && npm run build && cd .. && nw src/ --user-data-dir=../random-map-challenge-user-data/",
+    "dev-no-build": "nw src/ --user-data-dir=../random-map-challenge-user-data/",
+    "prod": "cd src/ && npm run build && cd .. && nwbuild --platforms osx64 --buildDir dist/ src/ --flavor normal --cacheDir cache/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nw": "^0.52.2-sdk",
+    "nw-builder": "^3.5.7"
+  }
+}

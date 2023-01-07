@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/settings.css" />
+    <title>Random Map Challenge</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="settings-header">
+        Settings
+      </div>
+
+      <form class="settings-form" autocomplete="off" autocapitalize="off">
+        <label for="time">Seed</label>
+        <input type="text" id="seed-input" name="seed" maxlength="25" placeholder="example: no bad maps pls"/>
+
+        <label for="time">Time (minutes)</label>
+        <input type="number" id="time-input" name="time" min="1" max="900" placeholder="min. 1, max. 900"/>
+
+        <label for="minSSCount">min. SS count</label>
+        <input type="number" id="minSSCount-input" name="minsscount" max="500" placeholder="max. 500"/>
+
+        <label for="fastestSSTime">Fastest SS Time (milliseconds)</label>
+        <input type="number" id="fastestSSTime-input" name="fastestsstime" max="7200000"/>
+        <span id="fastestSSTime-formatted">0:00:00.000</span>
+
+        <label for="skips">Skips</label>
+        <input type="checkbox" id="skips-input" name="skips"/>
+
+        <div id="skips-settings-container">
+          <label for="freeSkips">Free Starting Skips</label>
+          <input type="number" id="freeSkips-input" name="freeskips" max="10000">
+
+          <label for="freeSkipsAfterX">Free Skip Every X SS Completions</label>
+          <input type="number" id="freeSkipsAfterX-input" name="freeskipsafterx" max="10000"/>
+        </div>
+
+        <label for="CMPLevels">CMP levels</label>
+        <input type="checkbox" id="CMPLevels-input" name="CMPLevels"/>
+      </form>
+
+      <button id="back-button" type="button">
+        BACK
+      </button>
+
+      <button id="save-button" type="button">
+        SAVE
+      </button>
+      <span id="saved-message">
+        saved!
+      </span>
+    </div>
+  </body>
+
+  <script src="../app/bundle/index.js"></script>
+</html>

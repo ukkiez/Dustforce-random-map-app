@@ -1,0 +1,10 @@
+.timers-container {
+  /* allow the frameless window to be dragged by the header */
+  -webkit-app-region: drag;
+}
+
+#main-time {
+  color: #efefef;
+  font-size: 21vh;
+  letter-spacing: 0.2rem;
+}
