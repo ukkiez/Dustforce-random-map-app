@@ -8,6 +8,10 @@
         "ecmaVersion": 12,
         "sourceType": "module"
     },
+    "globals": {
+      "nw": true,
+      "global": true
+    },
     "rules": {
     }
 }
