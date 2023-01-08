@@ -4,9 +4,11 @@ const fs = nw.require( "fs" ); // eslint-disable-line no-undef
 
 import { formatMSToHumanReadable } from "./util/format.js";
 
+import { settingsPath } from "./initialize.js";
+
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
-const settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) ); // eslint-disable-line no-undef
+const settings = JSON.parse( fs.readFileSync( settingsPath ) );
 
 const {
   seed,
@@ -155,7 +157,7 @@ addCheckboxListener( CMPLevelsEl, "CMPLevels" );
 
 let messageDisplayTimeout;
 document.getElementById( "save-button" ).addEventListener( "click", () => {
-  fs.writeFileSync( `${ global.__dirname }/user-data/settings.json`, JSON.stringify( data, null, 2 ) ); // eslint-disable-line no-undef
+  fs.writeFileSync( settingsPath, JSON.stringify( data, null, 2 ) ); // eslint-disable-line no-undef
   initialState = {
     ...data,
   };

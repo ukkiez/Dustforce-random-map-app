@@ -1,4 +1,4 @@
-import { timers, runData } from "../initialize.js";
+import { settingsPath, timers, runData } from "../initialize.js";
 
 import { reset } from "../reset.js";
 
@@ -8,17 +8,17 @@ import { seededRandom } from "../util/random.js";
 import { hotkeys, listeners } from "../hotkeys.js";
 
 // use nw.require() instead of require() or import to make it actually available
-const fs = nw.require( "fs" ); // eslint-disable-line no-undef
-const open = nw.require( "open" ); // eslint-disable-line no-undef
+const fs = nw.require( "fs" );
+const open = nw.require( "open" );
 
-const homedir = nw.require( "os" ).homedir(); // eslint-disable-line no-undef
+const homedir = nw.require( "os" ).homedir();
 const splitFile = `${ homedir }/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/split.txt`;
 
-const { seed, minSSCount, fastestSSTime, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) ); // eslint-disable-line no-undef
+const { seed, minSSCount, fastestSSTime, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse( fs.readFileSync( settingsPath ) );
 
 // parse the filtered level metadata JSON file instead of importing it, so we
 // can be sure that on window reload we're getting all the new data
-const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) ); // eslint-disable-line no-undef
+const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
 
 const authorsById = new Map();
 

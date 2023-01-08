@@ -66,7 +66,7 @@ export class Timer {
 
     if ( this.hasStarted ) {
       if ( this.time <= 0 ) {
-        this.timerElement.innerHTML = formatTime( 0, this.tenths, this.hundreths );
+        this.finish();
         return;
       }
 
@@ -136,5 +136,7 @@ export class Timer {
     this.hasStarted = false;
 
     this.finished = true;
+
+    this.timerElement.innerHTML = formatTime( 0, this.tenths, this.hundreths );
   }
 }

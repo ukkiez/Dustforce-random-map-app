@@ -1,6 +1,6 @@
 // use nw.require() instead of require() or import to make it actually available
 // in the browser context
-const fs = nw.require( "fs" ); // eslint-disable-line no-undef
+const fs = nw.require( "fs" );
 
 import { Timer } from "./classes/timer.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
@@ -8,9 +8,42 @@ import { addClass, removeClass } from "./util/dom.js";
 
 import { registerHotkeys, unregisterListeners } from "./hotkeys.js";
 
-// read instead of import, to make sure the data is updated when we change
-// pages, something which does not seem to happen when importing
-const settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) ); // eslint-disable-line no-undef
+const platform = nw.require( "os" ).platform();
+
+const path = nw.require( "path" );
+
+export let settingsPath;
+let settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) );
+switch ( platform ) {
+  case "darwin":
+    // read instead of import, to make sure the data is updated when we change
+    // pages, something which does not seem to happen when importing
+    settingsPath = `${ global.__dirname }/user-data/settings.json`;
+    settings = JSON.parse( fs.readFileSync( settingsPath ) );
+    break;
+
+  case "linux":
+  case "win32": {
+    // ensure the user data directory and settings.json are in the same
+    // directory as the app executable, as the Linux and Windows versions are
+    // zipped and create temp directories for each app session, so the above
+    // Darwin version does not work across multiple sessions
+    const nwPath = nw.process.execPath;
+    const exeDir = path.dirname( nwPath );
+
+    settingsPath = `${ exeDir }/user-data/settings.json`;
+    if ( !fs.existsSync( `${ exeDir }/user-data` ) ) {
+      fs.mkdirSync( `${ exeDir }/user-data` );
+    }
+    if ( !fs.existsSync( settingsPath ) ) {
+      // make a copy of the settings json, for reasons described directly above
+      fs.writeFileSync( settingsPath, JSON.stringify( settings, null, 2 ) );
+    }
+
+    settings = JSON.parse( fs.readFileSync( settingsPath ) )
+    break;
+  }
+}
 
 const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
@@ -50,7 +83,6 @@ const switchPage = ( currentPage, destination ) => {
 }
 
 const initMainBody = () => {
-  // nw.Window.get().resizeTo( 260, 230 ); // eslint-disable-line no-undef
   const temp = document.getElementsByTagName( "template" )[ 0 ];
   const clone = temp.content.cloneNode( true );
   document.body.replaceChildren( clone );
@@ -74,8 +106,6 @@ const initMainBody = () => {
 }
 
 const initSettingsBody = () => {
-  // nw.Window.get().resizeTo( nw.Window.get().width, 380 ); // eslint-disable-line no-undef
-
   document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, true );
 
   document.getElementById( "back-button" ).addEventListener( "click", () => {
