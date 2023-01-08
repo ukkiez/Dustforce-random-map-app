@@ -5,7 +5,9 @@ import { reset } from "../reset.js";
 import { addClass, removeClass } from "../util/dom.js";
 import { seededRandom } from "../util/random.js";
 
-import { hotkeys, listeners } from "../hotkeys.js";
+import { listeners } from "../hotkeys.js";
+
+import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
 // use nw.require() instead of require() or import to make it actually available
 const fs = nw.require( "fs" );
@@ -14,7 +16,7 @@ const open = nw.require( "open" );
 const homedir = nw.require( "os" ).homedir();
 const splitFile = `${ homedir }/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/split.txt`;
 
-const { seed, minSSCount, fastestSSTime, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse( fs.readFileSync( settingsPath ) );
+const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse( fs.readFileSync( settingsPath ) );
 
 // parse the filtered level metadata JSON file instead of importing it, so we
 // can be sure that on window reload we're getting all the new data
@@ -171,12 +173,23 @@ listeners.start( function() {
 
     // populate the map pool
     for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
+      if ( !_CMPLevelsOn ) {
+        if ( cmpLevels.includes( levelFilename ) ) {
+          // don't include cmp levels, as the user set them to be off
+          continue;
+        }
+      }
+
       const { ss_count, fastest_time, author, atlas_id } = metadata;
       if ( ss_count >= config.minSSCount && fastest_time <= config.fastestSSTime ) {
         mapPool.push( levelFilename );
       }
 
       authorsById.set( atlas_id, author );
+
+      // don't allow going to the settings page, as it would load a different
+      // page, and therefore stop the current run permanently
+      document.getElementById( "settings-icon-container" ).style.display = "none";
     }
     initialized = true;
 

@@ -65,6 +65,73 @@ button:focus {
   outline: none;
 }
 
+#map-info {
+  color: #c3c3c3;
+  font-size: 1rem;
+  position: relative;
+  left: 0.3rem;
+  margin-top: 0.25rem;
+}
+#map-info-name, #map-info-author {
+  margin: 0;
+}
+#map-info-author {
+  color: #a8a7a7;
+  font-size: 0.8rem;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate( 360deg );
+  }
+}
+@keyframes spin3d {
+  100% {
+    transform: rotate3d( 3, 2, 3, 2turn );
+  }
+}
+
+#points-icon-container {
+  margin-top: 1rem;
+}
+#points-icon {
+  width: 60px;
+  height: 60px;
+}
+#points-icon.animated {
+  animation: spin3d 0.75s;
+}
+#points-icon.animated2 {
+  animation: spin 0.5s;
+}
+#points-icon-text {
+  color: #95c4ec;
+  font-size: 2.5rem;
+  vertical-align: text-bottom;
+  position: relative;
+  bottom: 0.7rem;
+  left: 0.5rem;
+
+  animation: fadeIn 1s;
+}
+
+#skips-container {
+  margin-top: 0.75rem;
+}
+#skips {
+  font-size: 1.15rem;
+  position: relative;
+  left: 0.5rem;
+}
+
+.skip-class {
+  color: #dadada;
+}
+
+.none {
+  color: #4a4a4a;
+}
+
 #settings-icon-container {
   position: absolute;
   width: 100%;
@@ -122,71 +189,4 @@ button:focus {
 #settings-icon:hover +.tooltip-text {
   visibility: visible;
   opacity: 1;
-}
-
-#map-info {
-  color: #adadad;
-  font-size: 1rem;
-  position: relative;
-  left: 0.3rem;
-  margin-top: 0.25rem;
-}
-#map-info-name, #map-info-author {
-  margin: 0;
-}
-#map-info-author {
-  color: #989898;
-  font-size: 0.8rem;
-}
-
-@keyframes spin {
-  100% {
-    transform: rotate( 360deg );
-  }
-}
-@keyframes spin3d {
-  100% {
-    transform: rotate3d( 3, 2, 3, 2turn );
-  }
-}
-
-#points-icon-container {
-  margin-top: 1rem;
-}
-#points-icon {
-  width: 60px;
-  height: 60px;
-}
-#points-icon.animated {
-  animation: spin3d 0.75s;
-}
-#points-icon.animated2 {
-  animation: spin 0.5s;
-}
-#points-icon-text {
-  color: #95c4ec;
-  font-size: 2.5rem;
-  vertical-align: text-bottom;
-  position: relative;
-  bottom: 0.7rem;
-  left: 0.5rem;
-
-  animation: fadeIn 1s;
-}
-
-#skips-container {
-  margin-top: 0.75rem;
-}
-#skips {
-  font-size: 1.15rem;
-  position: relative;
-  left: 0.5rem;
-}
-
-.skip-class {
-  color: #dadada;
-}
-
-.none {
-  color: #4a4a4a;
 }

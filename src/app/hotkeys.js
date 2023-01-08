@@ -11,6 +11,7 @@ export const listeners = {
   start: ( callback ) => {
     _listeners.start = function( event ) {
       if ( event.state === "DOWN" && event.name === "EQUALS" ) {
+      // if ( event.state === "DOWN" && event.vKey === 24 ) {
         callback();
       }
     };
@@ -20,6 +21,7 @@ export const listeners = {
   replay: ( callback ) => {
     _listeners.replay = function( event ) {
       if ( event.state === "DOWN" && event.name === "SEMICOLON" ) {
+      // if ( event.state === "DOWN" && event.vKey === 41 ) {
         callback();
       }
     }
@@ -29,6 +31,7 @@ export const listeners = {
   reset: ( callback ) => {
     _listeners.reset = function( event ) {
       if ( event.state === "DOWN" && event.name === "SQUARE BRACKET OPEN" ) {
+      // if ( event.state === "DOWN" && event.vKey === 42 ) {
         callback();
       }
     }
