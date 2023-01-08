@@ -190,6 +190,8 @@ listeners.start( function() {
       // don't allow going to the settings page, as it would load a different
       // page, and therefore stop the current run permanently
       document.getElementById( "settings-icon-container" ).style.display = "none";
+      // hide the seed, as there is no place on the screen for it at the moment
+      document.getElementById( "seed" ).style.display = "none";
     }
     initialized = true;
 

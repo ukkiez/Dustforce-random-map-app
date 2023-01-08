@@ -87,6 +87,10 @@ const initMainBody = () => {
   const clone = temp.content.cloneNode( true );
   document.body.replaceChildren( clone );
 
+  if ( settings.seed ) {
+    document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
+  }
+
   if ( !settings.skips ) {
     const skips = document.getElementById( "skips" );
     skips.innerText = "No Skips";

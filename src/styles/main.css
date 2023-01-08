@@ -79,6 +79,19 @@ button:focus {
   color: #a8a7a7;
   font-size: 0.8rem;
 }
+.map-info-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#seed {
+  position: absolute;
+  font-size: 7.5vh;
+  color: #95c4ec;
+  left: 3.5rem;
+  bottom: 0.3rem;
+}
 
 @keyframes spin {
   100% {
@@ -95,8 +108,8 @@ button:focus {
   margin-top: 1rem;
 }
 #points-icon {
-  width: 60px;
-  height: 60px;
+  width: 3.75rem;
+  height: 3.75rem;
 }
 #points-icon.animated {
   animation: spin3d 0.75s;

@@ -47,10 +47,6 @@ input[type="checkbox"] {
   width: auto;
 }
 
-#seed-input {
-  width: 12rem;
-}
-
 #fastestSSTime-formatted {
   font-size: 0.85rem;
 }

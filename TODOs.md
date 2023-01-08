@@ -39,6 +39,7 @@
 - Stylize the "score screen"
 - Make the map names in the map-info clickable links
 - Maybe add the ability to pause runs? (meh)
+- Add in a handicap (AKA starting points)
 
 # Done
 - Change the way things are reset
