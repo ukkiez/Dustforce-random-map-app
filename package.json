@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cd src/ && npm run build && cd .. && nw src/ --user-data-dir=../random-map-challenge-user-data/",
     "dev-no-build": "nw src/ --user-data-dir=../random-map-challenge-user-data/",
-    "prod": "cd src/ && npm run build && cd .. && nwbuild --platforms osx64 --buildDir dist/ src/ --flavor normal --cacheDir cache/"
+    "prod": "cd src/ && npm run build && cd .. && nwbuild --platforms osx64,win32 --buildDir dist/ src/ --flavor normal --cacheDir cache/ --version 0.52.2"
   },
   "keywords": [],
   "author": "",
