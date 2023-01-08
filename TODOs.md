@@ -5,16 +5,9 @@
 - Don't allow going to any other page, when a run is going
   - Of course, remove the settings route during runs
 - Allow an easy way to import dustkid level data. We don't really want people mass-updating this themselves (or atleast, even just two people at the same time), so instead maybe we can just update it once ourselves, and then just post in the Discord some file.
-- Figure out how to go about using seeds, when people can configure different
-  rules... Perhaps we should generate seeds based on settings ourselves? But how
-  would we make that always pick the appropriate maps with certain
-  configurations?
-  - We could generate a string representation of all the settings in a way, and
-    add in an extra field for that! This is also a way we could have people
-    share settings, instead of using files
-      - This could even be something a simple as a comma separated string, like:
-        "20,1,2000,true,false", though this could become very large as we add
-        more settings. A hash would probably make more sense.
+- Add button for exporting the current "settings" file
+  - Allow importing these settings, which is especially useful for racing
+    purposes
 - Maybe have the settings in a grid, two columns (so two per row)
 - Add a "X" to empty out the "seed" setting
 - Add a "copy to clipboard" for the seed as well
@@ -44,6 +37,7 @@
     sliding bar) the entire time, or just in the last minute or so
   - Perhaps stylize every minute gone by (with some colour change for example, or blinking)
 - Stylize the "score screen"
+- Make the map names in the map-info clickable links
 - Maybe add the ability to pause runs? (meh)
 
 # Done
