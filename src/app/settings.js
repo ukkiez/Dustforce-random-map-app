@@ -25,18 +25,18 @@ const seedEl = document.getElementById( "seed-input" );
 const timeEl = document.getElementById( "time-input" );
 const minSSCountEl = document.getElementById( "minSSCount-input" );
 const fastestSSTimeEl = document.getElementById( "fastestSSTime-input" );
+const CMPLevelsEl = document.getElementById( "CMPLevels-input" );
 
 const skipsEl = document.getElementById( "skips-input" );
 const freeSkipsEl = document.getElementById( "freeSkips-input" );
 const freeSkipsAfterXEl = document.getElementById( "freeSkipsAfterX-input" );
-
-const CMPLevelsEl = document.getElementById( "CMPLevels-input" );
 
 // set initial values
 seedEl.value = seed;
 timeEl.value = ( startTime / 1000 / 60 );
 minSSCountEl.value = minSSCount;
 fastestSSTimeEl.value = fastestSSTime;
+CMPLevelsEl.checked = CMPLevels;
 
 skipsEl.checked = skips;
 freeSkipsEl.value = freeSkips;
@@ -48,7 +48,6 @@ if ( !skips ) {
   freeSkipsContainer.style.display = "none";
 }
 
-CMPLevelsEl.checked = CMPLevels;
 
 const data = {
   ...settings,
@@ -139,6 +138,8 @@ addInputListener( fastestSSTimeEl, "fastestSSTime", null, false, true, function(
 } );
 addFocusOutListener( fastestSSTimeEl, "fastestSSTime" );
 
+addCheckboxListener( CMPLevelsEl, "CMPLevels" );
+
 addCheckboxListener( skipsEl, "skips", ( event ) => {
   if ( !event.target.checked ) {
     freeSkipsContainer.style.display = "none";
@@ -152,8 +153,6 @@ addFocusOutListener( freeSkipsEl, "freeSkips" );
 
 addInputListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels", null, false, true );
 addFocusOutListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels" );
-
-addCheckboxListener( CMPLevelsEl, "CMPLevels" );
 
 let messageDisplayTimeout;
 document.getElementById( "save-button" ).addEventListener( "click", () => {

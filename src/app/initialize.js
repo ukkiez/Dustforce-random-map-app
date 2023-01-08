@@ -97,10 +97,10 @@ const initMainBody = () => {
     // remove the animated class so we can toggle the animation whenever we want
     // (but only after a timeout, since we want the animation to finish playing
     // on pageload first)
-    removeClass( document.getElementById( "icon" ), "animated" );
+    removeClass( document.getElementById( "points-icon" ), "animated" );
   }, 2000 );
 
-  document.getElementById( "icon-container" ).addEventListener( "click", () => {
+  document.getElementById( "settings-icon" ).addEventListener( "click", () => {
     switchPage( "index.html", "./settings.html" );
   } );
 }

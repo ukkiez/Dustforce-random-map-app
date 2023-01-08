@@ -33,7 +33,7 @@ const increment = ( _decrement = false ) => {
     return;
   }
 
-  const counter = document.getElementById( "icon-text" );
+  const counter = document.getElementById( "points-icon-text" );
   let number = parseInt( counter.innerText, 10 );
   if ( _decrement ) {
     number--;
@@ -282,7 +282,7 @@ listeners.start( function() {
           }
 
           // trigger the S-icon animation
-          const el = document.getElementById( "icon" );
+          const el = document.getElementById( "points-icon" );
           addClass( el, "animated2" );
           setTimeout(() => {
             removeClass( el, "animated2" );

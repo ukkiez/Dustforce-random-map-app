@@ -1,4 +1,6 @@
 # TODOs
+
+- Calculate the map pool upfront, and show the number in the settings and/or main screen
 - In theory, people could go through all maps in a pool. If this happens, I guess the run must be ended with a special message...?
 - Don't allow going to any other page, when a run is going
   - Of course, remove the settings route during runs

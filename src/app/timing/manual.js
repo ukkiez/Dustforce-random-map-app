@@ -13,7 +13,7 @@
 // }
 
 // const increment = ( _decrement = false ) => {
-//   const counter = document.getElementById( "icon-text" );
+//   const counter = document.getElementById( "points-icon-text" );
 //   let number = parseInt( counter.innerText, 10 );
 //   if ( _decrement ) {
 //     number--;

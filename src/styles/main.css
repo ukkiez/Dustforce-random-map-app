@@ -65,6 +65,65 @@ button:focus {
   outline: none;
 }
 
+#settings-icon-container {
+  position: absolute;
+  width: 100%;
+  text-align: end;
+  margin-top: 0.25rem;
+}
+#settings-icon {
+  position: relative;
+  width: 15vh;
+  height: 15vh;
+  right: 2rem;
+  transition: 1s;
+  cursor: pointer;
+}
+#settings-icon:hover {
+  transition-duration: 0.3s;
+
+  background-color: #1e384ec9;
+  border-top-left-radius: 50% 1rem;
+  border-top-right-radius: 50% 1rem;
+  border-bottom-left-radius: 50% 1rem;
+  border-bottom-right-radius: 50% 1rem;
+  transform: rotate( 90deg );
+}
+.tooltip-text {
+  visibility: hidden;
+  width: 2rem;
+  height: 1rem;
+  background-color: #4177a7c9;
+  color: #dadada;
+  text-align: center;
+  border-radius: 6px;
+  position: absolute;
+  width: 30vh;
+  right: 6vh;
+  bottom: 22vh;
+
+  cursor: pointer;
+  z-index: 1;
+
+  opacity: 0;
+  transition: 1s;
+  transition: opacity 0.3s;
+}
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -0.4rem;
+  border-width: 0.4rem;
+  border-style: solid;
+  border-color: #4177a796 transparent transparent transparent;
+}
+#settings-icon:hover +.tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
 #map-info {
   color: #adadad;
   font-size: 1rem;
@@ -90,49 +149,21 @@ button:focus {
     transform: rotate3d( 3, 2, 3, 2turn );
   }
 }
-@keyframes scaleX {
-  50% {
-    transform: scaleX( -1 );
-  }
-  100% {
-    transform: scaleX( 1 );
-  }
-}
-@keyframes scaleY {
-  50% {
-    transform: scaleY( -1 );
-  }
-  100% {
-    transform: scaleY( 1 );
-  }
-}
 
-#icon-container {
+#points-icon-container {
   margin-top: 1rem;
 }
-#icon {
+#points-icon {
   width: 60px;
   height: 60px;
-  /* animation: scaleX linear 0.5s, spin 1s; */
-  /* animation-delay: 0.1s; */
-
-  /* animation-name: scaleX, spin;
-  animation-duration: 0.2s, 1s;
-  animation-delay: 0.2s, 0.2s; */
 }
-#icon.animated {
+#points-icon.animated {
   animation: spin3d 0.75s;
-  /* animation: scaleX linear 0.5s, spin 1s; */
-  /* animation-delay: 0.1s; */
-
-  /* animation-name: scaleX, spin;
-  animation-duration: 0.2s, 1s;
-  animation-delay: 0.2s, 0.2s; */
 }
-#icon.animated2 {
+#points-icon.animated2 {
   animation: spin 0.5s;
 }
-#icon-text {
+#points-icon-text {
   color: #95c4ec;
   font-size: 2.5rem;
   vertical-align: text-bottom;
