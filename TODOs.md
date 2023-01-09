@@ -1,5 +1,6 @@
 # TODOs
 
+- Remove dev dependencies from node_modules in Windows build
 - Create a start-up process, only for the first time the app is started up.
   - Ask the player for what their hotkeys need to be (because node-global-key-listener is garbage cross-platform, and nw.Shortcut is garbage too since it blocks single keys for the entire system)
   - Ask the player where their Dustforce installation is, as some even put it in a different drive. Note that we'd only need to do that if we can't find their dustforce installation in the first place

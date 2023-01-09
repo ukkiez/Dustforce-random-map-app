@@ -1,5 +1,5 @@
 {
-  "seed": "",
+  "seed": "foo",
   "startTime": 600000,
   "minSSCount": 50,
   "fastestSSTime": 30000,
