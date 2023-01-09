@@ -10,7 +10,6 @@ import { registerListeners, unregisterListeners } from "./hotkeys.js";
 // import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
 
 const platform = nw.require( "os" ).platform();
-const homedir = nw.require( "os" ).homedir();
 
 const path = nw.require( "path" );
 
@@ -46,7 +45,6 @@ switch ( platform ) {
     if ( !fs.existsSync( settingsPath ) ) {
       // make a copy of the default settings, for reasons described directly
       // above
-      defaultSettings[ "homedir" ] = homedir;
       fs.writeFileSync( settingsPath, JSON.stringify( defaultSettings, null, 2 ) );
     }
     if ( !fs.existsSync( shortcutsPath ) ) {
