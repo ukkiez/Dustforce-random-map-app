@@ -13,8 +13,22 @@ import cmpLevels from "../../dustkid-data/cmp-levels.json";
 const fs = nw.require( "fs" );
 const open = nw.require( "open" );
 
-const homedir = nw.require( "os" ).homedir();
-const splitFile = `${ homedir }/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/split.txt`;
+const os = nw.require( "os" );
+const homedir = os.homedir();
+let splitFile;
+switch ( os.platform() ) {
+  case "darwin":
+    splitFile = `${ homedir }/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/split.txt`;
+    break;
+
+  case "linux":
+    splitFile = `${ homedir }/.local/share/Steam/steamapps/common/Dustforce/split.txt`;
+    break;
+
+  case "win32":
+    splitFile = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dustforce\\split.txt";
+    break;
+}
 
 const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse( fs.readFileSync( settingsPath ) );
 
@@ -202,6 +216,11 @@ listeners.start( function() {
       // shuffle the map pool, by the given seed, which consequently means that
       // when we pick a level below, we'll simply do it in order, start to end
       shuffle( mapPool );
+    }
+
+    // ensure split.txt exists, otherwise create an empty one
+    if ( !fs.existsSync( splitFile ) ) {
+      fs.writeFileSync( splitFile, "" );
     }
   }
 
