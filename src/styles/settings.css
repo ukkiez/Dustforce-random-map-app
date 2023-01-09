@@ -43,8 +43,21 @@ input::placeholder {
   font-size: 0.65rem;
 }
 input[type="checkbox"] {
+  cursor: pointer;
+
   /* align checkboxes to the left */
   width: auto;
+}
+
+.download-settings {
+  margin-bottom: 0.5rem;
+}
+#download-settings-link {
+  color: #00a478;
+  font-size: 0.8rem;
+}
+#download-settings-link:hover {
+  color: #06d6a0;
 }
 
 #fastestSSTime-formatted {
@@ -52,6 +65,7 @@ input[type="checkbox"] {
 }
 
 #back-button {
+  cursor: pointer;
   font-size: 0.9rem;
   font-family: "Caracteres", sans-serif;
 
@@ -76,6 +90,7 @@ button {
 }
 
 #save-button {
+  cursor: pointer;
   font-size: 0.9rem;
   font-family: "Caracteres", sans-serif;
 

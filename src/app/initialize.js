@@ -6,19 +6,26 @@ import { Timer } from "./classes/timer.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
-import { registerHotkeys, unregisterListeners } from "./hotkeys.js";
+import { registerListeners, unregisterListeners } from "./hotkeys.js";
+// import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
 
 const platform = nw.require( "os" ).platform();
+const homedir = nw.require( "os" ).homedir();
 
 const path = nw.require( "path" );
 
+import defaultSettings from "../user-data/default-settings.json";
+import defaultShortcuts from "../user-data/default-shortcuts.json";
+
 export let settingsPath;
+let shortcutsPath;
 let settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) );
 switch ( platform ) {
   case "darwin":
     // read instead of import, to make sure the data is updated when we change
     // pages, something which does not seem to happen when importing
     settingsPath = `${ global.__dirname }/user-data/settings.json`;
+    shortcutsPath = `${ global.__dirname }/user-data/shortcuts.json`;
     settings = JSON.parse( fs.readFileSync( settingsPath ) );
     break;
 
@@ -32,12 +39,19 @@ switch ( platform ) {
     const exeDir = path.dirname( nwPath );
 
     settingsPath = `${ exeDir }/user-data/settings.json`;
+    shortcutsPath = `${ exeDir }/user-data/shortcuts.json`;
     if ( !fs.existsSync( `${ exeDir }/user-data` ) ) {
       fs.mkdirSync( `${ exeDir }/user-data` );
     }
     if ( !fs.existsSync( settingsPath ) ) {
-      // make a copy of the settings json, for reasons described directly above
-      fs.writeFileSync( settingsPath, JSON.stringify( settings, null, 2 ) );
+      // make a copy of the default settings, for reasons described directly
+      // above
+      defaultSettings[ "homedir" ] = homedir;
+      fs.writeFileSync( settingsPath, JSON.stringify( defaultSettings, null, 2 ) );
+    }
+    if ( !fs.existsSync( shortcutsPath ) ) {
+      // do the same for shortcuts
+      fs.writeFileSync( shortcutsPath, JSON.stringify( defaultShortcuts, null, 2 ) );
     }
 
     settings = JSON.parse( fs.readFileSync( settingsPath ) )
@@ -110,6 +124,8 @@ const initMainBody = () => {
 }
 
 const initSettingsBody = () => {
+  document.getElementById( "download-settings-link" ).href = settingsPath;
+
   document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, true );
 
   document.getElementById( "back-button" ).addEventListener( "click", () => {
@@ -164,6 +180,7 @@ export const init = () => {
   if ( page === "index.html" ) {
     // // register global hotkeys using NW.Shortcuts
     // registerHotkeys();
+    registerListeners();
 
     initMainBody();
 

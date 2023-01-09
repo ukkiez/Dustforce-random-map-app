@@ -3,5 +3,6 @@ dist
 cache
 src/app/bundle
 src/user-data/settings.json
+TODOs.md
 
 .DS_Store

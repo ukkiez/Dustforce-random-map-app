@@ -1,10 +1,11 @@
 {
   "seed": "",
   "startTime": 3600000,
-  "minSSCount": 20,
-  "fastestSSTime": 30000,
+  "minSSCount": 50,
+  "fastestSSTime": 60000,
   "skips": true,
   "freeSkips": 1,
   "freeSkipAfterXSolvedLevels": 10,
-  "CMPLevels": true
+  "CMPLevels": true,
+  "homedir": ""
 }

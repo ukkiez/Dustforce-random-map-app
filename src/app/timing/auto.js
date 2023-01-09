@@ -27,6 +27,7 @@ switch ( os.platform() ) {
 
   case "win32":
     splitFile = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dustforce\\split.txt";
+    // splitFile = "D:\\Steam Games\\steamapps\\common\\Dustforce\\split.txt";
     break;
 }
 
