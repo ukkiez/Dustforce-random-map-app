@@ -9,53 +9,8 @@ import { addClass, removeClass } from "./util/dom.js";
 import { registerListeners, unregisterListeners } from "./hotkeys.js";
 // import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
 
-const platform = nw.require( "os" ).platform();
-
-const path = nw.require( "path" );
-
-import defaultSettings from "../user-data/default-settings.json";
-import defaultShortcuts from "../user-data/default-shortcuts.json";
-
-export let settingsPath;
-let shortcutsPath;
-let settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) );
-switch ( platform ) {
-  case "darwin":
-    // read instead of import, to make sure the data is updated when we change
-    // pages, something which does not seem to happen when importing
-    settingsPath = `${ global.__dirname }/user-data/settings.json`;
-    shortcutsPath = `${ global.__dirname }/user-data/shortcuts.json`;
-    settings = JSON.parse( fs.readFileSync( settingsPath ) );
-    break;
-
-  case "linux":
-  case "win32": {
-    // ensure the user data directory and settings.json are in the same
-    // directory as the app executable, as the Linux and Windows versions are
-    // zipped and create temp directories for each app session, so the above
-    // Darwin version does not work across multiple sessions
-    const nwPath = nw.process.execPath;
-    const exeDir = path.dirname( nwPath );
-
-    settingsPath = `${ exeDir }/user-data/settings.json`;
-    shortcutsPath = `${ exeDir }/user-data/shortcuts.json`;
-    if ( !fs.existsSync( `${ exeDir }/user-data` ) ) {
-      fs.mkdirSync( `${ exeDir }/user-data` );
-    }
-    if ( !fs.existsSync( settingsPath ) ) {
-      // make a copy of the default settings, for reasons described directly
-      // above
-      fs.writeFileSync( settingsPath, JSON.stringify( defaultSettings, null, 2 ) );
-    }
-    if ( !fs.existsSync( shortcutsPath ) ) {
-      // do the same for shortcuts
-      fs.writeFileSync( shortcutsPath, JSON.stringify( defaultShortcuts, null, 2 ) );
-    }
-
-    settings = JSON.parse( fs.readFileSync( settingsPath ) )
-    break;
-  }
-}
+export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
+const settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) );
 
 const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
