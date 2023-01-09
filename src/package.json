@@ -1,5 +1,5 @@
 {
-  "name": "random-map-challenge",
+  "name": "random-map-app",
   "version": "1.0.0",
   "description": "",
   "main": "views/index.html",
@@ -7,7 +7,7 @@
     "build": "browserify app/index.js -o app/bundle/index.js -t [ babelify --presets [ @babel/preset-env ] --plugins [ @babel/plugin-proposal-class-properties ] ]"
   },
   "window": {
-    "title": "Random-map-challenge",
+    "title": "Random-Map-App",
     "frame": false,
     "position": "center",
     "always_on_top": true,

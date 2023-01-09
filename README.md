@@ -1,4 +1,4 @@
-# Random Map Challenge app
+# Random Map App
 Inspired by a plugin in Trackmania, this app automatically loads players into
 random custom levels. Where in Trackmania Author Medals give 1 point and Gold
 Medals give free skips, here it's SS'ing and Any%'ing levels.
@@ -11,4 +11,5 @@ consist of things such as:
 - How many free starting skips are given to players
 - Set seeds
 - Free skip every "X" SS
+
 And more.
