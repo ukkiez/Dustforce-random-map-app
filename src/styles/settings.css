@@ -49,15 +49,47 @@ input[type="checkbox"] {
   width: auto;
 }
 
-.download-settings {
+.links-container {
   margin-bottom: 0.5rem;
 }
 #download-settings-link {
   color: #00a478;
   font-size: 0.8rem;
+  display: inline-block;
 }
 #download-settings-link:hover {
   color: #06d6a0;
+}
+#import-settings-link {
+  color: #00a478;
+  font-size: 0.8rem;
+  width: fit-content;
+  display: inline-block;
+  text-decoration: underline;
+  cursor: pointer;
+}
+#import-settings-link:hover {
+  color: #06d6a0;
+}
+#import-settings-input {
+  display: none;
+}
+#imported-message {
+  display: none;
+  font-size: 1rem;
+  font-style: italic;
+  color: #42c2a0;
+}
+#failed-imported-message {
+  display: none;
+  font-size: 1rem;
+  font-style: italic;
+  color: #c82424;
+}
+
+#settings-link-separator {
+  color: #007c5b;
+  font-size: 0.8rem;
 }
 
 #fastestSSTime-formatted {

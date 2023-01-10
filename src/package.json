@@ -18,7 +18,8 @@
     "min_height": 10,
     "max_width": 1000,
     "max_height": 1000,
-    "icon": "assets/s-complete-icon.png"
+    "icon": "assets/s-complete-icon.png",
+    "resizable": false
   },
   "keywords": [],
   "author": "",
@@ -32,6 +33,7 @@
   },
   "dependencies": {
     "node-global-key-listener": "^0.1.1",
-    "open": "^8.4.0"
+    "open": "^8.4.0",
+    "uiohook-napi": "^1.5.0"
   }
 }

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/settings.css" />
-    <title>Random Map Challenge</title>
+    <title>Settings</title>
   </head>
 
   <body>
@@ -15,8 +15,15 @@
         Settings
       </div>
 
-      <div class="download-settings">
-        <a id="download-settings-link" download>Download Settings/Race File</a>
+      <div class="links-container">
+        <a id="download-settings-link" download="random-map-app-settings.json">Download</a>
+        <span id="settings-link-separator">/</span>
+        <label id="import-settings-link">
+          Import
+          <input type="file" id="import-settings-input" accept=".json" />
+        </label>
+        <span id="imported-message">imported!</span>
+        <span id="failed-imported-message">invalid file</span>
       </div>
 
       <form class="settings-form" autocomplete="off" autocapitalize="off">

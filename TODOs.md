@@ -1,14 +1,14 @@
 # TODOs
 
-- Remove dev dependencies from node_modules in Windows build
 - Create a start-up process, only for the first time the app is started up.
   - Ask the player for what their hotkeys need to be (because node-global-key-listener is garbage cross-platform, and nw.Shortcut is garbage too since it blocks single keys for the entire system)
   - Ask the player where their Dustforce installation is, as some even put it in a different drive. Note that we'd only need to do that if we can't find their dustforce installation in the first place
-  - Maybe use IOHook for Windows and Linux
+  - Maybe use the UIOHook module for Windows (and Linux?)
 - Calculate the map pool upfront, and show the number in the settings and/or main screen
 - In theory, people could go through all maps in a pool. If this happens, I guess the run must be ended with a special message...?
 - Don't allow going to any other page, when a run is going
   - Of course, remove the settings route during runs
+- Make a small list predefined settings
 - Allow an easy way to import dustkid level data. We don't really want people mass-updating this themselves (or atleast, even just two people at the same time), so instead maybe we can just update it once ourselves, and then just post in the Discord some file.
 - Add button for exporting the current "settings" file
   - Allow importing these settings, which is especially useful for racing
@@ -16,7 +16,6 @@
 - Maybe have the settings in a grid, two columns (so two per row)
 - Add a "X" to empty out the "seed" setting
 - Add a "copy to clipboard" for the seed as well
-- Add a settings icon in the bottom right/top right
 - Figure out how to actually store data in Windows, since it doesn't seem like the JSON file is being permanently written to
   - If we change it, it seems to change while the app is active, but quit and
     restart is just the original again
@@ -27,10 +26,6 @@
 - Maybe add a setting to configure skip delay
   - Would need to add a tooltip as well to explain this one, which would be a
     nice little thing to learn to make in CSS I suppose, but a bit of extra work
-- Add some little animations here and there (not too much)
-  - Maybe add the "let's dust" thing to the start
-  - Possibly do something with the SS count going up (rolling the number in, for example)
-  - Maybe roll in the level name and author or something (or have a fade-in for it)
 - Maybe add something next to the SS counter (could even be a skip counter,
   though no idea what we'd put as an icon for that)
 - Close the splits file watcher when the timer ends (I guess add an event emitter somehow)
@@ -60,3 +55,6 @@
   the visible range (NWjs why), perhaps just have multiple pages of settings
   instead of the user being able to scroll, or alternatively just automatically
   resize the window to have everything fit on screen (fixed by going to a previous version of NW binaries (0.52.2, same as the SDK in-use))
+- Remove dev dependencies from node_modules in Windows build *fixed via a manual build script (./build.js) for Windows*
+- Add a settings icon in the bottom right/top right
+- Add a few animations here and there (not too much)

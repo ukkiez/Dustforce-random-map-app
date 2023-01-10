@@ -91,7 +91,7 @@ const nw = new NwBuilder( {
   cacheDir: "./cache",
   forceDownload: false,
   buildDir: "./dist",
-  appName: "random-map-challenge",
+  appName: "random-map-app",
   appVersion: "0.0.1",
   macIcns: "./src/assets/s-complete-icon.icns",
   winIco: "./src/assets/s-complete-icon.icns",

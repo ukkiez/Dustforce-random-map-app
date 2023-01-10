@@ -1,6 +1,6 @@
 // use nw.require() instead of require() or import to make it actually available
 // in the browser context
-const fs = nw.require( "fs" ); // eslint-disable-line no-undef
+const fs = nw.require( "fs" );
 
 import { formatMSToHumanReadable } from "./util/format.js";
 
@@ -9,17 +9,6 @@ import { settingsPath } from "./initialize.js";
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
 const settings = JSON.parse( fs.readFileSync( settingsPath ) );
-
-const {
-  seed,
-  startTime,
-  minSSCount,
-  fastestSSTime,
-  skips,
-  freeSkips,
-  freeSkipAfterXSolvedLevels,
-  CMPLevels,
-} = settings;
 
 const seedEl = document.getElementById( "seed-input" );
 const timeEl = document.getElementById( "time-input" );
@@ -31,30 +20,61 @@ const skipsEl = document.getElementById( "skips-input" );
 const freeSkipsEl = document.getElementById( "freeSkips-input" );
 const freeSkipsAfterXEl = document.getElementById( "freeSkipsAfterX-input" );
 
-// set initial values
-seedEl.value = seed;
-timeEl.value = ( startTime / 1000 / 60 );
-minSSCountEl.value = minSSCount;
-fastestSSTimeEl.value = fastestSSTime;
-CMPLevelsEl.checked = CMPLevels;
-
-skipsEl.checked = skips;
-freeSkipsEl.value = freeSkips;
-freeSkipsAfterXEl.value = freeSkipAfterXSolvedLevels;
-// possibly hide the skip options, depending on whether the user wants them on
-// or not
 const freeSkipsContainer = document.getElementById( "skips-settings-container" );
-if ( !skips ) {
-  freeSkipsContainer.style.display = "none";
+
+let data = {
+
+};
+const setInputValues = ( _settings ) => {
+  const {
+    seed,
+    startTime,
+    minSSCount,
+    fastestSSTime,
+    skips,
+    freeSkips,
+    freeSkipAfterXSolvedLevels,
+    CMPLevels,
+  } = _settings;
+
+  // set initial values
+  seedEl.value = seed;
+  timeEl.value = ( startTime / 1000 / 60 );
+  minSSCountEl.value = minSSCount;
+  fastestSSTimeEl.value = fastestSSTime;
+  CMPLevelsEl.checked = CMPLevels;
+
+  skipsEl.checked = skips;
+  freeSkipsEl.value = freeSkips;
+  freeSkipsAfterXEl.value = freeSkipAfterXSolvedLevels;
+
+  // possibly hide all skip options, depending on whether the user enabled skips
+  // or not
+  if ( !skips ) {
+    freeSkipsContainer.style.display = "none";
+  }
+  else {
+    freeSkipsContainer.style.display = "initial";
+  }
+
+  data = {
+    ..._settings,
+  }
 }
 
+// initialize the input values
+setInputValues( settings );
 
-const data = {
-  ...settings,
-};
 let initialState = {
   ...data,
 };
+
+const saveData = ( _data ) => {
+  fs.writeFileSync( settingsPath, JSON.stringify( _data, null, 2 ) );
+  initialState = {
+    ..._data,
+  };
+}
 
 const addCheckboxListener = ( element, field = "", callback ) => {
   element.addEventListener( "input", ( event ) => {
@@ -156,10 +176,7 @@ addFocusOutListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels" );
 
 let messageDisplayTimeout;
 document.getElementById( "save-button" ).addEventListener( "click", () => {
-  fs.writeFileSync( settingsPath, JSON.stringify( data, null, 2 ) ); // eslint-disable-line no-undef
-  initialState = {
-    ...data,
-  };
+  saveData( data );
 
   if ( messageDisplayTimeout ) {
     clearTimeout( messageDisplayTimeout );
@@ -169,4 +186,89 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
   messageDisplayTimeout = setTimeout( () => {
     document.getElementById( "saved-message" ).style.display = "none";
   }, 2000 );
+} );
+
+// handle importing
+let importedMessageDisplayTimeout;
+let failedImportedMessageDisplayTimeout;
+const displayImportMessage = ( failed = false ) => {
+  if ( failed ) {
+    if ( failedImportedMessageDisplayTimeout ) {
+      clearTimeout( failedImportedMessageDisplayTimeout );
+    }
+    // show the message that indicates the user failed to import settings
+    document.getElementById( "failed-imported-message" ).style.display = "initial";
+    failedImportedMessageDisplayTimeout = setTimeout( () => {
+      document.getElementById( "failed-imported-message" ).style.display = "none";
+    }, 2000 );
+  }
+  else {
+    if ( importedMessageDisplayTimeout ) {
+      clearTimeout( importedMessageDisplayTimeout );
+    }
+    // show the message that indicates the user successfully imported settings
+    document.getElementById( "imported-message" ).style.display = "initial";
+    importedMessageDisplayTimeout = setTimeout( () => {
+      document.getElementById( "imported-message" ).style.display = "none";
+    }, 2000 );
+  }
+}
+
+const importSettingsInput = document.getElementById( "import-settings-input" );
+importSettingsInput.addEventListener( "change", () => {
+  const [ file ] = importSettingsInput.files;
+  if ( !file ) {
+    return;
+  }
+
+  if ( file.type !== "application/json" ) {
+    displayImportMessage( true );
+    return;
+  }
+
+  const reader = new FileReader();
+  let importedSettings;
+  reader.addEventListener( "load", () => {
+    try {
+      importedSettings = JSON.parse( reader.result );
+
+      // verify the imported settings against the current file, to make sure all
+      // fields (and only those) are there; technically the user can mess with
+      // these since we don't compress the source code in the production build,
+      // but it's the easiest for development purposes, and it's their own
+      // responsibility if they do so
+
+      const fields = Object.keys( settings );
+      const importFields = Object.keys( importedSettings );
+      if ( importFields.length !== fields.length ) {
+        // the number of fields doesn't match in the first place, don't bother
+        // with field checks
+        displayImportMessage( true );
+        return;
+      }
+
+      // create a set between both fields, and check if the eventual length is
+      // the same as the current settings fields length, as duplicate fields
+      // would be filtered out
+      const set = new Set( importFields.concat( fields ) );
+      if ( set.size !== fields.length ) {
+        displayImportMessage( true );
+        return;
+      }
+    }
+    catch ( parsingError ) {
+      displayImportMessage( true );
+      return;
+    }
+
+    displayImportMessage();
+
+    // finally, show the imported settings (but don't save, the user should do
+    // that themselves)
+    setInputValues( importedSettings );
+
+    // reset the input
+    importSettingsInput.value = "";
+  } );
+  reader.readAsBinaryString( file );
 } );
