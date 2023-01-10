@@ -77,7 +77,7 @@ const initMainBody = () => {
 }
 
 const initSettingsBody = () => {
-  document.getElementById( "download-settings-link" ).href = settingsPath;
+  document.getElementById( "download-settings-link" ).href = "../user-data/settings.json";
 
   document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, true );
 
