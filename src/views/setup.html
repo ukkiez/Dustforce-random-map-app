@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/setup.css" />
+    <title>Random Map App Setup</title>
+  </head>
+
+  <body>
+    <div id="title-container">
+      <img class="setup-animation" id="title-logo" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
+      <span id="title-text">
+        Setup
+      </span>
+    </div>
+
+    <div id="dustforce-directory-container">
+      <div id="dustforce-directory-text">
+        Dustforce Directory
+      </div>
+      <div id="dustforce-directory-input-text">
+        C:\foo\bar\baz
+      </div>
+    </div>
+
+    <form id="hotkeys-form" autocomplete="off" autocapitalize="off">
+      <div id="hotkeys-form-text">Hotkeys</div>
+      <!-- <label for="start-hotkey">Start Run / Skip Map</label> -->
+      <input type="text" id="start-hotkey-input" name="start-hotkey" placeholder="Start / Skip"/>
+
+      <!-- <label for="replay-hotkey">Replay Map</label> -->
+      <input type="text" id="replay-hotkey-input" name="replay-hotkey" placeholder="re-enter level"/>
+
+      <!-- <label for="reset-hotkey">Reset Run</label> -->
+      <input type="text" id="reset-hotkey-input" name="reset-hotkey" placeholder="reset"/>
+    </form>
+
+    <div id="done-button-container">
+      <button id="done-button" type="button">
+        DONE
+      </button>
+    </div>
+  </body>
+
+  <script src="../app/bundle/index.js"></script>
+</html>

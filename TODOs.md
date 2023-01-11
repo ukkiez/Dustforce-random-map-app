@@ -5,6 +5,7 @@
   - Ask the player where their Dustforce installation is, as some even put it in a different drive. Note that we'd only need to do that if we can't find their dustforce installation in the first place
   - Maybe use the UIOHook module for Windows (and Linux?)
 - Calculate the map pool upfront, and show the number in the settings and/or main screen
+- Add a setting where the window opacity can be changed
 - In theory, people could go through all maps in a pool. If this happens, I guess the run must be ended with a special message...?
 - Don't allow going to any other page, when a run is going
   - Of course, remove the settings route during runs

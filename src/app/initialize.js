@@ -9,10 +9,12 @@ import { addClass, removeClass } from "./util/dom.js";
 import { registerListeners, unregisterListeners } from "./hotkeys.js";
 // import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
 
+const setup = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/setup.json` ) );
+
 export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
 const settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) );
 
-const switchPage = ( currentPage, destination ) => {
+export const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
   if ( split.length === 1 ) {
     destination = split[ 0 ];
@@ -130,6 +132,23 @@ const split = href.split( "/" );
 const page = split[ split.length - 1 ];
 
 export const init = () => {
+  if ( page === "setup.html" ) {
+    import( "./setup.js" );
+    return;
+  }
+  else if ( !setup.initialSetupDone ) {
+    if ( page !== "setup.html" ) {
+      // go to the initial setup page, where we'll confirm the dustforce
+      // directory, and which hotkeys the user wants to use; this will only
+      // happen the first time someone ever opens the app
+
+      // initInitialSetupBody();
+
+      switchPage( "", "./setup.html" );
+    }
+    return;
+  }
+
   if ( page === "index.html" ) {
     // // register global hotkeys using NW.Shortcuts
     // registerHotkeys();

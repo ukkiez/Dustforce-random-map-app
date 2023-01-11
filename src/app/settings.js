@@ -22,9 +22,7 @@ const freeSkipsAfterXEl = document.getElementById( "freeSkipsAfterX-input" );
 
 const freeSkipsContainer = document.getElementById( "skips-settings-container" );
 
-let data = {
-
-};
+let data = {};
 const setInputValues = ( _settings ) => {
   const {
     seed,

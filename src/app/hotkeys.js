@@ -1,4 +1,4 @@
-const { GlobalKeyboardListener } = nw.require( "node-global-key-listener" ); // eslint-disable-line no-undef
+const { GlobalKeyboardListener } = nw.require( "node-global-key-listener" );
 const keyboardListener = new GlobalKeyboardListener();
 
 const _listeners = {
@@ -49,7 +49,7 @@ export const unregisterListeners = () => {
   }
 }
 
-// import shortcuts from "../shortcuts.json";
+// import shortcuts from "../user-data/hotkeys.json";
 
 // /* eslint-disable no-undef */
 // const _start = new nw.Shortcut( { key: shortcuts.start } );

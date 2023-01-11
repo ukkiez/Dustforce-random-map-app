@@ -1,0 +1,101 @@
+@keyframes spin {
+  0% {}
+  66%, 100% {
+    transform: rotate3d( 0, 1, 0, 1turn );
+  }
+}
+
+#title-container {
+  margin-bottom: 0.5rem;
+  text-align: center;
+  -webkit-app-region: drag;
+}
+#title-logo {
+  width: 3rem;
+  height: 3rem;
+  position: absolute;
+  right: 12.75rem;
+  top: 0.75rem;
+}
+.setup-animation {
+  animation: spin 3.5s infinite;
+  animation-delay: 1s;
+}
+#title-text {
+  font-size: 2rem;
+}
+
+#dustforce-directory-container {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+#dustforce-directory-input-text {
+  color: #ccd1d5;
+  font-size: 0.9rem;
+}
+
+#hotkeys-form {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+label {
+  color: aliceblue;
+  font-size: 0.9rem;
+  display: block;
+}
+
+input {
+  margin-top: 0.3rem;
+
+  width: fit-content;
+
+  /* have the input box cut off at the form containers padding, instead of
+  slightly further beyond */
+  box-sizing: border-box;
+
+  background-color: #708396;
+  color: aliceblue;
+
+  border-radius: 0.15rem;
+  border-style: none;
+
+  /* remove the native outline around selected inputs */
+  outline: none;
+
+  text-align: center;
+}
+input::placeholder {
+  font-family: "Caracteres", sans-serif;
+  text-align: center;
+  font-style: italic;
+  color:#b6c3d0;
+  font-size: 0.7rem;
+}
+
+#done-button-container {
+  text-align: center;
+}
+#done-button {
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: "Caracteres", sans-serif;
+
+  border-radius: 0.1rem;
+  border-style: none;
+
+  color: #034634;
+  background-color: #04a67b;
+
+  margin-bottom: 0.5rem;
+
+  position: relative;
+}
+#done-button:hover {
+  color: #01654b;
+  background-color: #04d9a0;
+}
+#done-button:active {
+  color: #03684d;
+  background-color: #06bb8a;
+}
