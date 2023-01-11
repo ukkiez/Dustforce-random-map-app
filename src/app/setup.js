@@ -41,7 +41,7 @@ const warnAboutDirectory = () => {
 }
 
 let _foundDustforceDirectory = false;
-if ( !fs.existsSync( dustforceDirectory ) ) {
+if ( fs.existsSync( dustforceDirectory ) ) {
   // the Dustforce directory is where it is expected to be
   directoryInputTextEl.innerText = "Directory Found.";
   _foundDustforceDirectory = true;

@@ -1,5 +1,5 @@
 {
-  "initialSetupDone": true,
+  "initialSetupDone": false,
   "hotkeys": {
     "start": "EQUALS",
     "replay": "SEMICOLON",
