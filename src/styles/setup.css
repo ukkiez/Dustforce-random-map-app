@@ -1,4 +1,4 @@
-@keyframes spin {
+@keyframes rotateWithDelay {
   0% {}
   66%, 100% {
     transform: rotate3d( 0, 1, 0, 1turn );
@@ -18,10 +18,11 @@
   top: 0.75rem;
 }
 .setup-animation {
-  animation: spin 3.5s infinite;
+  animation: rotateWithDelay 3.5s infinite;
   animation-delay: 1s;
 }
 #title-text {
+  color: aliceblue;
   font-size: 2rem;
 }
 
@@ -30,8 +31,31 @@
   text-align: center;
 }
 #dustforce-directory-input-text {
-  color: #ccd1d5;
+  color: #059c74;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+#dustforce-directory-input-warning {
+  display: none;
+  color: #d10202;
   font-size: 0.9rem;
+  font-style: italic;
+  margin-top: 0.1rem;
+}
+
+#open-directory-link {
+  display: none;
+  color: #00a478;
+  font-size: 0.8rem;
+  width: fit-content;
+  text-decoration: underline;
+  cursor: pointer;
+}
+#open-directory-link:hover {
+  color: #06d6a0;
+}
+#open-directory-input {
+  display: none;
 }
 
 #hotkeys-form {

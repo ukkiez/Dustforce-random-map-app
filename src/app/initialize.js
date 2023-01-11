@@ -9,7 +9,7 @@ import { addClass, removeClass } from "./util/dom.js";
 import { registerListeners, unregisterListeners } from "./hotkeys.js";
 // import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
 
-const setup = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/setup.json` ) );
+const config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
 export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
 const settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) );
@@ -136,7 +136,7 @@ export const init = () => {
     import( "./setup.js" );
     return;
   }
-  else if ( !setup.initialSetupDone ) {
+  else if ( !config.initialSetupDone ) {
     if ( page !== "setup.html" ) {
       // go to the initial setup page, where we'll confirm the dustforce
       // directory, and which hotkeys the user wants to use; this will only

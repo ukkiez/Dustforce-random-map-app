@@ -1,0 +1,9 @@
+{
+  "initialSetupDone": true,
+  "hotkeys": {
+    "start": "EQUALS",
+    "replay": "SEMICOLON",
+    "reset": "BACKSLASH"
+  },
+  "dustforceDirectory": "/Users/yannickk/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources"
+}

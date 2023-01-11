@@ -21,20 +21,20 @@
       <div id="dustforce-directory-text">
         Dustforce Directory
       </div>
-      <div id="dustforce-directory-input-text">
-        C:\foo\bar\baz
-      </div>
+      <div id="dustforce-directory-input-text"></div>
+      <div id="dustforce-directory-input-warning">Can't verify directory</div>
+      <label id="open-directory-link">
+        Select Directory
+        <input type="file" id="open-directory-input" nwdirectory />
+      </label>
     </div>
 
     <form id="hotkeys-form" autocomplete="off" autocapitalize="off">
       <div id="hotkeys-form-text">Hotkeys</div>
-      <!-- <label for="start-hotkey">Start Run / Skip Map</label> -->
       <input type="text" id="start-hotkey-input" name="start-hotkey" placeholder="Start / Skip"/>
 
-      <!-- <label for="replay-hotkey">Replay Map</label> -->
       <input type="text" id="replay-hotkey-input" name="replay-hotkey" placeholder="re-enter level"/>
 
-      <!-- <label for="reset-hotkey">Reset Run</label> -->
       <input type="text" id="reset-hotkey-input" name="reset-hotkey" placeholder="reset"/>
     </form>
 

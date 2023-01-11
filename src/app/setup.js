@@ -2,10 +2,89 @@ const { GlobalKeyboardListener } = nw.require( "node-global-key-listener" );
 const keyboardListener = new GlobalKeyboardListener();
 
 const fs = nw.require( "fs" );
+const path = nw.require( "path" );
 
 import { switchPage } from "./initialize.js";
 
-const setupData = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/setup.json` ) );
+const setupData = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+
+const os = nw.require( "os" );
+const homedir = os.homedir();
+
+let dustforceDirectory;
+switch ( os.platform() ) {
+  case "darwin":
+    dustforceDirectory = `${ homedir }/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/`;
+    break;
+
+  case "linux":
+    dustforceDirectory = `${ homedir }/.local/share/Steam/steamapps/common/Dustforce/`;
+    break;
+
+  case "win32":
+    dustforceDirectory = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dustforce\\";
+    break;
+}
+
+const directoryInputTextEl = document.getElementById( "dustforce-directory-input-text" );
+const openDirectoryLinkEl = document.getElementById( "open-directory-link" );
+
+const directoryInputWarningEl = document.getElementById( "dustforce-directory-input-warning" );
+const warnAboutDirectory = () => {
+  openDirectoryLinkEl.style.display = "none";
+  directoryInputWarningEl.style.display = "block";
+
+  setTimeout( () => {
+    directoryInputWarningEl.style.display = "none";
+    openDirectoryLinkEl.style.display = "inline-block";
+  }, 3000 );
+}
+
+let _foundDustforceDirectory = false;
+if ( !fs.existsSync( dustforceDirectory ) ) {
+  // the Dustforce directory is where it is expected to be
+  directoryInputTextEl.innerText = "Directory Found.";
+  _foundDustforceDirectory = true;
+}
+else {
+  // the directory location is unknown, so force the user to provide it to us
+  // (e.g. some Windows users put their installation on a different drive)
+  directoryInputTextEl.style.display = "none";
+  openDirectoryLinkEl.style.display = "inline-block";
+
+  const openDirectoryInput = document.getElementById( "open-directory-input" );
+  openDirectoryInput.addEventListener( "change", ( event ) => {
+    const { value: absolutePath } = event.target;
+
+    const rootIndex = absolutePath.indexOf( "Dustforce" );
+    if ( rootIndex < 0 ) {
+      event.target.value = "";
+      warnAboutDirectory();
+      return;
+    }
+
+    let pathToRoot = absolutePath.substring( 0, rootIndex );
+    if ( os.platform() === "darwin" ) {
+      pathToRoot = path.join( pathToRoot, "Dustforce/Dustforce.app/Contents/Resources" );
+    }
+    else {
+      pathToRoot = path.join( pathToRoot, "Dustforce" )
+    }
+
+    if ( !pathToRoot ) {
+      event.target.value = "";
+      warnAboutDirectory();
+      return;
+    }
+
+    dustforceDirectory = pathToRoot;
+    _foundDustforceDirectory = true;
+
+    openDirectoryLinkEl.style.display = "none";
+    directoryInputTextEl.innerText = "Path Seems Valid.";
+    directoryInputTextEl.style.display = "block";
+  } );
+}
 
 const startHotkeyEl = document.getElementById( "start-hotkey-input" );
 const replayHotkeyEl = document.getElementById( "replay-hotkey-input" );
@@ -47,7 +126,6 @@ const listener = keyboardListener.addListener( ( event ) => {
   if ( event.state === "DOWN" ) {
     if ( _listenTo ) {
       hotkeyData[ _listenTo ] = event.name;
-      console.log( hotkeyData );
     }
   }
 } );
@@ -86,7 +164,6 @@ const addHotkeyListener = ( input, field ) => {
       }
     }
 
-    console.log( fieldValues );
     for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
       if ( value === event.target.value ) {
         fieldValues[ key ].element.value = "";
@@ -122,6 +199,11 @@ resetHotkeyEl.addEventListener( "focusin", () => {
 } );
 
 document.getElementById( "done-button" ).addEventListener( "click", () => {
+  if ( !_foundDustforceDirectory ) {
+    // the location of the dustforce installation is required
+    return;
+  }
+
   if ( Object.values( fieldValues ).some( ( { value } ) => !value ) ) {
     // not all hotkeys were registered yet
     return;
@@ -131,8 +213,9 @@ document.getElementById( "done-button" ).addEventListener( "click", () => {
   setupData.hotkeys = {
     ...hotkeyData,
   };
+  setupData.dustforceDirectory = dustforceDirectory;
 
-  fs.writeFileSync( `${ global.__dirname }/user-data/setup.json`, JSON.stringify( setupData, null, 2 ) );
+  fs.writeFileSync( `${ global.__dirname }/user-data/configuration.json`, JSON.stringify( setupData, null, 2 ) );
 
   keyboardListener.removeListener( listener );
 

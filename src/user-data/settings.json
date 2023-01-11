@@ -1,10 +1,10 @@
 {
-  "seed": "race seed",
-  "startTime": 3600000,
-  "minSSCount": 30,
-  "fastestSSTime": 60000,
+  "seed": "",
+  "startTime": 600000,
+  "minSSCount": 50,
+  "fastestSSTime": 15000,
   "skips": true,
   "freeSkips": 1,
-  "freeSkipAfterXSolvedLevels": 10,
-  "CMPLevels": true
+  "freeSkipAfterXSolvedLevels": 3,
+  "CMPLevels": false
 }
