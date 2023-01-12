@@ -1,6 +1,8 @@
 import { init, timers } from "./initialize.js";
 
-export const reset = () => {
+import { debounce } from "./util/index.js";
+
+export const reset = debounce( () => {
   for ( const timer of timers ) {
     if ( timer.hasStarted && !timer.finished ) {
       timer.finish();
@@ -10,4 +12,4 @@ export const reset = () => {
   }
 
   init();
-}
+}, 100, true );

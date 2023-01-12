@@ -51,6 +51,7 @@ export const switchPage = ( currentPage, destination ) => {
   window.location.href = destination;
 }
 
+let iconAnimationTimeout;
 const initMainBody = () => {
   const temp = document.getElementsByTagName( "template" )[ 0 ];
   const clone = temp.content.cloneNode( true );
@@ -66,7 +67,10 @@ const initMainBody = () => {
     addClass( skips, "none" );
   }
 
-  setTimeout( () => {
+  if ( iconAnimationTimeout ) {
+    clearTimeout( iconAnimationTimeout );
+  }
+  iconAnimationTimeout = setTimeout( () => {
     // remove the animated class so we can toggle the animation whenever we want
     // (but only after a timeout, since we want the animation to finish playing
     // on pageload first)

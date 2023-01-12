@@ -158,8 +158,6 @@ resetHotkeyEl.addEventListener( "focusin", () => {
 } );
 
 document.getElementById( "save-button" ).addEventListener( "click", () => {
-  console.log( { initialData } );
-  console.log( { hotkeyData } );
   setupData.hotkeys = {
     ...hotkeyData,
   };

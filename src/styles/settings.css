@@ -86,10 +86,20 @@ input[type="checkbox"] {
   font-style: italic;
   color: #c82424;
 }
-
 #settings-link-separator {
   color: #007c5b;
   font-size: 0.8rem;
+}
+
+#map-pool-size {
+  font-size: 0.9rem;
+  position: absolute;
+  top: 2.25rem;
+  right: 1.5rem;
+  color: aliceblue;
+  font-style: italic;
+  white-space: pre-wrap;
+  text-align: center;
 }
 
 #fastestSSTime-formatted {

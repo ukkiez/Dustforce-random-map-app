@@ -270,3 +270,32 @@ importSettingsInput.addEventListener( "change", () => {
   } );
   reader.readAsBinaryString( file );
 } );
+
+import cmpLevels from "../dustkid-data/cmp-levels.json";
+const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+const getMapPoolSize = () => {
+  const mapPool = new Set();
+  for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
+    if ( !data.CMPLevels ) {
+      if ( cmpLevels.includes( levelFilename ) ) {
+        // don't include cmp levels, as the user set them to be off
+        continue;
+      }
+    }
+
+    const { ss_count, fastest_time } = metadata;
+    if ( ss_count >= data.minSSCount && fastest_time <= data.fastestSSTime ) {
+      mapPool.add( levelFilename );
+    }
+  }
+
+  return mapPool.size;
+}
+const mapPoolNumberEl = document.getElementById( "map-pool-size-number" );
+mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
+
+setInterval( () => {
+  // calculate and display the map pool from the current settings every half a
+  // second
+  mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
+}, 500 );

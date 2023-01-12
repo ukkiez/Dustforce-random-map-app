@@ -17,7 +17,7 @@ export const registerListeners = () => {
   // const shortcuts = JSON.parse( fs.readFileSync( shortcutsPath ) );
   listeners.start = ( callback ) => {
     _listeners.start = function( event ) {
-      if ( event.state === "DOWN" && event.name === hotkeys.start ) {
+      if ( event.state === "DOWN" && event.name === "EQUALS" ) {
         callback();
       }
     };
@@ -49,6 +49,19 @@ export const unregisterListeners = () => {
     keyboardListener.removeListener( listener );
   }
 }
+
+/*
+ To add logging of errors please use. This is hopefully not needed in most cases, but may still be useful in production.
+    new GlobalKeyboardListener({
+        windows: {
+            onError: (errorCode) => console.error("ERROR: " + errorCode),
+            onInfo: (info) => console.info("INFO: " + info)
+        },
+        mac: {
+            onError: (errorCode) => console.error("ERROR: " + errorCode),
+        }
+    })
+*/
 
 // import shortcuts from "../user-data/hotkeys.json";
 
