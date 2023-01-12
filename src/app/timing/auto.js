@@ -11,25 +11,12 @@ import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
 // use nw.require() instead of require() or import to make it actually available
 const fs = nw.require( "fs" );
+const path = nw.require( "path" );
 const open = nw.require( "open" );
 
-const os = nw.require( "os" );
-const homedir = os.homedir();
-let splitFile;
-switch ( os.platform() ) {
-  case "darwin":
-    splitFile = `${ homedir }/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/split.txt`;
-    break;
+const { dustforceDirectory } = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
-  case "linux":
-    splitFile = `${ homedir }/.local/share/Steam/steamapps/common/Dustforce/split.txt`;
-    break;
-
-  case "win32":
-    splitFile = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dustforce\\split.txt";
-    // splitFile = "D:\\Steam Games\\steamapps\\common\\Dustforce\\split.txt";
-    break;
-}
+const splitFile = path.join( dustforceDirectory, "split.txt" );
 
 const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse( fs.readFileSync( settingsPath ) );
 
@@ -263,7 +250,9 @@ listeners.start( function() {
   currentLevel = pickLevel();
   installAndMaybePlay( currentLevel, true );
 
-  // initiate the observer for split.txt
+  // initiate the observer for split.txt; TODO: maybe debounce the callback in
+  // case fs.watch() fires multiple times, which seems to happen occassionally,
+  // though the code takes this into account already
   watcher = fs.watch( splitFile, ( event ) => {
     if ( timers[ 0 ].finished ) {
       watcher.close();
@@ -338,6 +327,13 @@ listeners.start( function() {
       } );
     }
   } );
+} );
+
+// handle the timer's finish event emitter
+timers[ 0 ].on( "finished", () => {
+  console.log( "finished" );
+  // close the watcher when the timer has finished
+  watcher.close();
 } );
 
 // // let the player replay the level at any given time, they may for example have

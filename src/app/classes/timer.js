@@ -1,7 +1,9 @@
+import { EventEmitter } from "events";
+
 import { addClass, removeClass } from "../util/dom.js";
 import { formatTime } from "../util/format.js";
 
-export class Timer {
+export class Timer extends EventEmitter {
   timerElement;
   diffElement;
 
@@ -21,6 +23,8 @@ export class Timer {
   finished = false;
 
   constructor( { ...options } ) {
+    super();
+
     const { timerElementId, diffElementId, timeToCompare, tenths, hundreths, startTime = 3600000, interval, _countdown = true } = options;
 
     this.timerElement = document.getElementById( timerElementId );
@@ -138,5 +142,7 @@ export class Timer {
     this.finished = true;
 
     this.timerElement.innerHTML = formatTime( 0, this.tenths, this.hundreths );
+
+    this.emit( "finished" );
   }
 }

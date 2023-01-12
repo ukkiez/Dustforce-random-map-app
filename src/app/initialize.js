@@ -12,7 +12,7 @@ import { registerListeners, unregisterListeners } from "./hotkeys.js";
 const config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
 export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
-const settings = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/settings.json` ) );
+const settings = JSON.parse( fs.readFileSync( settingsPath ) );
 
 export const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
@@ -166,6 +166,7 @@ export const init = () => {
 
     initSettingsBody();
     import( "./settings.js" );
+    import( "./hotkeySetup.js" );
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "seed": "",
-  "startTime": 600000,
+  "startTime": 60000,
   "minSSCount": 50,
   "fastestSSTime": 15000,
   "skips": true,

@@ -1,5 +1,9 @@
+const fs = nw.require( "fs" );
+
 const { GlobalKeyboardListener } = nw.require( "node-global-key-listener" );
 const keyboardListener = new GlobalKeyboardListener();
+
+const { hotkeys } = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
 const _listeners = {
   start: null,
@@ -13,8 +17,7 @@ export const registerListeners = () => {
   // const shortcuts = JSON.parse( fs.readFileSync( shortcutsPath ) );
   listeners.start = ( callback ) => {
     _listeners.start = function( event ) {
-      if ( event.state === "DOWN" && event.name === "EQUALS" ) {
-      // if ( event.state === "DOWN" && event.vKey === shortcuts.start ) {
+      if ( event.state === "DOWN" && event.name === hotkeys.start ) {
         callback();
       }
     };
@@ -23,8 +26,7 @@ export const registerListeners = () => {
   };
   listeners.replay = ( callback ) => {
     _listeners.replay = function( event ) {
-      if ( event.state === "DOWN" && event.name === "SEMICOLON" ) {
-      // if ( event.state === "DOWN" && event.vKey === shortcuts.replay ) {
+      if ( event.state === "DOWN" && event.name === hotkeys.replay ) {
         callback();
       }
     }
@@ -33,8 +35,7 @@ export const registerListeners = () => {
   };
   listeners.reset = ( callback ) => {
     _listeners.reset = function( event ) {
-      if ( event.state === "DOWN" && event.name === "SQUARE BRACKET OPEN" ) {
-      // if ( event.state === "DOWN" && event.vKey === shortcuts.reset ) {
+      if ( event.state === "DOWN" && event.name === hotkeys.reset ) {
         callback();
       }
     }
