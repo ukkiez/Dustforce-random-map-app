@@ -6,8 +6,7 @@ import { Timer } from "./classes/timer.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
-import { registerListeners, unregisterListeners } from "./hotkeys.js";
-// import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
+import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
 
 const config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
@@ -24,7 +23,34 @@ export const switchPage = ( currentPage, destination ) => {
   }
 
   if ( destination === "settings.html" ) {
-    unregisterListeners();
+    // open a new window with the settings configuration
+
+    unregisterHotkeys();
+
+    // get the current window
+    const currentWindow = nw.Window.get();
+    currentWindow.hide();
+
+    nw.Window.open( "views/settings.html", {
+      position: "center",
+      width: 500,
+      height: 500,
+      frame: false,
+      always_on_top: true,
+      transparent: true,
+      resizable: false
+    }, function( win ) {
+      if ( typeof win !== "undefined" ){
+        win.on( "closed", function() {
+          currentWindow.reload();
+          currentWindow.show();
+        } );
+        win.on( "loaded", function() {
+          win.focus();
+        } ) ;
+      }
+    } );
+    return;
   }
 
   switch ( currentPage ) {
@@ -40,12 +66,12 @@ export const switchPage = ( currentPage, destination ) => {
       }
       break;
 
-    case "settings.html":
-      // see above
-      for ( const child of document.body.children ) {
-        child.style.display = "none";
+    case "settings.html": {
+        // close the external settings window
+        const settingsWindow = nw.Window.get();
+        settingsWindow.close();
+        break;
       }
-      break;
   }
 
   window.location.href = destination;
@@ -89,6 +115,15 @@ const initSettingsBody = () => {
 
   document.getElementById( "back-button" ).addEventListener( "click", () => {
     switchPage( "settings.html", "./index.html" );
+  } );
+
+  const currentWindow = nw.Window.get();
+  currentWindow.on( "loaded", function() {
+    // get the height and width of the container div, and match the window size
+    // with it (with some extra height to make sure nothing is cut off at the
+    // bottom)
+    const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
+    currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 15 );
   } );
 }
 
@@ -154,9 +189,8 @@ export const init = () => {
   }
 
   if ( page === "index.html" ) {
-    // // register global hotkeys using NW.Shortcuts
-    // registerHotkeys();
-    registerListeners();
+    // register global hotkeys using NW.Shortcuts
+    registerHotkeys();
 
     initMainBody();
 
@@ -166,7 +200,7 @@ export const init = () => {
     import( "./timing/auto.js" );
   }
   else if ( page === "settings.html" ) {
-    unregisterListeners();
+    unregisterHotkeys();
 
     initSettingsBody();
     import( "./settings.js" );

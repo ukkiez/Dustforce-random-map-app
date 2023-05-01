@@ -1,6 +1,3 @@
-const { GlobalKeyboardListener } = nw.require( "node-global-key-listener" );
-const keyboardListener = new GlobalKeyboardListener();
-
 const fs = nw.require( "fs" );
 
 const setupData = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
@@ -44,26 +41,20 @@ resetHotkeyEl.addEventListener( "click" , ( event ) => {
   fieldValues.reset.value = "";
 } );
 
-// start listening for keys, as we'll need whatever name the key listener itself
-// thinks is being registered (which from testing we know can vary depending on
-// the OS and probably keyboard language)
-let _listenTo = "";
-let listener;
-const startListening = () => {
-  return keyboardListener.addListener( ( event ) => {
-    if ( event.state === "DOWN" ) {
-      if ( event.name === "TAB" ) {
-        // don't allow tab as a hotkey, as we're allowing users to cycle through
-        // the inputs with tab
-        return;
-      }
-
-      if ( _listenTo ) {
-        hotkeyData[ _listenTo ] = event.name;
-      }
-    }
-  } );
-}
+const modifiers = [
+  "ShiftLeft",
+  "ShiftRight",
+  "ControlLeft",
+  "ControlRight",
+  "AltLeft",
+  "AltRight",
+  "AltLeft",
+  "OSLeft",
+  "MetaLeft",
+  "MetaRight",
+  "OSLeft",
+  "OSRight",
+];
 
 const addHotkeyListener = ( input, field ) => {
   input.addEventListener( "keydown" , ( event ) => {
@@ -74,35 +65,46 @@ const addHotkeyListener = ( input, field ) => {
     }
 
     event.preventDefault();
-    let hotkey = "";
+    let modifierKey = "";
     if ( event.shiftKey ) {
-      hotkey = "Shift";
+      modifierKey = "Shift";
     }
     else if ( event.ctrlKey ) {
-      hotkey = "Ctrl";
+      modifierKey = "Ctrl";
     }
     else if ( event.altKey ) {
-      hotkey = "Alt";
+      modifierKey = "Alt";
     }
     else if ( event.metaKey ) {
-      hotkey = "Meta";
-    }
-
-    if ( key.startsWith( "Key" ) ) {
-      key = key.slice( 3 );
+      modifierKey = "Meta";
     }
 
     if ( event.shiftKey || event.ctrlKey || event.altKey || event.metaKey ) {
-      event.target.value = hotkey;
-    }
-    else if ( event.key === " " ) {
-      event.target.value = "SPACE";
+      if ( key.startsWith( "Key" ) ) {
+        key = key.slice( 3 );
+      }
+
+      if ( !modifiers.includes( key ) ) {
+        if ( event.key === " " ) {
+          event.target.value = `${ modifierKey }+SPACE`;
+        }
+        else {
+          event.target.value = `${ modifierKey }+${event.key.toUpperCase()}`;
+        }
+      }
     }
     else {
-      event.target.value = event.key.toUpperCase();
+      if ( event.key === " " ) {
+        event.target.value = "SPACE";
+      }
+      else {
+        event.target.value = event.key.toUpperCase();
+      }
     }
 
     for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
+      // check if this hotkey was already set in a different field, and clear it
+      // there, if it is
       if ( value === event.target.value ) {
         fieldValues[ key ].element.value = "";
         fieldValues[ key ].value = "";
@@ -118,49 +120,26 @@ addHotkeyListener( replayHotkeyEl, "replay" );
 addHotkeyListener( resetHotkeyEl, "reset" );
 
 startHotkeyEl.addEventListener( "focusout", () => {
-  _listenTo = "";
   if ( !startHotkeyEl.value ) {
     startHotkeyEl.value = initialData.start;
   }
 } );
 replayHotkeyEl.addEventListener( "focusout", () => {
-  _listenTo = "";
   if ( !replayHotkeyEl.value ) {
     replayHotkeyEl.value = initialData.replay;
   }
 } );
 resetHotkeyEl.addEventListener( "focusout", () => {
-  _listenTo = "";
   if ( !resetHotkeyEl.value ) {
     resetHotkeyEl.value = initialData.reset;
   }
 } );
-startHotkeyEl.addEventListener( "focusin", () => {
-  if ( !listener ) {
-    listener = startListening();
-  }
-
-  _listenTo = "start";
-} );
-replayHotkeyEl.addEventListener( "focusin", () => {
-  if ( !listener ) {
-    listener = startListening();
-  }
-
-  _listenTo = "replay";
-} );
-resetHotkeyEl.addEventListener( "focusin", () => {
-  if ( !listener ) {
-    listener = startListening();
-  }
-
-  _listenTo = "reset";
-} );
 
 document.getElementById( "save-button" ).addEventListener( "click", () => {
-  setupData.hotkeys = {
-    ...hotkeyData,
-  };
+  for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
+    setupData.hotkeys[ key ] = value;
+  }
+
   for ( const [ key, value ] of Object.entries( setupData.hotkeys ) ) {
     if ( !value ) {
       // revert to the original value
@@ -169,77 +148,8 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
   }
 
   fs.writeFileSync( `${ global.__dirname }/user-data/configuration.json`, JSON.stringify( setupData, null, 2 ) );
-  keyboardListener.removeListener( listener );
 
   startHotkeyEl.value = setupData.hotkeys.start;
   replayHotkeyEl.value = setupData.hotkeys.replay;
   resetHotkeyEl.value = setupData.hotkeys.reset;
 } );
-
-/*
-  maybe allow key combinations in the future (this is currently annoying to
-  handle with the key listener module)
-
-const modifiers = [
-  "ShiftLeft",
-  "ShiftRight",
-  "ControlLeft",
-  "ControlRight",
-  "AltLeft",
-  "AltRight",
-  "AltLeft",
-  "OSLeft",
-  "MetaLeft",
-  "MetaRight",
-  "OSLeft",
-  "OSRight",
-];
-const hasMultipleModifiers = ( event ) => {
-  const modifiers = [ event.shiftKey, event.ctrlKey, event.altKey, event.metaKey ];
-  if ( modifiers.filter( e => e ).length > 1 ) {
-    return true;
-  }
-}
-const addHotkeyListener = ( input ) => {
-  input.addEventListener( "keydown" , ( event ) => {
-    if ( hasMultipleModifiers( event ) ) {
-      // don't allow multiple modifiers (e.g. Ctrl+Alt+B)
-      return;
-    }
-
-    let key = event.code;
-    if ( key !== "Tab" ) {
-      event.preventDefault();
-      let hotkey = "";
-      hotkey += event.shiftKey ? "Shift" : "";
-      hotkey += event.ctrlKey ? "Ctrl" : "";
-      hotkey += event.altKey ? "Alt" : "";
-      hotkey += event.metaKey ? "Meta" : "";
-      if ( key.startsWith( "Key" ) ) {
-        key = key.slice( 3 );
-      }
-
-      if ( !modifiers.includes( key ) ) {
-        if ( event.key === " " ) {
-          hotkey += "+" + "SPACE";
-        }
-        else {
-          hotkey += "+" + event.key.toUpperCase();
-        }
-      }
-
-      if ( event.shiftKey || event.ctrlKey || event.altKey || event.metaKey ) {
-        event.target.value = hotkey;
-      }
-      else {
-        if ( event.key === " " ) {
-          event.target.value = "SPACE";
-        }
-        else {
-          event.target.value = event.key.toUpperCase();
-        }
-      }
-    }
-  } );
-}
-*/

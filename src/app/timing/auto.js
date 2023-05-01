@@ -168,8 +168,8 @@ const handleSkipsCount = ( change ) => {
 
 let initialized = false;
 let watcher;
-// hotkeys._start.on( "active", function() {
-listeners.start( function() {
+// listeners.start( function() {
+listeners.start.on( "active", function() {
   if ( !initialized ) {
     mapPool = [];
 
@@ -344,14 +344,15 @@ timers[ 0 ].on( "finished", () => {
 //   }
 // } );
 
-listeners.replay( function() {
+// listeners.replay( function() {
+listeners.replay.on( "active", function() {
   if ( timers[ 0 ].hasStarted ) {
     installAndMaybePlay( currentLevel, true );
   }
 } );
 
-// hotkeys._reset.on( "active", function() {
-listeners.reset( function() {
+// listeners.reset( function() {
+listeners.reset.on( "active", function() {
   initialized = false;
   choiceIndex = 0;
 
@@ -361,26 +362,6 @@ listeners.reset( function() {
 
   reset();
   ( { skips, completedLevelIds, solvedLevelIds, chosenLevelCache } = runData );
-
-  // /* eslint-disable no-undef */
-  // const win = nw.Window.get();
-
-  // // before reloading unregister all hokeys, as there seems to be a bug where
-  // // reloading the window keeps the hotkey registered but not actually bound to
-  // // anything, leading to a "dead" key
-  // nw.App.unregisterGlobalHotKey( _start );
-  // nw.App.unregisterGlobalHotKey( _increment );
-  // nw.App.unregisterGlobalHotKey( _decrement );
-  // nw.App.unregisterGlobalHotKey( _reset );
-
-  // // reload the entire app, a simple but effective way to reset the timers and
-  // // potentially add new personal bests and best splits
-  // win.reload();
-
-  // // TODO: make it more visually appealing to reset the window, currently the
-  // // CSS resetting sort of jerks the whole app around
-
-  /* eslint-enable no-undef */
 } );
 
 // // register some manual ways to increment/decrement the SS counter, just in case

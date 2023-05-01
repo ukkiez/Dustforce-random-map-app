@@ -1,5 +1,8 @@
 # TODOs
 
+- Don't use the `open()` module, spawn a child process
+  - For some reason, sometimes there's a pretty big delay after SS'ing a level,
+    where the installplaylink just doesn't open for a second
 - Create a start-up process, only for the first time the app is started up.
   - Ask the player for what their hotkeys need to be (because node-global-key-listener is garbage cross-platform, and nw.Shortcut is garbage too since it blocks single keys for the entire system)
   - Ask the player where their Dustforce installation is, as some even put it in a different drive. Note that we'd only need to do that if we can't find their dustforce installation in the first place
@@ -41,6 +44,8 @@
 - Make the map names in the map-info clickable links
 - Maybe add the ability to pause runs? (meh)
 - Add in a handicap (AKA starting points)
+
+- Fix OBS transparency issue for Window Capture
 
 # Done
 - Change the way things are reset
