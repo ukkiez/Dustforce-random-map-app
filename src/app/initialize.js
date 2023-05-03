@@ -33,7 +33,7 @@ export const switchPage = ( currentPage, destination ) => {
 
     nw.Window.open( "views/settings.html", {
       position: "center",
-      width: 500,
+      width: 360,
       height: 500,
       frame: false,
       always_on_top: true,
@@ -129,7 +129,6 @@ const initSettingsBody = () => {
 
 export let timers = [];
 const initTimers = () => {
-
   const startTime = settings.startTime;
 
   const mainTimer = new Timer( {

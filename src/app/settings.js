@@ -49,7 +49,7 @@ const setInputValues = ( _settings ) => {
   // possibly hide all skip options, depending on whether the user enabled skips
   // or not
   if ( !skips ) {
-    freeSkipsContainer.style.display = "none";
+    freeSkipsContainer.classList.add( "disabled" );
   }
   else {
     freeSkipsContainer.style.display = "initial";
@@ -160,10 +160,10 @@ addCheckboxListener( CMPLevelsEl, "CMPLevels" );
 
 addCheckboxListener( skipsEl, "skips", ( event ) => {
   if ( !event.target.checked ) {
-    freeSkipsContainer.style.display = "none";
+    freeSkipsContainer.classList.add( "disabled" );
   }
   else {
-    freeSkipsContainer.style.display = "block";
+    freeSkipsContainer.classList.remove( "disabled" );
   }
 } );
 addInputListener( freeSkipsEl, "freeSkips", null, false, true );
@@ -189,8 +189,12 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
 // handle importing
 let importedMessageDisplayTimeout;
 let failedImportedMessageDisplayTimeout;
+const importSettingsInput = document.getElementById( "import-settings-input" );
 const displayImportMessage = ( failed = false ) => {
   if ( failed ) {
+    // reset the input
+    importSettingsInput.value = "";
+
     if ( failedImportedMessageDisplayTimeout ) {
       clearTimeout( failedImportedMessageDisplayTimeout );
     }
@@ -212,7 +216,6 @@ const displayImportMessage = ( failed = false ) => {
   }
 }
 
-const importSettingsInput = document.getElementById( "import-settings-input" );
 importSettingsInput.addEventListener( "change", () => {
   const [ file ] = importSettingsInput.files;
   if ( !file ) {
@@ -268,6 +271,7 @@ importSettingsInput.addEventListener( "change", () => {
     // reset the input
     importSettingsInput.value = "";
   } );
+
   reader.readAsBinaryString( file );
 } );
 
@@ -295,7 +299,7 @@ const mapPoolNumberEl = document.getElementById( "map-pool-size-number" );
 mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
 
 setInterval( () => {
-  // calculate and display the map pool from the current settings every half a
-  // second
+  // calculate and display the map pool from the current settings every x
+  // milliseconds
   mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
-}, 500 );
+}, 100 );

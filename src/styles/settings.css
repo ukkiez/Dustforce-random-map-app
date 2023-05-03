@@ -1,5 +1,5 @@
 body {
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 
 .settings-header {
@@ -49,6 +49,14 @@ input[type="checkbox"] {
   width: auto;
 }
 
+.disabled > label {
+  color: #4c5763;
+}
+.disabled > input {
+  color: #4c5763;
+  background-color: #384049;
+}
+
 .links-container {
   margin-bottom: 0.5rem;
 }
@@ -92,7 +100,7 @@ input[type="checkbox"] {
 }
 
 #map-pool-size {
-  font-size: 0.9rem;
+  font-size: 1rem;
   position: absolute;
   top: 2.25rem;
   right: 1.5rem;
@@ -108,7 +116,7 @@ input[type="checkbox"] {
 
 #back-button {
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1.15rem;
   font-family: "Caracteres", sans-serif;
 
   border-radius: 0.1rem;
@@ -133,7 +141,7 @@ button {
 
 #save-button {
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1.15rem;
   font-family: "Caracteres", sans-serif;
 
   border-radius: 0.1rem;

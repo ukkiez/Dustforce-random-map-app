@@ -5,14 +5,15 @@ import { reset } from "../reset.js";
 import { addClass, removeClass } from "../util/dom.js";
 import { seededRandom } from "../util/random.js";
 
-import { listeners } from "../hotkeys.js";
+import { shortcuts } from "../hotkeys.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
 // use nw.require() instead of require() or import to make it actually available
 const fs = nw.require( "fs" );
 const path = nw.require( "path" );
-const open = nw.require( "open" );
+// const open = nw.require( "open" );
+const { exec } = nw.require( "child_process" );
 
 const { dustforceDirectory } = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
@@ -56,12 +57,31 @@ const increment = ( _decrement = false ) => {
 const installPrefix = "dustforce://install";
 const installPlayPrefix = "dustforce://installPlay";
 
+const os = nw.require( "os" );
+
+let openCommand = "";
+switch ( os.platform() ) {
+  case "darwin":
+  case "linux":
+    openCommand = "open";
+    break;
+
+  case "win32":
+  default:
+    openCommand = "start";
+    break;
+}
+
+const openApp = ( url ) => {
+  exec( `${ openCommand } ${ url }` );
+}
+
 const installAndMaybePlay = ( level, play = false ) => {
   if ( play ) {
-    open( `${ installPlayPrefix }/${ level.id }/${ level.name }` );
+    openApp( `${ installPlayPrefix }/${ level.id }/${ level.name }` );
   }
   else {
-    open( `${ installPrefix }/${ level.id }/${ level.name }` );
+    openApp( `${ installPrefix }/${ level.id }/${ level.name }` );
   }
 }
 
@@ -168,8 +188,7 @@ const handleSkipsCount = ( change ) => {
 
 let initialized = false;
 let watcher;
-// listeners.start( function() {
-listeners.start.on( "active", function() {
+shortcuts.start.on( "active", function() {
   if ( !initialized ) {
     mapPool = [];
 
@@ -331,28 +350,17 @@ listeners.start.on( "active", function() {
 
 // handle the timer's finish event emitter
 timers[ 0 ].on( "finished", () => {
-  console.log( "finished" );
   // close the watcher when the timer has finished
   watcher.close();
 } );
 
-// // let the player replay the level at any given time, they may for example have
-// // exited the map, or even exited character select
-// hotkeys._replay.on( "active", function() {
-//   if ( timers[ 0 ].hasStarted ) {
-//     installAndMaybePlay( currentLevel, true );
-//   }
-// } );
-
-// listeners.replay( function() {
-listeners.replay.on( "active", function() {
+shortcuts.replay.on( "active", function() {
   if ( timers[ 0 ].hasStarted ) {
     installAndMaybePlay( currentLevel, true );
   }
 } );
 
-// listeners.reset( function() {
-listeners.reset.on( "active", function() {
+shortcuts.reset.on( "active", function() {
   initialized = false;
   choiceIndex = 0;
 
