@@ -208,37 +208,90 @@ button:focus {
 
 #challenge-btn-container {
   margin-top: 4vh;
-  margin-left: 15vw;
+  margin-left: 1vw;
 }
 .challenge-run-btn {
+  font-family: "Caracteres", sans-serif;
   border: none;
   border-radius: 0.25rem;
   outline: none;
-  transition: 0.15s ease-in-out;
+  transition: 0.4s;
   cursor: pointer;
+
+  overflow: hidden;
+  background-color: transparent;
+  display: inline-flex;
+  font-size: 6.5vw;
+  align-items: center;
+  padding-top: 0.1rem;
+}
+.challenge-run-btn:hover {
+  transition: 0s;
+}
+.challenge-run-btn:active {
+  transition: 0s;
 }
 
 .neutral-btn {
-  overflow: hidden;
-  background-color: transparent;
   border: #95c4ec 0.1rem solid;
   color: #95c4ec;
 }
-
 .neutral-btn:hover {
   background-color: #95c4ec;
   color: #31475b;
   border: transparent 0.1rem solid;
 }
 .neutral-btn:active {
-  background-color: #648aab;
-  color: rgb(45, 64, 83);
+  color: #95c4ec;
+  background-color: #45749b;
+  border: #203547 0.1rem solid;
+}
+
+.warning-btn {
+  border: #de8251 0.1rem solid;
+  color: #de8251;
+}
+.warning-btn:hover {
+  background-color: #d5733e;
+  color: #582d16;
+  border: transparent 0.1rem solid;
+}
+.warning-btn:active {
+  color: #de8251;
+  background-color: #582d16;
+  border: #311a0d 0.1rem solid;
+}
+
+@keyframes spin-ccw {
+  100% {
+    transform: rotate( -360deg );
+  }
+}
+.animation-spin-cww:hover .btn-icon {
+  animation: spin-ccw 0.5s;
+}
+
+@keyframes animation-foo {
+  50% {
+    transform: scale3d(1.5, 0.5, 0.3);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+.animation-foo:hover .btn-icon {
+  animation: animation-foo 0.5s;
 }
 
 .btn-icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 9vw;
+  height: 9vh;
   fill: currentColor;
-  top: 0.1rem;
   position: relative;
+  right: 0.15rem;
+}
+
+.btn-text {
+  position: relative;
+  top: 0.05rem;
 }

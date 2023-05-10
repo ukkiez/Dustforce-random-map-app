@@ -147,7 +147,11 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
     }
   }
 
-  fs.writeFileSync( `${ global.__dirname }/user-data/configuration.json`, JSON.stringify( setupData, null, 2 ) );
+  const currentSetupData = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+  fs.writeFileSync( `${ global.__dirname }/user-data/configuration.json`, JSON.stringify( {
+    ...currentSetupData,
+    hotkeys: { ...setupData.hotkeys },
+  }, null, 2 ) );
 
   startHotkeyEl.value = setupData.hotkeys.start;
   replayHotkeyEl.value = setupData.hotkeys.replay;

@@ -170,6 +170,9 @@ const split = href.split( "/" );
 const page = split[ split.length - 1 ];
 
 export const init = () => {
+  // set the user configured opacity
+  document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;
+
   if ( page === "setup.html" ) {
     import( "./setup.js" );
     return;

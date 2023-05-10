@@ -1,9 +1,12 @@
 {
-  "initialSetupDone": false,
+  "initialSetupDone": true,
   "hotkeys": {
-    "start": "EQUALS",
-    "replay": "SEMICOLON",
-    "reset": "BACKSLASH"
+    "start": "Ctrl+1",
+    "replay": "Ctrl+2",
+    "reset": "Ctrl+3"
   },
-  "dustforceDirectory": "/Users/yannickk/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/"
+  "dustforceDirectory": "/Users/yannickk/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/",
+  "styling": {
+    "opacity": 32
+  }
 }
