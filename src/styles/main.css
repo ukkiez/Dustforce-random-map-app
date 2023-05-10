@@ -206,11 +206,68 @@ button:focus {
   opacity: 1;
 }
 
+.hub-btn-container {
+  margin-left: 1vw;
+  margin-bottom: 3.5vh;
+}
+.hub-btn {
+  font-family: "Caracteres", sans-serif;
+  border: none;
+  border-radius: 0.25rem;
+  outline: none;
+  transition: 0.4s;
+  cursor: pointer;
+
+  overflow: hidden;
+  background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  font-size: 7.5vw;
+  padding-top: 0.1rem;
+
+  /* color: #f0f0f0;
+  background-color: #03694d;
+  border: #03694d 0.1rem solid; */
+
+  border: #049770 0.1rem solid;
+  color: #049770;
+}
+.hub-btn:hover {
+  transition: 0s;
+  background-color: #049770;
+  color: #daefe9;
+  border: transparent 0.1rem solid;
+}
+.hub-btn:active {
+  transition: 0s;
+  color: #049770;
+  background-color: #014331;
+  border: #011f17 0.1rem solid;
+}
+
+@keyframes slow-fade-repeat {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animation-slow-fade-repeat:hover .btn-icon {
+  animation: slow-fade-repeat 3s infinite;
+  animation-delay: 1s;
+}
+
 #challenge-btn-container {
   margin-top: 4vh;
   margin-left: 1vw;
 }
 .challenge-run-btn {
+  visibility: hidden;
+
   font-family: "Caracteres", sans-serif;
   border: none;
   border-radius: 0.25rem;
@@ -271,7 +328,7 @@ button:focus {
   animation: spin-ccw 0.5s;
 }
 
-@keyframes animation-foo {
+@keyframes animation-squeeze {
   50% {
     transform: scale3d(1.5, 0.5, 0.3);
   }
@@ -279,7 +336,7 @@ button:focus {
     transform: scale3d(1, 1, 1);
   }
 }
-.animation-foo:hover .btn-icon {
+.animation-squeeze:hover .btn-icon {
   animation: animation-foo 0.5s;
 }
 

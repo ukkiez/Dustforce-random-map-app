@@ -190,6 +190,20 @@ let initialized = false;
 let watcher;
 shortcuts.start.on( "active", function() {
   if ( !initialized ) {
+    // don't allow going to the settings page, as it would load a different
+    // page, and therefore stop the current run permanently
+    document.getElementById( "settings-icon-container" ).style.display = "none";
+    // hide the seed, as there is no place on the screen for it at the moment
+    document.getElementById( "seed" ).style.display = "none";
+    // hide the hub buttons, and load the challenge run buttons
+    const hubButtonContainer = document.querySelector( ".hub-btn-container" );
+    hubButtonContainer.style.display = "none";
+
+    const challengeButtons = document.getElementsByClassName( "challenge-run-btn" );
+    for ( const button of challengeButtons ) {
+      button.style.visibility = "visible";
+    }
+
     mapPool = [];
 
     // populate the map pool
@@ -207,12 +221,6 @@ shortcuts.start.on( "active", function() {
       }
 
       authorsById.set( atlas_id, author );
-
-      // don't allow going to the settings page, as it would load a different
-      // page, and therefore stop the current run permanently
-      document.getElementById( "settings-icon-container" ).style.display = "none";
-      // hide the seed, as there is no place on the screen for it at the moment
-      document.getElementById( "seed" ).style.display = "none";
     }
     initialized = true;
 

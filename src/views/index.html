@@ -10,6 +10,15 @@
   </head>
 
   <template>
+    <div class="hub-btn-container">
+      <button type="button" class="hub-btn animation-slow-fade-repeat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon bi bi-play-fill" viewBox="0 0 16 16">
+          <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+        </svg>
+        <span id="start-btn" class="hub-btn-text">Start Challenge</span>
+      </button>
+    </div>
+
     <div class="timers-container" id="timers-container">
       <div class="timer" id="main-time">
         0.00
@@ -46,7 +55,7 @@
         <span class="btn-text">Load</span>
       </button>
 
-      <button type="button" class="challenge-run-btn warning-btn animation-foo">
+      <button type="button" class="challenge-run-btn warning-btn animation-squeeze">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon bi bi-skip-end-fill" viewBox="0 0 16 16">
           <path d="M12.5 4a.5.5 0 0 0-1 0v3.248L5.233 3.612C4.693 3.3 4 3.678 4 4.308v7.384c0 .63.692 1.01 1.233.697L11.5 8.753V12a.5.5 0 0 0 1 0V4z"/>
         </svg>
