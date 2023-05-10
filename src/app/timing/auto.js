@@ -170,6 +170,7 @@ const handleSkipsCount = ( change ) => {
     skips += change;
     if ( skips > 0 ) {
       removeClass( element, "none" );
+      removeClass( document.getElementById( "skip-btn" ), "disabled-btn" )
     }
   }
   else if ( change < 0 ) {
@@ -179,6 +180,7 @@ const handleSkipsCount = ( change ) => {
 
       if ( skips <= 0 ) {
         addClass( element, "none" );
+        addClass( document.getElementById( "skip-btn" ), "disabled-btn" )
       }
     }
   }

@@ -340,6 +340,13 @@ button:focus {
   animation: animation-foo 0.5s;
 }
 
+.disabled-btn {
+  background-color: transparent;
+  color: #4f4f4f;
+  border: #4f4f4f 0.1rem solid;
+  pointer-events: none;
+}
+
 .btn-icon {
   width: 9vw;
   height: 9vh;
