@@ -9,11 +9,18 @@ import { settingsPath } from "./initialize.js";
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
 const settings = JSON.parse( fs.readFileSync( settingsPath ) );
+const modes = JSON.parse( fs.readFileSync( `${ global.__dirname }/settings/modes.json` ) );
+
+const settingsNameEl = document.getElementById( "settings-name" );
+const settingsListEl = document.getElementById( "settings-list" );
 
 const seedEl = document.getElementById( "seed-input" );
 const timeEl = document.getElementById( "time-input" );
 const minSSCountEl = document.getElementById( "minSSCount-input" );
+
 const fastestSSTimeEl = document.getElementById( "fastestSSTime-input" );
+const formattedFastestTimeEl = document.getElementById( "fastestSSTime-formatted" );
+
 const CMPLevelsEl = document.getElementById( "CMPLevels-input" );
 
 const skipsEl = document.getElementById( "skips-input" );
@@ -25,6 +32,7 @@ const freeSkipsContainer = document.getElementById( "skips-settings-container" )
 let data = {};
 const setInputValues = ( _settings ) => {
   const {
+    settingsName,
     seed,
     startTime,
     minSSCount,
@@ -35,11 +43,17 @@ const setInputValues = ( _settings ) => {
     CMPLevels,
   } = _settings;
 
+  settingsNameEl.innerText = `${ settingsName } Mode`;
+
   // set initial values
   seedEl.value = seed;
   timeEl.value = ( startTime / 1000 / 60 );
   minSSCountEl.value = minSSCount;
+
   fastestSSTimeEl.value = fastestSSTime;
+  const milliseconds = Math.floor( fastestSSTime );
+  formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, true );
+
   CMPLevelsEl.checked = CMPLevels;
 
   skipsEl.checked = skips;
@@ -53,6 +67,7 @@ const setInputValues = ( _settings ) => {
   }
   else {
     freeSkipsContainer.style.display = "initial";
+    freeSkipsContainer.classList.remove( "disabled" );
   }
 
   data = {
@@ -78,6 +93,9 @@ const addCheckboxListener = ( element, field = "", callback ) => {
   element.addEventListener( "input", ( event ) => {
     const { checked } = event.target;
     data[ field ] = checked;
+
+    settingsNameEl.innerText = "Custom Mode";
+    data.settingsName = "Custom";
 
     if ( callback ) {
       // do any optional non-explicit extra thing
@@ -111,6 +129,9 @@ const addInputListener = ( element, field = "", transform, hasMin = false, hasMa
       data[ field ] = isNum ? parseInt( event.target.value ) : event.target.value;
     }
 
+    settingsNameEl.innerText = "Custom Mode";
+    data.settingsName = "Custom";
+
     if ( callback ) {
       // do any optional non-explicit extra thing
       callback( event );
@@ -141,6 +162,39 @@ const addFocusOutListener = ( element, field = "", transform, callback ) => {
   } );
 }
 
+// initialize listed modes in the settings list
+for ( const mode of Object.keys( modes ) ) {
+  const button = document.createElement( "button" );
+  button.type = "button";
+  button.innerText = mode;
+  settingsListEl.appendChild( button );
+}
+
+for ( const button of settingsListEl.children ) {
+  button.addEventListener( "click", () => {
+    const value = button.innerText;
+    const modeName = value.toLowerCase().replace( " ", "-" );
+    if ( !modes[ modeName ] ) {
+      event.preventDefault();
+      return;
+    }
+
+    const mode = modes[ modeName ];
+    for ( const [ field, setting ] of Object.entries( mode ) ) {
+      data[ field ] = setting;
+    }
+
+    data.settingsName = value;
+
+    setInputValues( data );
+
+    settingsListEl.classList.add( "hidden" );
+    setTimeout( () => {
+      settingsListEl.classList.remove( "hidden" );
+    }, 100 );
+  } );
+}
+
 addInputListener( seedEl, "seed", ( value ) => value.toLowerCase() );
 
 addInputListener( timeEl, "startTime", ( value ) => value * 60 * 1000, true, true );
@@ -149,7 +203,6 @@ addFocusOutListener( timeEl, "startTime", ( value ) => ( value / 1000 ) / 60 );
 addInputListener( minSSCountEl, "minSSCount", null, false, true );
 addFocusOutListener( minSSCountEl, "minSSCount" );
 
-const formattedFastestTimeEl = document.getElementById( "fastestSSTime-formatted" );
 addInputListener( fastestSSTimeEl, "fastestSSTime", null, false, true, function( event ) {
   const milliseconds = Math.floor( event.target.value );
   formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, true );

@@ -105,7 +105,7 @@ const addHotkeyListener = ( input, field ) => {
     for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
       // check if this hotkey was already set in a different field, and clear it
       // there, if it is
-      if ( value === event.target.value ) {
+      if ( value && ( value === event.target.value ) ) {
         fieldValues[ key ].element.value = "";
         fieldValues[ key ].value = "";
       }

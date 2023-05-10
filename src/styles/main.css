@@ -7,6 +7,8 @@
 html {
   height: 100%;
   margin: 1rem 0.5rem 0.5rem;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
 }
 
 @keyframes slideInLeft {
@@ -202,4 +204,41 @@ button:focus {
 #settings-icon:hover +.tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+
+#challenge-btn-container {
+  margin-top: 4vh;
+  margin-left: 15vw;
+}
+.challenge-run-btn {
+  border: none;
+  border-radius: 0.25rem;
+  outline: none;
+  transition: 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.neutral-btn {
+  overflow: hidden;
+  background-color: transparent;
+  border: #95c4ec 0.1rem solid;
+  color: #95c4ec;
+}
+
+.neutral-btn:hover {
+  background-color: #95c4ec;
+  color: #31475b;
+  border: transparent 0.1rem solid;
+}
+.neutral-btn:active {
+  background-color: #648aab;
+  color: rgb(45, 64, 83);
+}
+
+.btn-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: currentColor;
+  top: 0.1rem;
+  position: relative;
 }

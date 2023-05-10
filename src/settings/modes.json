@@ -1,0 +1,56 @@
+{
+  "classic": {
+    "seed": "",
+    "startTime": 3600000,
+    "minSSCount": 10,
+    "fastestSSTime": 90000,
+    "skips": true,
+    "freeSkips": 1,
+    "freeSkipAfterXSolvedLevels": 0,
+    "CMPLevels": false
+  },
+
+  "rapid": {
+    "seed": "",
+    "startTime": 1800000,
+    "minSSCount": 10,
+    "fastestSSTime": 45000,
+    "skips": true,
+    "freeSkips": 1,
+    "freeSkipAfterXSolvedLevels": 0,
+    "CMPLevels": false
+  },
+
+  "blitz": {
+    "seed": "",
+    "startTime": 900000,
+    "minSSCount": 10,
+    "fastestSSTime": 20000,
+    "skips": true,
+    "freeSkips": 1,
+    "freeSkipAfterXSolvedLevels": 0,
+    "CMPLevels": false
+  },
+
+  "casual": {
+    "seed": "",
+    "startTime": 3600000,
+    "minSSCount": 40,
+    "fastestSSTime": 120000,
+    "skips": true,
+    "freeSkips": 1,
+    "freeSkipAfterXSolvedLevels": 5,
+    "CMPLevels": false
+  },
+
+  "hard": {
+    "seed": "",
+    "startTime": 3600000,
+    "minSSCount": 0,
+    "fastestSSTime": 600000,
+    "skips": false,
+    "freeSkips": 0,
+    "freeSkipAfterXSolvedLevels": 0,
+    "CMPLevels": false
+  }
+}
