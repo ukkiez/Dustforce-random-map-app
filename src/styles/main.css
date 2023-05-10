@@ -352,3 +352,29 @@ button:focus {
   position: relative;
   top: 0.05rem;
 }
+
+#reset-btn {
+  font-size: 4vh;
+  margin-left: 1.5rem;
+}
+#reset-btn .btn-icon {
+  width: 6vw;
+  height: 6vh;
+}
+#reset-btn {
+  border: #bf2020 0.1rem solid;
+  color: #bf2020;
+}
+#reset-btn:hover {
+  background-color: #bf2020;
+  color: #4b0d0d;
+  border: transparent 0.1rem solid;
+}
+#reset-btn:active {
+  color: #bf2020;
+  background-color: #821818;
+  border: #390a0a 0.1rem solid;
+}
+#reset-btn .btn-text {
+  top: 0;
+}

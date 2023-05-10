@@ -83,115 +83,115 @@ else {
   } );
 }
 
-const startHotkeyEl = document.getElementById( "start-hotkey-input" );
-const replayHotkeyEl = document.getElementById( "replay-hotkey-input" );
-const resetHotkeyEl = document.getElementById( "reset-hotkey-input" );
+// const startHotkeyEl = document.getElementById( "start-hotkey-input" );
+// const replayHotkeyEl = document.getElementById( "replay-hotkey-input" );
+// const resetHotkeyEl = document.getElementById( "reset-hotkey-input" );
 
-const hotkeyData = {
-  start: "",
-  replay: "",
-  reset: "",
-};
-const fieldValues = {
-  start: { element: startHotkeyEl, value: "" },
-  replay: { element: replayHotkeyEl, value: "" },
-  reset: { element: resetHotkeyEl, value: "" },
-};
+// const hotkeyData = {
+//   start: "",
+//   replay: "",
+//   reset: "",
+// };
+// const fieldValues = {
+//   start: { element: startHotkeyEl, value: "" },
+//   replay: { element: replayHotkeyEl, value: "" },
+//   reset: { element: resetHotkeyEl, value: "" },
+// };
 
-// reset field values on click
-startHotkeyEl.addEventListener( "click" , ( event ) => {
-  event.target.value = "";
-  hotkeyData.start = "";
-  fieldValues.start.value = "";
-} );
-replayHotkeyEl.addEventListener( "click" , ( event ) => {
-  event.target.value = "";
-  hotkeyData.replay = "";
-  fieldValues.replay.value = "";
-} );
-resetHotkeyEl.addEventListener( "click" , ( event ) => {
-  event.target.value = "";
-  hotkeyData.reset = "";
-  fieldValues.reset.value = "";
-} );
+// // reset field values on click
+// startHotkeyEl.addEventListener( "click" , ( event ) => {
+//   event.target.value = "";
+//   hotkeyData.start = "";
+//   fieldValues.start.value = "";
+// } );
+// replayHotkeyEl.addEventListener( "click" , ( event ) => {
+//   event.target.value = "";
+//   hotkeyData.replay = "";
+//   fieldValues.replay.value = "";
+// } );
+// resetHotkeyEl.addEventListener( "click" , ( event ) => {
+//   event.target.value = "";
+//   hotkeyData.reset = "";
+//   fieldValues.reset.value = "";
+// } );
 
-const modifiers = [
-  "ShiftLeft",
-  "ShiftRight",
-  "ControlLeft",
-  "ControlRight",
-  "AltLeft",
-  "AltRight",
-  "AltLeft",
-  "OSLeft",
-  "MetaLeft",
-  "MetaRight",
-  "OSLeft",
-  "OSRight",
-];
+// const modifiers = [
+//   "ShiftLeft",
+//   "ShiftRight",
+//   "ControlLeft",
+//   "ControlRight",
+//   "AltLeft",
+//   "AltRight",
+//   "AltLeft",
+//   "OSLeft",
+//   "MetaLeft",
+//   "MetaRight",
+//   "OSLeft",
+//   "OSRight",
+// ];
 
-const addHotkeyListener = ( input, field ) => {
-  input.addEventListener( "keydown" , ( event ) => {
-    let key = event.code;
+// const addHotkeyListener = ( input, field ) => {
+//   input.addEventListener( "keydown" , ( event ) => {
+//     let key = event.code;
 
-    if ( key === "Tab" ) {
-      return;
-    }
+//     if ( key === "Tab" ) {
+//       return;
+//     }
 
-    event.preventDefault();
-    let modifierKey = "";
-    if ( event.shiftKey ) {
-      modifierKey = "Shift";
-    }
-    else if ( event.ctrlKey ) {
-      modifierKey = "Ctrl";
-    }
-    else if ( event.altKey ) {
-      modifierKey = "Alt";
-    }
-    else if ( event.metaKey ) {
-      modifierKey = "Meta";
-    }
+//     event.preventDefault();
+//     let modifierKey = "";
+//     if ( event.shiftKey ) {
+//       modifierKey = "Shift";
+//     }
+//     else if ( event.ctrlKey ) {
+//       modifierKey = "Ctrl";
+//     }
+//     else if ( event.altKey ) {
+//       modifierKey = "Alt";
+//     }
+//     else if ( event.metaKey ) {
+//       modifierKey = "Meta";
+//     }
 
-    if ( event.shiftKey || event.ctrlKey || event.altKey || event.metaKey ) {
-      if ( key.startsWith( "Key" ) ) {
-        key = key.slice( 3 );
-      }
+//     if ( event.shiftKey || event.ctrlKey || event.altKey || event.metaKey ) {
+//       if ( key.startsWith( "Key" ) ) {
+//         key = key.slice( 3 );
+//       }
 
-      if ( !modifiers.includes( key ) ) {
-        if ( event.key === " " ) {
-          event.target.value = `${ modifierKey }+SPACE`;
-        }
-        else {
-          event.target.value = `${ modifierKey }+${event.key.toUpperCase()}`;
-        }
-      }
-    }
-    else {
-      if ( event.key === " " ) {
-        event.target.value = "SPACE";
-      }
-      else {
-        event.target.value = event.key.toUpperCase();
-      }
-    }
+//       if ( !modifiers.includes( key ) ) {
+//         if ( event.key === " " ) {
+//           event.target.value = `${ modifierKey }+SPACE`;
+//         }
+//         else {
+//           event.target.value = `${ modifierKey }+${event.key.toUpperCase()}`;
+//         }
+//       }
+//     }
+//     else {
+//       if ( event.key === " " ) {
+//         event.target.value = "SPACE";
+//       }
+//       else {
+//         event.target.value = event.key.toUpperCase();
+//       }
+//     }
 
-    for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
-      // check if this hotkey was already set in a different field, and clear it
-      // there, if it is
-      if ( value === event.target.value ) {
-        fieldValues[ key ].element.value = "";
-        fieldValues[ key ].value = "";
-      }
-    }
+//     for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
+//       // check if this hotkey was already set in a different field, and clear it
+//       // there, if it is
+//       if ( value === event.target.value ) {
+//         fieldValues[ key ].element.value = "";
+//         fieldValues[ key ].value = "";
+//       }
+//     }
 
-    fieldValues[ field ].value = event.target.value;
-  } );
-}
+//     fieldValues[ field ].value = event.target.value;
+//   } );
+// }
 
-addHotkeyListener( startHotkeyEl, "start" );
-addHotkeyListener( replayHotkeyEl, "replay" );
-addHotkeyListener( resetHotkeyEl, "reset" );
+// addHotkeyListener( startHotkeyEl, "start" );
+// addHotkeyListener( replayHotkeyEl, "replay" );
+// addHotkeyListener( resetHotkeyEl, "reset" );
 
 document.getElementById( "done-button" ).addEventListener( "click", () => {
   if ( !_foundDustforceDirectory ) {
@@ -199,16 +199,16 @@ document.getElementById( "done-button" ).addEventListener( "click", () => {
     return;
   }
 
-  if ( Object.values( fieldValues ).some( ( { value } ) => !value ) ) {
-    // not all hotkeys were registered yet
-    return;
-  }
+  // if ( Object.values( fieldValues ).some( ( { value } ) => !value ) ) {
+  //   // not all hotkeys were registered yet
+  //   return;
+  // }
 
   setupData.initialSetupDone = true;
 
-  for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
-    setupData.hotkeys[ key ] = value;
-  }
+  // for ( const [ key, { value } ] of Object.entries( fieldValues ) ) {
+  //   setupData.hotkeys[ key ] = value;
+  // }
 
   setupData.dustforceDirectory = dustforceDirectory;
 

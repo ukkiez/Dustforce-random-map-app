@@ -5,7 +5,7 @@ import { reset } from "../reset.js";
 import { addClass, removeClass } from "../util/dom.js";
 import { seededRandom } from "../util/random.js";
 
-import { shortcuts } from "../hotkeys.js";
+// import { shortcuts } from "../hotkeys.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
@@ -24,7 +24,7 @@ const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsO
 // parse the filtered level metadata JSON file instead of importing it, so we
 // can be sure that on window reload we're getting all the new data
 const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
-
+console.log( "AUTO.js" );
 const authorsById = new Map();
 
 const timerAction = ( action ) => {
@@ -188,7 +188,8 @@ const handleSkipsCount = ( change ) => {
 
 let initialized = false;
 let watcher;
-shortcuts.start.on( "active", function() {
+// shortcuts.start.on( "active", function() {
+const startAndSkip = () => {
   if ( !initialized ) {
     // don't allow going to the settings page, as it would load a different
     // page, and therefore stop the current run permanently
@@ -354,7 +355,10 @@ shortcuts.start.on( "active", function() {
       } );
     }
   } );
-} );
+};
+
+document.getElementById( "start-btn" ).addEventListener( "click", startAndSkip );
+document.getElementById( "skip-btn" ).addEventListener( "click", startAndSkip );
 
 // handle the timer's finish event emitter
 timers[ 0 ].on( "finished", () => {
@@ -362,22 +366,33 @@ timers[ 0 ].on( "finished", () => {
   watcher.close();
 } );
 
-shortcuts.replay.on( "active", function() {
+// shortcuts.replay.on( "active", function() {
+document.getElementById( "replay-btn" ).addEventListener( "click", () => {
   if ( timers[ 0 ].hasStarted ) {
     installAndMaybePlay( currentLevel, true );
   }
 } );
 
-shortcuts.reset.on( "active", function() {
-  initialized = false;
-  choiceIndex = 0;
+// shortcuts.reset.on( "active", function() {
+let resetButtonClicked = 0;
+document.getElementById( "reset-btn" ).addEventListener( "click", () => {
+  resetButtonClicked++;
 
-  if ( watcher ) {
-    watcher.close();
+  setTimeout( () => {
+    resetButtonClicked = 0;
+  }, 250 );
+
+  if ( resetButtonClicked >= 2 ) {
+    initialized = false;
+    choiceIndex = 0;
+
+    if ( watcher ) {
+      watcher.close();
+    }
+
+    reset();
+    ( { skips, completedLevelIds, solvedLevelIds, chosenLevelCache } = runData );
   }
-
-  reset();
-  ( { skips, completedLevelIds, solvedLevelIds, chosenLevelCache } = runData );
 } );
 
 // // register some manual ways to increment/decrement the SS counter, just in case

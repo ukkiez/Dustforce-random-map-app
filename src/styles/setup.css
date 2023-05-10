@@ -102,7 +102,7 @@ input::placeholder {
 }
 #done-button {
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1.25rem;
   font-family: "Caracteres", sans-serif;
 
   border-radius: 0.1rem;

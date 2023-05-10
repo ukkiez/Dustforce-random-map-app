@@ -25,7 +25,7 @@ export const switchPage = ( currentPage, destination ) => {
   if ( destination === "settings.html" ) {
     // open a new window with the settings configuration
 
-    unregisterHotkeys();
+    // unregisterHotkeys();
 
     // get the current window
     const currentWindow = nw.Window.get();
@@ -191,8 +191,8 @@ export const init = () => {
   }
 
   if ( page === "index.html" ) {
-    // register global hotkeys using NW.Shortcuts
-    registerHotkeys();
+    // // register global hotkeys using NW.Shortcuts
+    // registerHotkeys();
 
     initMainBody();
 
@@ -202,11 +202,11 @@ export const init = () => {
     import( "./timing/auto.js" );
   }
   else if ( page === "settings.html" ) {
-    unregisterHotkeys();
+    // unregisterHotkeys();
 
     initSettingsBody();
     import( "./settings.js" );
-    import( "./hotkeySetup.js" );
+    // import( "./hotkeySetup.js" );
   }
 }
 

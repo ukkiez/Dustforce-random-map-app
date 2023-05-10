@@ -1,9 +1,9 @@
 {
-  "settingsName": "classic",
-  "seed": "",
-  "startTime": 3600000,
+  "settingsName": "Custom",
+  "seed": "foo",
+  "startTime": 900000,
   "minSSCount": 10,
-  "fastestSSTime": 90000,
+  "fastestSSTime": 20000,
   "skips": true,
   "freeSkips": 1,
   "freeSkipAfterXSolvedLevels": 0,
