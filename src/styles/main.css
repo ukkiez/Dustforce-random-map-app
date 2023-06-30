@@ -218,7 +218,7 @@ button:focus {
   border: none;
   border-radius: 0.25rem;
   outline: none;
-  transition: background-color 0.4s color 0.4s;
+  transition: background-color 0.4s, color 0.4s;
   cursor: pointer;
 
   overflow: hidden;
