@@ -6,8 +6,6 @@ import { Timer } from "./classes/timer.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
-import { registerHotkeys, unregisterHotkeys } from "./hotkeys.js";
-
 const config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
 export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
@@ -25,8 +23,6 @@ export const switchPage = ( currentPage, destination ) => {
   if ( destination === "settings.html" ) {
     // open a new window with the settings configuration
 
-    // unregisterHotkeys();
-
     // get the current window
     const currentWindow = nw.Window.get();
     currentWindow.hide();
@@ -38,7 +34,7 @@ export const switchPage = ( currentPage, destination ) => {
       frame: false,
       always_on_top: true,
       transparent: true,
-      resizable: false
+      resizable: true
     }, function( win ) {
       if ( typeof win !== "undefined" ){
         win.on( "closed", function() {
@@ -182,31 +178,24 @@ export const init = () => {
       // go to the initial setup page, where we'll confirm the dustforce
       // directory, and which hotkeys the user wants to use; this will only
       // happen the first time someone ever opens the app
-
-      // initInitialSetupBody();
-
       switchPage( "", "./setup.html" );
     }
     return;
   }
 
   if ( page === "index.html" ) {
-    // // register global hotkeys using NW.Shortcuts
-    // registerHotkeys();
-
     initMainBody();
 
     initTimers();
     initRunData();
 
-    import( "./timing/auto.js" );
+    import( "./timing/auto.js" ).then( ( { initialize } ) => {
+      initialize();
+    } );
   }
   else if ( page === "settings.html" ) {
-    // unregisterHotkeys();
-
     initSettingsBody();
     import( "./settings.js" );
-    // import( "./hotkeySetup.js" );
   }
 }
 

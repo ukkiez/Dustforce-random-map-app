@@ -5,8 +5,6 @@ import { reset } from "../reset.js";
 import { addClass, removeClass } from "../util/dom.js";
 import { seededRandom } from "../util/random.js";
 
-// import { shortcuts } from "../hotkeys.js";
-
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
 // use nw.require() instead of require() or import to make it actually available
@@ -24,7 +22,7 @@ const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsO
 // parse the filtered level metadata JSON file instead of importing it, so we
 // can be sure that on window reload we're getting all the new data
 const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
-console.log( "AUTO.js" );
+
 const authorsById = new Map();
 
 const timerAction = ( action ) => {
@@ -73,7 +71,7 @@ switch ( os.platform() ) {
 }
 
 const openApp = ( url ) => {
-  exec( `${ openCommand } ${ url }` );
+  exec( `${ openCommand } "${ url }"` );
 }
 
 const installAndMaybePlay = ( level, play = false ) => {
@@ -118,7 +116,7 @@ const pickLevel = () => {
   let choice;
   if ( seed ) {
     // the map pool was already shuffled at the start of the run (see: function
-    // tied to the start hotkey below), so simply pick maps start to end
+    // tied to the start below), so simply pick maps start to end
     choice = mapPool[ choiceIndex ];
     choiceIndex++;
   }
@@ -190,7 +188,6 @@ const handleSkipsCount = ( change ) => {
 
 let initialized = false;
 let watcher;
-// shortcuts.start.on( "active", function() {
 const startAndSkip = () => {
   if ( !initialized ) {
     // don't allow going to the settings page, as it would load a different
@@ -359,32 +356,23 @@ const startAndSkip = () => {
   } );
 };
 
-document.getElementById( "start-btn" ).addEventListener( "click", startAndSkip );
-document.getElementById( "skip-btn" ).addEventListener( "click", startAndSkip );
+export const initialize = () => {
+  document.getElementById( "start-btn" ).addEventListener( "click", startAndSkip );
+  document.getElementById( "skip-btn" ).addEventListener( "click", startAndSkip );
 
-// handle the timer's finish event emitter
-timers[ 0 ].on( "finished", () => {
-  // close the watcher when the timer has finished
-  watcher.close();
-} );
+  // handle the timer's finish event emitter
+  timers[ 0 ].on( "finished", () => {
+    // close the watcher when the timer has finished
+    watcher.close();
+  } );
 
-// shortcuts.replay.on( "active", function() {
-document.getElementById( "replay-btn" ).addEventListener( "click", () => {
-  if ( timers[ 0 ].hasStarted ) {
-    installAndMaybePlay( currentLevel, true );
-  }
-} );
+  document.getElementById( "replay-btn" ).addEventListener( "click", () => {
+    if ( timers[ 0 ].hasStarted ) {
+      installAndMaybePlay( currentLevel, true );
+    }
+  } );
 
-// shortcuts.reset.on( "active", function() {
-let resetButtonClicked = 0;
-document.getElementById( "reset-btn" ).addEventListener( "click", () => {
-  resetButtonClicked++;
-
-  setTimeout( () => {
-    resetButtonClicked = 0;
-  }, 250 );
-
-  if ( resetButtonClicked >= 2 ) {
+  document.getElementById( "reset-btn" ).addEventListener( "click", () => {
     initialized = false;
     choiceIndex = 0;
 
@@ -394,13 +382,5 @@ document.getElementById( "reset-btn" ).addEventListener( "click", () => {
 
     reset();
     ( { skips, completedLevelIds, solvedLevelIds, chosenLevelCache } = runData );
-  }
-} );
-
-// // register some manual ways to increment/decrement the SS counter, just in case
-// hotkeys._increment.on( "active", function() {
-//   increment();
-// } );
-// hotkeys._decrement.on( "active", function() {
-//   increment( true );
-// } );
+  } );
+};
