@@ -63,7 +63,7 @@ for ( const [ filename, metadata ] of Object.entries( levelMetadata ) ) {
   };
 }
 
-const dataSortedBySSCount = Object.fromEntries(
+const sortedData = Object.fromEntries(
   Object.entries( filteredData ).sort( ( a, b ) => {
     const [ , metadataA ] = a;
     const [ , metadataB ] = b;
@@ -82,4 +82,4 @@ const dataSortedBySSCount = Object.fromEntries(
   } )
 );
 
-fs.writeFileSync( destination, JSON.stringify( dataSortedBySSCount, null, 2 ) );
+fs.writeFileSync( destination, JSON.stringify( sortedData, null, 2 ) );

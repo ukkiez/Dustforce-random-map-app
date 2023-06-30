@@ -14,12 +14,12 @@
     "transparent": true,
     "width": 260,
     "height": 270,
-    "min_width": 100,
-    "min_height": 10,
+    "min_width": 250,
+    "min_height": 260,
     "max_width": 1000,
     "max_height": 1000,
     "icon": "assets/s-complete-icon.png",
-    "resizable": false
+    "resizable": true
   },
   "keywords": [],
   "author": "",
