@@ -31,3 +31,24 @@ export const debounce = function( func, wait, immediate ) {
     }
 	};
 }
+
+// limits the rate at which a function can be called
+export const rateLimiter = function( func, ms = 100 ) {
+  let waiting = false;
+
+  return function() {
+		const context = this;
+    const args = arguments;
+
+    if ( waiting ) {
+      return;
+    }
+
+    func.apply( context, args );
+    waiting = true;
+
+    setTimeout(() => {
+      waiting = false;
+    }, ms );
+  };
+}
