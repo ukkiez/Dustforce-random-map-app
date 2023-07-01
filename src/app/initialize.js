@@ -34,18 +34,24 @@ export const switchPage = ( currentPage, destination ) => {
       frame: false,
       always_on_top: true,
       transparent: true,
-      resizable: true
+      resizable: true,
+      // hide the window initially, and only show it after focusing the window;
+      // this way, we can e.g. resize / move the window without janky initial
+      // visuals
+      show: false,
     }, function( win ) {
-      if ( typeof win !== "undefined" ){
+      if ( typeof win !== "undefined" ) {
         win.on( "closed", function() {
           currentWindow.reload();
           currentWindow.show();
         } );
         win.on( "loaded", function() {
+          win.moveTo( currentWindow.x, currentWindow.y - 100 );
           win.focus();
-        } ) ;
+        } );
       }
     } );
+
     return;
   }
 
