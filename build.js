@@ -7,6 +7,24 @@ const path = require( "path" );
 
 const { exec } = require( "child_process" );
 
+const execAsync = ( command, log ) => {
+  return new Promise( ( resolve, reject ) => {
+    const child = exec( command, {
+      encoding: "utf8",
+    }, ( error, stdout, stderr ) => {
+      if ( error ) {
+        reject( error );
+      }
+
+      if ( log ) {
+        console.log( stdout );
+      }
+
+      resolve( stdout );
+    } );
+  } );
+}
+
 async function copyDir( src, dest, exclusions = [] ) {
   await fsPromises.mkdir( dest, { recursive: true } );
 
@@ -28,6 +46,31 @@ async function copyDir( src, dest, exclusions = [] ) {
   }
 }
 
+// build Mac and Linux versions
+const nw = new NwBuilder( {
+  files: [ "./src/**/*" ],
+  version: "0.52.2",
+  flavor: "normal",
+  platforms: [ "osx64", "linux32", "linux64" ],
+  cacheDir: "./cache",
+  forceDownload: false,
+  buildDir: "./dist",
+  appName: "random-map-app",
+  appVersion: "0.0.1",
+  macIcns: "./src/assets/s-complete-icon.icns",
+  winIco: "./src/assets/s-complete-icon.icns",
+} );
+
+( async () => {
+  await nw.build();
+  console.log( "> Built Mac&Linux" );
+
+  // create a tar file for distribution
+  await execAsync( "tar -cvzf dist/RMA-osx64.tar.gz dist/random-map-app/osx64", true );
+  await execAsync( "tar -cvzf dist/RMA-linux32.tar.gz dist/random-map-app/linux32", true );
+  await execAsync( "tar -cvzf dist/RMA-linux64.tar.gz dist/random-map-app/linux64", true );
+} )();
+
 // construct the Windows build manually, since this version of nw-builder can't
 // do it, and newer versions don't actually properly function; note that this
 // assumes the NW binaries have been downloaded and put in the cache beforehand
@@ -42,7 +85,7 @@ catch ( e ) {}
 
 fs.mkdirSync( buildPath );
 fs.mkdirSync( path.join( buildPath, "package.nw" ) );
-( async() => {
+( async () => {
   await copyDir( nwBinaries, buildPath );
   await copyDir( srcPath, path.join( buildPath, "/package.nw" ), [
     "node_modules",
@@ -59,19 +102,7 @@ fs.mkdirSync( path.join( buildPath, "package.nw" ) );
   fs.mkdirSync( "./temp" );
   fs.copyFileSync( path.join( srcPath, "/package.json" ), "./temp/package.json" );
 
-  await new Promise( ( resolve, reject ) => {
-    const child = exec( "npm i --omit=dev --prefix ./temp", {
-      encoding: "utf8",
-
-    }, ( error, stdout, stderr ) => {
-      if ( error ) {
-        reject( error );
-      }
-
-      console.log( stdout );
-      resolve();
-    } );
-  } );
+  await execAsync( "npm i --omit=dev --prefix ./temp", true );
 
   await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
 
@@ -80,21 +111,8 @@ fs.mkdirSync( path.join( buildPath, "package.nw" ) );
 
   // clean up
   fs.rmSync( "./temp", { recursive: true } );
+
+  // create a tar file for distribution
+  await execAsync( "tar -cvzf dist/RMA-win32.tar.gz dist/win32", true );
+  console.log( "> Built Windows" );
 } )();
-
-// build Mac and Linux versions
-const nw = new NwBuilder( {
-  files: [ "./src/**/*" ],
-  version: "0.52.2",
-  flavor: "normal",
-  platforms: [ "osx64", "linux32", "linux64" ],
-  cacheDir: "./cache",
-  forceDownload: false,
-  buildDir: "./dist",
-  appName: "random-map-app",
-  appVersion: "0.0.1",
-  macIcns: "./src/assets/s-complete-icon.icns",
-  winIco: "./src/assets/s-complete-icon.icns",
-} );
-
-nw.build();
