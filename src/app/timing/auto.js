@@ -156,14 +156,15 @@ const handleSkipsCount = ( change ) => {
     return;
   }
 
-  const element = document.getElementById( "skips" );
+  const skipsElement = document.getElementById( "skips" );
+  const skipButtonElement = document.getElementById( "skip-btn" );
 
   if ( change > 0 ) {
     // increment the skips count
     skips += change;
     if ( skips > 0 ) {
-      removeClass( element, "none" );
-      removeClass( document.getElementById( "skip-btn" ), "disabled-btn" )
+      removeClass( skipsElement, "none" );
+      removeClass( skipButtonElement, "disabled-btn" )
     }
   }
   else if ( change < 0 ) {
@@ -172,13 +173,13 @@ const handleSkipsCount = ( change ) => {
       skips = Math.max( 0, skips + change );
 
       if ( skips <= 0 ) {
-        addClass( element, "none" );
-        addClass( document.getElementById( "skip-btn" ), "disabled-btn" )
+        addClass( skipsElement, "none" );
+        addClass( skipButtonElement, "disabled-btn" )
       }
     }
   }
 
-  element.innerText = `Skips remaining: ${ skips }`;
+  skipsElement.innerText = `Skips remaining: ${ skips }`;
 }
 
 let initialized = false;
@@ -203,6 +204,11 @@ const startAndSkip = () => {
     const challengeButtons = document.getElementsByClassName( "challenge-run-btn" );
     for ( const button of challengeButtons ) {
       button.style.visibility = "visible";
+    }
+
+    if ( !_skipsOn ) {
+      addClass( document.getElementById( "skips" ), "none" );
+      addClass( document.getElementById( "skip-btn" ), "disabled-btn" )
     }
 
     mapPool = [];
