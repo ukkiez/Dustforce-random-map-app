@@ -43,11 +43,11 @@
     "CMPLevels": false
   },
 
-  "hard": {
+  "hardcore": {
     "seed": "",
     "startTime": 3600000,
-    "minSSCount": 0,
-    "fastestSSTime": 600000,
+    "minSSCount": 1,
+    "fastestSSTime": 180000,
     "skips": false,
     "freeSkips": 0,
     "freeSkipAfterXSolvedLevels": 0,
