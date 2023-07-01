@@ -67,7 +67,6 @@ const setInputValues = ( _settings ) => {
     freeSkipsContainer.classList.add( "disabled" );
   }
   else {
-    freeSkipsContainer.style.display = "initial";
     freeSkipsContainer.classList.remove( "disabled" );
   }
 

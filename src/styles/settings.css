@@ -1,5 +1,5 @@
 body {
-  overflow-y: hidden;
+  overflow-y: scroll;
 }
 
 button {
@@ -12,14 +12,28 @@ button {
   font-size: 2rem;
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0.5rem;
+}
+.single-column {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
 .settings-form {
   margin-left: 0.1rem;
 }
 
-.disabled > label {
+.setting-container {
+
+}
+
+.disabled * > label {
   color: #4c5763;
 }
-.disabled > input {
+.disabled * > input {
   color: #4c5763;
   background-color: #384049;
 }

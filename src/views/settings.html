@@ -39,31 +39,53 @@
       </div>
 
       <form class="settings-form" autocomplete="off" autocapitalize="off">
-        <label for="seed">Seed</label>
-        <input type="text" id="seed-input" name="seed" maxlength="12" placeholder="example: bad maps pls"/>
+        <div class="grid">
+          <div class="setting-container single-column">
+            <label for="seed">Seed</label>
+            <input type="text" id="seed-input" name="seed" maxlength="12" placeholder="example: bad maps pls"/>
+          </div>
 
-        <label for="time">Time (minutes)</label>
-        <input type="number" id="time-input" name="time" min="1" max="900" placeholder="min. 1, max. 900"/>
+          <div class="setting-container">
+            <label for="time">Time (minutes)</label>
+            <input type="number" id="time-input" name="time" min="1" max="900" placeholder="min. 1, max. 900"/>
+          </div>
 
-        <label for="minSSCount">min. SS count</label>
-        <input type="number" id="minSSCount-input" name="minsscount" min="0" max="500" placeholder="max. 500"/>
+          <div class="setting-container">
+            <label for="minSSCount">min. SS count</label>
+            <input type="number" id="minSSCount-input" name="minsscount" min="0" max="500" placeholder="max. 500"/>
+          </div>
 
-        <label for="fastestSSTime">Fastest SS Time (milliseconds)</label>
-        <input type="number" id="fastestSSTime-input" name="fastestsstime" min="16" max="7200000"/>
-        <span id="fastestSSTime-formatted">0:00:00.000</span>
+          <div class="setting-container single-column">
+            <label for="fastestSSTime">Fastest SS Time (milliseconds)</label>
+            <input type="number" id="fastestSSTime-input" name="fastestsstime" min="16" max="3599999"/>
+            <span id="fastestSSTime-formatted">0:00:00.000</span>
+          </div>
 
-        <label for="CMPLevels">CMP levels</label>
-        <input type="checkbox" id="CMPLevels-input" name="CMPLevels"/>
+          <div class="setting-container">
+            <label for="CMPLevels">CMP levels</label>
+            <input type="checkbox" id="CMPLevels-input" name="CMPLevels"/>
+          </div>
 
-        <label for="skips">Skips</label>
-        <input type="checkbox" id="skips-input" name="skips"/>
+          <div class="setting-container">
+            <label for="skips">Skips</label>
+            <input type="checkbox" id="skips-input" name="skips"/>
+          </div>
+        </div>
 
-        <div id="skips-settings-container">
-          <label for="freeSkips">Free Starting Skips</label>
-          <input type="number" id="freeSkips-input" name="freeskips" max="10000">
+        <div id="skips-settings-container" class="setting-container grid">
+          <div class="setting-container">
+            <label for="freeSkips">Free Starting Skips</label>
+          </div>
+          <div class="setting-container">
+            <label for="freeSkipsAfterX">Free Skip Every X SS Completions</label>
+          </div>
 
-          <label for="freeSkipsAfterX">Free Skip Every X SS Completions</label>
-          <input type="number" id="freeSkipsAfterX-input" name="freeskipsafterx" max="10000"/>
+          <div class="setting-container">
+            <input type="number" id="freeSkips-input" name="freeskips" max="10000">
+          </div>
+          <div class="setting-container">
+            <input type="number" id="freeSkipsAfterX-input" name="freeskipsafterx" max="10000"/>
+          </div>
         </div>
       </form>
 

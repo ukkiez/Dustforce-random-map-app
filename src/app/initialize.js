@@ -30,7 +30,7 @@ export const switchPage = ( currentPage, destination ) => {
     nw.Window.open( "views/settings.html", {
       position: "center",
       width: 360,
-      height: 500,
+      height: 470,
       frame: false,
       always_on_top: true,
       transparent: true,
@@ -119,9 +119,7 @@ const initSettingsBody = () => {
     // with it (with some extra height to make sure nothing is cut off at the
     // bottom)
     const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
-    currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 15 );
-
-    currentWindow.setResizable( false );
+    currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 35 );
   } );
 }
 
