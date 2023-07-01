@@ -99,11 +99,16 @@ const block = ( ms = 3000 ) => {
   }, ms );
 }
 
-const adjustOnScreenMapInfo = ( name, author ) => {
+const adjustOnScreenMapInfo = ( levelId, name, author ) => {
   const nameEl = document.getElementById( "map-info-name" );
   const authorEl = document.getElementById( "map-info-author" );
   nameEl.innerText = name;
   authorEl.innerText = author;
+
+  // allow users to go to the Atlas page by clicking on the map name
+  nameEl.onclick = () => {
+    nw.Shell.openExternal( `https://atlas.dustforce.com/${ levelId }` );
+  };
 }
 
 // keep track of skips, which levels have been completed (SS or any%), and which
@@ -136,7 +141,7 @@ const pickLevel = () => {
   const id = choice.substring( index + 1 );
 
   const author = authorsById.get( parseInt( id, 10 ) );
-  adjustOnScreenMapInfo( name, author );
+  adjustOnScreenMapInfo( id, name, author );
 
   return {
     name,
@@ -193,11 +198,17 @@ const startAndSkip = () => {
     // don't allow going to the settings page, as it would load a different
     // page, and therefore stop the current run permanently
     document.getElementById( "settings-icon-container" ).style.display = "none";
+
     // hide the seed, as there is no place on the screen for it at the moment
     document.getElementById( "seed" ).style.display = "none";
+
     // hide the hub buttons, and load the challenge run buttons
     const hubButtonContainer = document.querySelector( ".hub-btn-container" );
     hubButtonContainer.style.display = "none";
+
+    // give the map name element a class that visually indicates you can click
+    // it (to go to the map's Atlas page)
+    document.getElementById( "map-info-name" ).classList.add( "clickable" );
 
     const challengeButtons = document.getElementsByClassName( "challenge-run-btn" );
     for ( const button of challengeButtons ) {
