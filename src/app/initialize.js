@@ -120,6 +120,8 @@ const initSettingsBody = () => {
     // bottom)
     const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
     currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 15 );
+
+    currentWindow.setResizable( false );
   } );
 }
 
