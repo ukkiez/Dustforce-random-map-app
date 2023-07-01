@@ -26,9 +26,17 @@ for ( const [ filename, solvers ] of Object.entries( solversData ) ) {
   ssCountByFilename.set( filename, solvers.length );
 }
 
+// const solversMap = new Map( Object.entries( solversData ) );
+
+// const userId = 64233;
 const filteredData = {};
 for ( const [ filename, metadata ] of Object.entries( levelMetadata ) ) {
   const { level_type, level_end, name, author, atlas_id, fastest_time } = metadata;
+
+  // if ( solversMap.get( filename )?.includes( userId ) ) {
+  //   // filter out the user's SS'd maps
+  //   continue;
+  // }
 
   if ( atlas_id === 0 ) {
     // filter out ID-less levels (i.e. stock levels)
