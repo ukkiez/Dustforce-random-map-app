@@ -2,6 +2,11 @@ body {
   overflow-y: hidden;
 }
 
+button {
+  font-family: "Caracteres", sans-serif;
+  margin-right: 0.25rem;
+}
+
 .settings-header {
   -webkit-app-region: drag;
   font-size: 2rem;
@@ -201,11 +206,6 @@ input[type="checkbox"] {
 #back-button:active {
   color: #0e3851;
   background-color: #80a9cd;
-}
-
-button {
-  font-family: "Caracteres", sans-serif;
-  margin-right: 0.25rem;
 }
 
 #save-button {
