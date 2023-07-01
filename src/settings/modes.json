@@ -43,7 +43,7 @@
     "CMPLevels": false
   },
 
-  "hardcore": {
+  "hard": {
     "seed": "",
     "startTime": 3600000,
     "minSSCount": 1,
