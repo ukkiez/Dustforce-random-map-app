@@ -88,7 +88,7 @@ button {
   margin-bottom: 0.5rem;
 }
 
-.dropdown-button {
+.dropdown-btn {
   color: #f1f1f1;
   background-color: #03694d;
   padding: 0.5rem 0rem;
@@ -96,6 +96,34 @@ button {
   border: none;
   border-radius: 0.15rem;
   min-width: 9.5rem;
+  text-align: left;
+}
+#settings-name {
+  margin-left: 0.5rem;
+}
+.dropdown-btn-icon {
+  fill: #69a997;
+  position: absolute;
+  right: 0.8rem;
+  bottom: 0.6rem;
+  transition: transform 0.1s, fill 0.15s;
+}
+
+/* Rotate the dropdown button icon */
+.dropdown:hover .dropdown-btn-icon {
+  transition: transform 0.1s, fill 0.25s;
+  transform: rotate( 90deg );
+  fill: currentColor;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropdown-button {
+  background-color: #03815f;
 }
 
 /* Dropdown Content (Hidden by Default) */
@@ -104,7 +132,7 @@ button {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
-  min-width: 8rem;
+  min-width: 9.5rem;
   z-index: 1;
   border-radius: 0.15rem;
 }
@@ -136,16 +164,6 @@ button {
 .dropdown-content button:active {
   color: #134462;
   background-color: #adc5d4;
-}
-
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropdown-button {
-  background-color: #03815f;
 }
 
 label {
