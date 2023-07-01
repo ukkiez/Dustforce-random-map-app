@@ -85,10 +85,10 @@ const installAndMaybePlay = ( level, play = false ) => {
 
 let blocked = false;
 let timeout = null;
-const block = ( ms = 3000 ) => {
+const block = ( ms = 1500 ) => {
   if ( timeout ) {
-    // clear any previously active timeouts, that will unblock even though they
-    // shouldn't
+    // clear any previously active timeouts that would unblock before the
+    // current function call
     clearTimeout( timeout );
   }
 
@@ -118,20 +118,10 @@ let { skips, completedLevelIds, solvedLevelIds, chosenLevelCache } = runData;
 let mapPool = [];
 let choiceIndex = 0;
 const pickLevel = () => {
-  let choice;
-  if ( seed ) {
-    // the map pool was already shuffled at the start of the run (see: function
-    // tied to the start below), so simply pick maps start to end
-    choice = mapPool[ choiceIndex ];
-    choiceIndex++;
-  }
-  else {
-    // no seed was given for this run, so just pick maps at random
-    choice = mapPool[ Math.floor( Math.random() * mapPool.length ) ];
-    while ( chosenLevelCache.has( choice ) ) {
-      choice = mapPool[ Math.floor( Math.random() * mapPool.length ) ];
-    }
-  }
+  // the map pool was already shuffled at the start of the run, so simply pick
+  // maps start to end
+  const choice = mapPool[ choiceIndex ];
+  choiceIndex++;
 
   chosenLevelCache.add( choice );
 
@@ -235,14 +225,18 @@ const startAndSkip = () => {
     }
     initialized = true;
 
-    if ( seed ) {
-      // initialize the seeder
-      const { shuffle } = seededRandom( { seed } );
-
-      // shuffle the map pool, by the given seed, which consequently means that
-      // when we pick a level below, we'll simply do it in order, start to end
-      shuffle( mapPool );
+    let _seed = seed;
+    if ( !_seed ) {
+      // generate a random 5-digit seed if the user didn't provide a seed
+      _seed = `${ Math.floor( Math.random() * 90000 ) + 10000 }`;
     }
+
+    // initialize the seeder
+    const { shuffle } = seededRandom( { seed: _seed } );
+
+    // shuffle the map pool, by the given seed, which consequently means that
+    // when we pick a level below, we'll simply do it in order, start to end
+    shuffle( mapPool );
 
     // ensure split.txt exists, otherwise create an empty one
     if ( !fs.existsSync( splitFile ) ) {
