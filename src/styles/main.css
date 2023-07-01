@@ -75,6 +75,11 @@ button:focus {
   left: 0.3rem;
   margin-top: 0.25rem;
 }
+.map-info-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 #map-info-name, #map-info-author {
   margin: 0;
 }
@@ -82,10 +87,9 @@ button:focus {
   color: #a8a7a7;
   /* font-size: 0.8rem; */
 }
-.map-info-text {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+#map-info-name.clickable:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 #seed {
