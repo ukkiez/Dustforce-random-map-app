@@ -261,6 +261,31 @@ input[type="checkbox"] {
   background-color: #05b486;
 }
 
+.input-icon {
+  vertical-align: text-bottom;
+
+  fill: #025c44;
+  padding-right: 0.1rem;
+  transition: transform 0s;
+}
+.input-icon:hover {
+  cursor: pointer;
+
+  fill: #03a87c;
+}
+.input-icon:active {
+  transform: scale(0.8);
+  transition: transform 0.05s;
+  fill: #03a87c;
+}
+#seed-copy-btn-filled {
+  fill: #03a87c;
+}
+
+.hidden {
+  display: none;
+}
+
 #saved-message {
   display: none;
   font-size: 1rem;

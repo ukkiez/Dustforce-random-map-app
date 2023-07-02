@@ -2,9 +2,10 @@
 // in the browser context
 const fs = nw.require( "fs" );
 
-import { formatMSToHumanReadable } from "./util/format.js";
-
 import { settingsPath } from "./initialize.js";
+
+import { formatMSToHumanReadable } from "./util/format.js";
+import { addClass, removeClass } from "./util/dom.js";
 
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
@@ -252,6 +253,33 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
   messageDisplayTimeout = setTimeout( () => {
     document.getElementById( "saved-message" ).style.display = "none";
   }, 2000 );
+} );
+
+// seed copy-to-clipboard button logic
+const seedCopyButton = document.getElementById( "seed-copy-btn" );
+const seedCopyButtonFilled = document.getElementById( "seed-copy-btn-filled" );
+let seedCopyButtonTimeout;
+const copySeed = () => {
+  const clipboard = nw.Clipboard.get();
+  clipboard.set( seedEl.value || "" );
+
+  addClass( seedCopyButton, "hidden" );
+  removeClass( seedCopyButtonFilled, "hidden" );
+
+  if ( seedCopyButtonTimeout ) {
+    clearTimeout( seedCopyButtonTimeout );
+  }
+  seedCopyButtonTimeout = setTimeout( () => {
+    addClass( seedCopyButtonFilled, "hidden" );
+    removeClass( seedCopyButton, "hidden" );
+  }, 1000 );
+};
+seedCopyButton.addEventListener( "click", copySeed );
+seedCopyButtonFilled.addEventListener( "click", copySeed );
+
+const clearSeedButton = document.getElementById( "clear-seed" );
+clearSeedButton.addEventListener( "click", () => {
+  seedEl.value = "";
 } );
 
 // handle importing
