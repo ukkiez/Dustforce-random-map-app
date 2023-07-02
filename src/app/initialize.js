@@ -34,7 +34,7 @@ export const switchPage = ( currentPage, destination ) => {
       frame: false,
       always_on_top: true,
       transparent: true,
-      resizable: true,
+      resizable: false,
       // hide the window initially, and only show it after focusing the window;
       // this way, we can e.g. resize / move the window without janky initial
       // visuals
