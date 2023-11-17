@@ -186,6 +186,9 @@ let initialized = false;
 let watcher;
 const startAndSkip = () => {
   if ( !initialized ) {
+    // hide the close-app button during runs
+    document.getElementById( "close-app-btn" ).style.display = "none";
+
     // don't allow going to the settings page, as it would load a different
     // page, and therefore stop the current run permanently
     document.getElementById( "settings-icon-container" ).style.display = "none";

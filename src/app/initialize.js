@@ -34,11 +34,11 @@ export const switchPage = ( currentPage, destination ) => {
       frame: false,
       always_on_top: true,
       transparent: true,
-      resizable: false,
-      // hide the window initially, and only show it after focusing the window;
-      // this way, we can e.g. resize / move the window without janky initial
-      // visuals
-      show: false,
+      resizable: true,
+      // // hide the window initially, and only show it after focusing the window;
+      // // this way, we can e.g. resize / move the window without janky initial
+      // // visuals; this may be causing an issue on Windows
+      // show: false,
     }, function( win ) {
       if ( typeof win !== "undefined" ) {
         win.on( "closed", function() {
@@ -46,7 +46,8 @@ export const switchPage = ( currentPage, destination ) => {
           currentWindow.show();
         } );
         win.on( "loaded", function() {
-          win.moveTo( currentWindow.x, currentWindow.y - 100 );
+          // move the settings window to the position of the main window
+          // win.moveTo( currentWindow.x, currentWindow.y - 100 );
           win.focus();
         } );
       }
@@ -84,6 +85,11 @@ const initMainBody = () => {
   const temp = document.getElementsByTagName( "template" )[ 0 ];
   const clone = temp.content.cloneNode( true );
   document.body.replaceChildren( clone );
+
+  document.getElementById( "close-app-btn" ).addEventListener( "click", () => {
+    // close the application
+    nw.Window.get().close();
+  } );
 
   if ( settings.seed ) {
     document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
