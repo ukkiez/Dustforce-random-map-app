@@ -66,7 +66,7 @@ switch ( os.platform() ) {
 
   case "win32":
   default:
-    openCommand = "start";
+    openCommand = 'start ""';
     break;
 }
 
