@@ -120,9 +120,9 @@ button:focus {
 
 #seed {
   position: absolute;
-  font-size: 7.5vh;
+  font-size: 7.5vw;
   color: #95c4ec;
-  left: 3.5rem;
+  right: 3.5vw;
   bottom: 0.3rem;
 }
 
