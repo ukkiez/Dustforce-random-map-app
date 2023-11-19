@@ -35,10 +35,10 @@ export const switchPage = ( currentPage, destination ) => {
       always_on_top: true,
       transparent: true,
       resizable: true,
-      // // hide the window initially, and only show it after focusing the window;
-      // // this way, we can e.g. resize / move the window without janky initial
-      // // visuals; this may be causing an issue on Windows
-      // show: false,
+      // hide the window initially, and only show it after focusing the window;
+      // this way, we can e.g. resize / move the window without janky initial
+      // visuals; this may be causing an issue on Windows
+      show: false,
     }, function( win ) {
       if ( typeof win !== "undefined" ) {
         win.on( "closed", function() {
@@ -49,6 +49,7 @@ export const switchPage = ( currentPage, destination ) => {
           // move the settings window to the position of the main window
           // win.moveTo( currentWindow.x, currentWindow.y - 100 );
           win.focus();
+          win.show();
         } );
       }
     } );
@@ -89,6 +90,18 @@ const initMainBody = () => {
   document.getElementById( "close-app-btn" ).addEventListener( "click", () => {
     // close the application
     nw.Window.get().close();
+  } );
+
+  const currentWindow = nw.Window.get();
+
+  // max width / max height
+  const aspectRatio = 250 / 260;
+  let resize;
+  currentWindow.on( "resize", function( width ) {
+    clearTimeout( resize );
+    resize = setTimeout( () => {
+      currentWindow.resizeTo( width, Math.round( width / aspectRatio ) );
+    }, 200 );
   } );
 
   if ( settings.seed ) {
