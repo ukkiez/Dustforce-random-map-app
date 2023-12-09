@@ -7,7 +7,8 @@
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 0,
-    "CMPLevels": false
+    "CMPLevels": false,
+    "settingsName": "classic"
   },
 
   "rapid": {
@@ -18,7 +19,8 @@
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 0,
-    "CMPLevels": false
+    "CMPLevels": false,
+    "settingsName": "rapid"
   },
 
   "blitz": {
@@ -29,7 +31,8 @@
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 0,
-    "CMPLevels": false
+    "CMPLevels": false,
+    "settingsName": "blitz"
   },
 
   "casual": {
@@ -40,7 +43,8 @@
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 5,
-    "CMPLevels": false
+    "CMPLevels": false,
+    "settingsName": "casual"
   },
 
   "hard": {
@@ -51,6 +55,7 @@
     "skips": false,
     "freeSkips": 0,
     "freeSkipAfterXSolvedLevels": 0,
-    "CMPLevels": false
+    "CMPLevels": false,
+    "settingsName": "hard"
   }
 }

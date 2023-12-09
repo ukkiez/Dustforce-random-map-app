@@ -31,7 +31,13 @@ const freeSkipsAfterXEl = document.getElementById( "freeSkipsAfterX-input" );
 
 const freeSkipsContainer = document.getElementById( "skips-settings-container" );
 
-let data = {};
+let data = {
+  ...settings,
+};
+let initialState = {
+  ...settings,
+};
+
 const setInputValues = ( _settings ) => {
   const {
     settingsName,
@@ -70,26 +76,80 @@ const setInputValues = ( _settings ) => {
   else {
     freeSkipsContainer.classList.remove( "disabled" );
   }
-
-  data = {
-    ..._settings,
-  }
 }
 
 const { styling } = userConfiguration;
 const { opacity } = styling;
 const opacitySlider = document.getElementById( "app-opacity-range" );
 opacitySlider.value = opacity;
+let initialOpacity = opacity;
 
 // initialize the input values
 setInputValues( settings );
 
-let initialState = {
-  ...data,
+const objectDiff = ( object1, object2, ignoredKeys = [] ) => {
+  for ( const [ key, field ] of Object.entries( object1 ) ) {
+    if ( ignoredKeys.includes( key ) ) {
+      continue;
+    }
+
+    // check whether any fields have changed
+    if ( object2[ key ] !== field ) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const stateHasChanged = () => {
+  return objectDiff( initialState, data );
+};
+
+const handleSettingsName = () => {
+  // check whether the current settings are the same as for one of the
+  // predefined modes
+  for ( const mode of Object.values( modes ) ) {
+    if ( !objectDiff( mode, data, [ "settingsName" ] ) ) {
+      settingsNameEl.innerText = mode.settingsName;
+      data.settingsName = mode.settingsName;
+      return;
+    }
+  }
+
+  settingsNameEl.innerText = "Custom Mode";
+  data.settingsName = "Custom";
+};
+
+const can = {
+  save: false,
+  discard: false,
+};
+const handleSaveAndDiscard = ( force = false ) => {
+  let diff = false;
+  if ( !force ) {
+    diff = stateHasChanged();
+  }
+
+  if ( diff || force ) {
+    can.save = true;
+    removeClass( document.getElementById( "save-button" ), "disabled" );
+
+    can.discard = true;
+    removeClass( document.getElementById( "discard-button" ), "hidden" );
+  }
+  else {
+    can.save = false;
+    addClass( document.getElementById( "save-button" ), "disabled" );
+
+    can.discard = false;
+    addClass( document.getElementById( "discard-button" ), "hidden" );
+  }
 };
 
 const saveData = ( _data ) => {
   fs.writeFileSync( settingsPath, JSON.stringify( _data, null, 2 ) );
+  // reset the initial state to the newly saved state
   initialState = {
     ..._data,
   };
@@ -100,13 +160,13 @@ const addCheckboxListener = ( element, field = "", callback ) => {
     const { checked } = event.target;
     data[ field ] = checked;
 
-    settingsNameEl.innerText = "Custom Mode";
-    data.settingsName = "Custom";
-
     if ( callback ) {
       // do any optional non-explicit extra thing
       callback( event );
     }
+
+    handleSettingsName();
+    handleSaveAndDiscard();
   } );
 }
 
@@ -135,13 +195,13 @@ const addInputListener = ( element, field = "", transform, hasMin = false, hasMa
       data[ field ] = isNum ? parseInt( event.target.value ) : event.target.value;
     }
 
-    settingsNameEl.innerText = "Custom Mode";
-    data.settingsName = "Custom";
-
     if ( callback ) {
       // do any optional non-explicit extra thing
       callback( event );
     }
+
+    handleSettingsName();
+    handleSaveAndDiscard();
   } );
 }
 
@@ -165,6 +225,8 @@ const addFocusOutListener = ( element, field = "", transform, callback ) => {
       // do any optional non-explicit extra thing
       callback( event );
     }
+
+    handleSaveAndDiscard();
   } );
 }
 
@@ -198,6 +260,8 @@ for ( const button of settingsListEl.children ) {
     setTimeout( () => {
       settingsListEl.classList.remove( "hidden" );
     }, 100 );
+
+    handleSaveAndDiscard();
   } );
 }
 
@@ -245,6 +309,10 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
     }
   }, null, 2 ) );
 
+  initialOpacity = parseInt( opacitySlider.value, 10 );
+
+  handleSaveAndDiscard();
+
   if ( messageDisplayTimeout ) {
     clearTimeout( messageDisplayTimeout );
   }
@@ -253,6 +321,14 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
   messageDisplayTimeout = setTimeout( () => {
     document.getElementById( "saved-message" ).style.display = "none";
   }, 2000 );
+} );
+
+document.getElementById( "discard-button" ).addEventListener( "click", () => {
+  data = { ...initialState };
+  setInputValues( { ...initialState } );
+  opacitySlider.value = initialOpacity;
+  document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ initialOpacity / 100 })`;
+  handleSaveAndDiscard();
 } );
 
 // seed copy-to-clipboard button logic
@@ -280,6 +356,8 @@ seedCopyButtonFilled.addEventListener( "click", copySeed );
 const clearSeedButton = document.getElementById( "clear-seed" );
 clearSeedButton.addEventListener( "click", () => {
   seedEl.value = "";
+  data.seed = "";
+  handleSaveAndDiscard();
 } );
 
 // handle importing
@@ -402,4 +480,5 @@ setInterval( () => {
 
 opacitySlider.addEventListener( "input", event => {
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ event.target.value / 100 })`;
+  handleSaveAndDiscard( true );
 } );
