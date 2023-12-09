@@ -10,7 +10,6 @@ import cmpLevels from "../../dustkid-data/cmp-levels.json";
 // use nw.require() instead of require() or import to make it actually available
 const fs = nw.require( "fs" );
 const path = nw.require( "path" );
-// const open = nw.require( "open" );
 const { exec } = nw.require( "child_process" );
 
 const { dustforceDirectory } = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
