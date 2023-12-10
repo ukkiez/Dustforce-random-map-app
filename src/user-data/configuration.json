@@ -1,12 +1,7 @@
 {
   "initialSetupDone": true,
-  "hotkeys": {
-    "start": "",
-    "replay": "",
-    "reset": ""
-  },
   "dustforceDirectory": "/Users/yannickk/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/",
   "styling": {
-    "opacity": 40
+    "opacity": 72
   }
 }
