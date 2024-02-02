@@ -7,6 +7,8 @@ import { settingsPath } from "./initialize.js";
 import { formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
+import cmpLevels from "../dustkid-data/cmp-levels.json";
+
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
 const settings = JSON.parse( fs.readFileSync( settingsPath ) );
@@ -37,6 +39,30 @@ let data = {
 let initialState = {
   ...settings,
 };
+
+const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+const getMapPoolSize = () => {
+  const mapPool = new Set();
+  for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
+    if ( !data.CMPLevels ) {
+      if ( cmpLevels.includes( levelFilename ) ) {
+        // don't include cmp levels, as the user set them to be off
+        continue;
+      }
+    }
+
+    const { ss_count, fastest_time } = metadata;
+    if ( ss_count >= data.minSSCount && fastest_time <= data.fastestSSTime ) {
+      mapPool.add( levelFilename );
+    }
+  }
+
+  return mapPool.size;
+}
+const setMapPoolSize = () => {
+  const mapPoolNumberEl = document.getElementById( "map-pool-size-number" );
+  mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
+}
 
 const setInputValues = ( _settings ) => {
   const {
@@ -84,8 +110,9 @@ const opacitySlider = document.getElementById( "app-opacity-range" );
 opacitySlider.value = opacity;
 let initialOpacity = opacity;
 
-// initialize the input values
+// initialize the input values and map pool size
 setInputValues( settings );
+setMapPoolSize();
 
 const objectDiff = ( object1, object2, ignoredKeys = [] ) => {
   for ( const [ key, field ] of Object.entries( object1 ) ) {
@@ -103,7 +130,7 @@ const objectDiff = ( object1, object2, ignoredKeys = [] ) => {
 };
 
 const stateHasChanged = () => {
-  return objectDiff( initialState, data );
+  return objectDiff( initialState, data, [ "settingsName" ] );
 };
 
 const handleSettingsName = () => {
@@ -125,7 +152,7 @@ const can = {
   save: false,
   discard: false,
 };
-const handleSaveAndDiscard = ( force = false ) => {
+const handleStateChange = ( force = false ) => {
   let diff = false;
   if ( !force ) {
     diff = stateHasChanged();
@@ -145,6 +172,13 @@ const handleSaveAndDiscard = ( force = false ) => {
     can.discard = false;
     addClass( document.getElementById( "discard-button" ), "hidden" );
   }
+
+  // check if the settings name should be changed (e.g. Classic Mode to Custom
+  // Mode)
+  handleSettingsName();
+
+  // recalculate the map pool size
+  setMapPoolSize();
 };
 
 const saveData = ( _data ) => {
@@ -165,8 +199,7 @@ const addCheckboxListener = ( element, field = "", callback ) => {
       callback( event );
     }
 
-    handleSettingsName();
-    handleSaveAndDiscard();
+    handleStateChange();
   } );
 }
 
@@ -200,8 +233,7 @@ const addInputListener = ( element, field = "", transform, hasMin = false, hasMa
       callback( event );
     }
 
-    handleSettingsName();
-    handleSaveAndDiscard();
+    handleStateChange();
   } );
 }
 
@@ -226,7 +258,7 @@ const addFocusOutListener = ( element, field = "", transform, callback ) => {
       callback( event );
     }
 
-    handleSaveAndDiscard();
+    handleStateChange();
   } );
 }
 
@@ -261,7 +293,7 @@ for ( const button of settingsListEl.children ) {
       settingsListEl.classList.remove( "hidden" );
     }, 100 );
 
-    handleSaveAndDiscard();
+    handleStateChange();
   } );
 }
 
@@ -311,7 +343,7 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
 
   initialOpacity = parseInt( opacitySlider.value, 10 );
 
-  handleSaveAndDiscard();
+  handleStateChange();
 
   if ( messageDisplayTimeout ) {
     clearTimeout( messageDisplayTimeout );
@@ -328,7 +360,7 @@ document.getElementById( "discard-button" ).addEventListener( "click", () => {
   setInputValues( { ...initialState } );
   opacitySlider.value = initialOpacity;
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ initialOpacity / 100 })`;
-  handleSaveAndDiscard();
+  handleStateChange();
 } );
 
 // seed copy-to-clipboard button logic
@@ -357,7 +389,7 @@ const clearSeedButton = document.getElementById( "clear-seed" );
 clearSeedButton.addEventListener( "click", () => {
   seedEl.value = "";
   data.seed = "";
-  handleSaveAndDiscard();
+  handleStateChange();
 } );
 
 // handle importing
@@ -449,36 +481,7 @@ importSettingsInput.addEventListener( "change", () => {
   reader.readAsBinaryString( file );
 } );
 
-import cmpLevels from "../dustkid-data/cmp-levels.json";
-const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
-const getMapPoolSize = () => {
-  const mapPool = new Set();
-  for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
-    if ( !data.CMPLevels ) {
-      if ( cmpLevels.includes( levelFilename ) ) {
-        // don't include cmp levels, as the user set them to be off
-        continue;
-      }
-    }
-
-    const { ss_count, fastest_time } = metadata;
-    if ( ss_count >= data.minSSCount && fastest_time <= data.fastestSSTime ) {
-      mapPool.add( levelFilename );
-    }
-  }
-
-  return mapPool.size;
-}
-const mapPoolNumberEl = document.getElementById( "map-pool-size-number" );
-mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
-
-setInterval( () => {
-  // calculate and display the map pool from the current settings every x
-  // milliseconds
-  mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
-}, 100 );
-
 opacitySlider.addEventListener( "input", event => {
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ event.target.value / 100 })`;
-  handleSaveAndDiscard( true );
+  handleStateChange( true );
 } );
