@@ -60,8 +60,20 @@ const getMapPoolSize = () => {
   return mapPool.size;
 }
 const setMapPoolSize = () => {
+  const mapPoolEl = document.getElementById( "map-pool-size" );
   const mapPoolNumberEl = document.getElementById( "map-pool-size-number" );
-  mapPoolNumberEl.innerText = getMapPoolSize().toLocaleString( "en-US" );
+  const poolSize = getMapPoolSize();
+  mapPoolNumberEl.innerText = poolSize.toLocaleString( "en-US" );
+
+  if ( poolSize <= 0 ) {
+    addClass( mapPoolEl, "error" );
+    // make sure the save button is disabled, since no maps are left in the pool
+    // with the currently-selected settings
+    addClass( document.getElementById( "save-button" ), "disabled" );
+  }
+  else {
+    removeClass( mapPoolEl, "error" );
+  }
 }
 
 const setInputValues = ( _settings ) => {

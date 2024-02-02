@@ -26,16 +26,16 @@ button {
   margin-left: 0.1rem;
 }
 
-.setting-container {
-
-}
-
 .disabled * > label {
   color: #4c5763;
 }
 .disabled * > input {
   color: #4c5763;
   background-color: #384049;
+}
+
+.error {
+  color: #c82424 !important;
 }
 
 .links-container {
