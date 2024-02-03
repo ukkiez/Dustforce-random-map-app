@@ -1,4 +1,5 @@
 body {
+  color: #afe2ff;
   overflow-y: scroll;
 }
 
@@ -183,7 +184,7 @@ input {
   slightly further beyond */
   box-sizing: border-box;
 
-  background-color: #708396;
+  background-color: #2e5c8a;
   color: aliceblue;
 
   border-radius: 0.15rem;
@@ -194,7 +195,7 @@ input {
 }
 input::placeholder {
   font-style: italic;
-  color:#92a8bd;
+  color:#5d94c8;
   font-size: 0.65rem;
 }
 input[type="checkbox"] {

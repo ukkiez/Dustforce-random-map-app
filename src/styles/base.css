@@ -1,0 +1,65 @@
+@font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
+
+html {
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  margin: 1rem 0.5rem 0rem 0.5rem;
+  height: 100%;
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX( -100% );
+  }
+  100% {
+    transform: translateX( 0 );
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+body {
+  /* animation: 0.3s ease-out 0s 1 slideInLeft; */
+  animation: fadeIn 0.4s;
+
+  /* font-family: "Dosis", sans-serif; */
+  /* font-family: "ABeeZee", sans-serif; */
+  /* font-family: "Technology", sans-serif; */
+  font-family: "Caracteres", sans-serif;
+
+  color: #95c4ec;
+  background: rgba(0, 0, 0, 0.40);
+
+  font-size: 1rem;
+
+  overflow: hidden;
+
+  /* make sure the body doesn't increase its height beyond the window size, so
+  we can have the split container actually resize itself based on the body
+  height */
+  height: 100%;
+
+  width: -webkit-fill-available;
+  /* width: 100%; */
+
+  display: inline-block;
+
+  margin: 0;
+  padding: 0;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* remove the annoying "selection outline" when clicking on buttons */
+button:focus {
+  outline: none;
+}

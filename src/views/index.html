@@ -4,15 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles/base.css" />
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/timers.css" />
+    <link rel="stylesheet" href="../styles/challenge.css" />
     <title>Random Map App</title>
   </head>
 
-  <template>
+  <template id="main-hub-template">
     <svg id="close-app-btn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon bi bi-x" viewBox="0 0 16 16">
       <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
     </svg>
+
+    <div id="points-icon-container">
+      <span id="mode">??? Mode</span>
+      <img class="animated" id="points-icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
+    </div>
 
     <div class="hub-btn-container">
       <button id="start-btn" type="button" class="hub-btn animation-slow-fade-repeat">
@@ -29,21 +36,36 @@
       </div>
     </div>
 
-    <div id="map-info">
-      <div id="map-info-name" class="map-info-text">map</div>
-      <div id="map-info-author" class="map-info-text">author</div>
-      <span id="seed"></span>
-    </div>
-
-    <div id="points-icon-container">
-      <img class="animated" id="points-icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
-
-      <span id="points-icon-text">0</span>
-    </div>
+    <div id="seed"></div>
 
     <div id="settings-icon-container">
       <img id="settings-icon" alt="Cog Icon" src="../assets/settings-icon.png" />
       <span class="tooltip-text">Settings</span>
+    </div>
+
+    <div id="skips-container">
+      <span id="skips" class="skip-class">Skips remaining: 1</span>
+    </div>
+  </template>
+
+
+
+  <template id="challenge-run-template">
+    <div class="timers-container" id="timers-container">
+      <div class="timer" id="main-time">
+        0.00
+      </div>
+    </div>
+
+    <div id="map-info">
+      <div id="map-info-name" class="map-info-text clickable">map</div>
+      <div id="map-info-author" class="map-info-text">author</div>
+    </div>
+
+    <div id="points-icon-container">
+      <img id="points-icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
+
+      <span id="points-icon-text">0</span>
     </div>
 
     <div id="skips-container">

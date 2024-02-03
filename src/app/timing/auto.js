@@ -1,4 +1,4 @@
-import { settingsPath, timers, runData } from "../initialize.js";
+import { initChallengeRunBody, runData, settingsPath, timers } from "../initialize.js";
 
 import { reset } from "../reset.js";
 
@@ -185,28 +185,7 @@ let initialized = false;
 let watcher;
 const startAndSkip = () => {
   if ( !initialized ) {
-    // hide the close-app button during runs
-    document.getElementById( "close-app-btn" ).style.display = "none";
-
-    // don't allow going to the settings page, as it would load a different
-    // page, and therefore stop the current run permanently
-    document.getElementById( "settings-icon-container" ).style.display = "none";
-
-    // hide the seed, as there is no place on the screen for it at the moment
-    document.getElementById( "seed" ).style.display = "none";
-
-    // hide the hub buttons, and load the challenge run buttons
-    const hubButtonContainer = document.querySelector( ".hub-btn-container" );
-    hubButtonContainer.style.display = "none";
-
-    // give the map name element a class that visually indicates you can click
-    // it (to go to the map's Atlas page)
-    document.getElementById( "map-info-name" ).classList.add( "clickable" );
-
-    const challengeButtons = document.getElementsByClassName( "challenge-run-btn" );
-    for ( const button of challengeButtons ) {
-      button.style.visibility = "visible";
-    }
+    initChallengeRunBody();
 
     if ( !_skipsOn ) {
       addClass( document.getElementById( "skips" ), "none" );
@@ -370,8 +349,9 @@ const startAndSkip = () => {
 };
 
 export const initialize = () => {
-  document.getElementById( "start-btn" ).addEventListener( "click", startAndSkip );
-  document.getElementById( "skip-btn" ).addEventListener( "click", startAndSkip );
+  // TODO: make this work with replacing the template
+  document.getElementById( "start-btn" )?.addEventListener( "click", startAndSkip );
+  document.getElementById( "skip-btn" )?.addEventListener( "click", startAndSkip );
 
   // handle the timer's finish event emitter
   timers[ 0 ].on( "finished", () => {
@@ -379,13 +359,13 @@ export const initialize = () => {
     watcher.close();
   } );
 
-  document.getElementById( "replay-btn" ).addEventListener( "click", () => {
+  document.getElementById( "replay-btn" )?.addEventListener( "click", () => {
     if ( timers[ 0 ].hasStarted ) {
       installAndMaybePlay( currentLevel, true );
     }
   } );
 
-  document.getElementById( "reset-btn" ).addEventListener( "click", () => {
+  document.getElementById( "reset-btn" )?.addEventListener( "click", () => {
     initialized = false;
     choiceIndex = 0;
 

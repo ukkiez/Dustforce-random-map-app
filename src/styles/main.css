@@ -1,97 +1,29 @@
-@import url( "https://fonts.googleapis.com/css2?family=ABeeZee&display=swap" );
-
-@font-face { font-family: Dosis; src: url( "../assets/fonts/Dosis.ttf" );}
 @font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
-@font-face { font-family: Technology; src: url( "../assets/fonts/Technology.ttf" );}
-
-html {
-  user-select: none;
-  -webkit-font-smoothing: antialiased;
-  margin: 1rem 0.5rem 0rem 0.5rem;
-  height: 100%;
-}
-
-@keyframes slideInLeft {
-  0% {
-    transform: translateX( -100% );
-  }
-  100% {
-    transform: translateX( 0 );
-  }
-}
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-body {
-  /* animation: 0.3s ease-out 0s 1 slideInLeft; */
-  animation: fadeIn 0.4s;
-
-  /* font-family: "Dosis", sans-serif; */
-  /* font-family: "ABeeZee", sans-serif; */
-  font-family: "Caracteres", sans-serif;
-  /* font-family: "Technology", sans-serif; */
-
-  color: #95c4ec;
-  background: rgba(0, 0, 0, 0.40);
-
-  font-size: 1rem;
-
-  overflow: hidden;
-
-  /* make sure the body doesn't increase its height beyond the window size, so
-  we can have the split container actually resize itself based on the body
-  height */
-  height: 100%;
-
-  width: -webkit-fill-available;
-  /* width: 100%; */
-
-  display: inline-block;
-
-  margin: 0;
-  padding: 0;
-}
-
-::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
-}
-
-/* remove the annoying "selection outline" when clicking on buttons */
-button:focus {
-  outline: none;
-}
 
 #close-app-btn {
   position: absolute;
-  right: 4vw;
-  top: 3vh;
-  height: 1.1rem;
-  width: 1.1rem;
+  right: 1vw;
+  top: 0.5vw;
+  height: 10vw;
+  width: 10vw;
   color: #bf2020;
-  border: #bf2020 0.1rem solid;
-  border-radius: 0.25rem;
+  /* border: #bf2020 0.1rem solid;
+  border-radius: 0.25rem; */
   outline: none;
   cursor: pointer;
   transition: background-color 0.4s, color 0.4s;
 }
 #close-app-btn:hover {
-  background-color: #bf2020;
-  color: #4b0d0d;
+  color: #ff3939;
+  /* background-color: #bf2020; */
   transition: 0s;
-  border: transparent 0.1rem solid;
+  /* border: transparent 0.1rem solid; */
 }
 #close-app-btn:active {
   color: #bf2020;
-  background-color: #821818;
+  /* background-color: #821818; */
   transition: 0s;
-  border: transparent 0.1rem solid;
+  /* border: transparent 0.1rem solid; */
 }
 
 #map-info {
@@ -100,6 +32,7 @@ button:focus {
   position: relative;
   left: 0.3rem;
   margin-top: 0.25rem;
+  height: 11.5vh;
 }
 .map-info-text {
   text-overflow: ellipsis;
@@ -111,19 +44,15 @@ button:focus {
 }
 #map-info-author {
   color: #a8a7a7;
-  /* font-size: 0.8rem; */
 }
 #map-info-name.clickable:hover {
   text-decoration: underline;
   cursor: pointer;
 }
-
 #seed {
-  position: absolute;
   font-size: 7.5vw;
   color: #95c4ec;
-  right: 3.5vw;
-  bottom: 0.3rem;
+  min-height: 9vw;
 }
 
 @keyframes spin {
@@ -137,30 +66,45 @@ button:focus {
   }
 }
 
+@keyframes opac {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.15;
+  }
+}
+
 #points-icon-container {
-  margin-top: 1rem;
-  height: 22vh;
+  -webkit-app-region: drag;
+  display: flex;
   position: relative;
+  height: 16vh;
+  align-items: center;
+  margin-bottom: 2.5vw;
+  width: 80vw;
+  margin-left: 0.3rem;
+}
+#mode {
+  font-size: 13vw;
+  color: #dadada;
+  border-bottom: 0.15rem solid #4c677f;
+  outline: aliceblue;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 #points-icon {
-  /* width: 3.75rem; */
-  height: 92%;
+  position: absolute;
+  height: 222%;
+  left: 21vw;
+  top: -3vw;
+  opacity: 0.15;
+  z-index: -1;
 }
 #points-icon.animated {
-  animation: spin3d 0.75s;
-}
-#points-icon.animated2 {
-  animation: spin 0.5s;
-}
-#points-icon-text {
-  color: #95c4ec;
-  font-size: 14vh;
-  position: absolute;
-  top: 50%;
-  margin-top: -8vh;
-  margin-left: 2vw;
-
-  animation: fadeIn 1s;
+  animation: spin3d 0.75s, opac 0.75s;
 }
 
 #skips-container {
@@ -240,7 +184,7 @@ button:focus {
 }
 
 .hub-btn-container {
-  margin-left: 1vw;
+  margin-left: 0.3rem;
   margin-bottom: 3.5vh;
 }
 .hub-btn {
@@ -256,10 +200,6 @@ button:focus {
   align-items: center;
   font-size: 7.5vw;
   padding-top: 0.1rem;
-
-  /* color: #f0f0f0;
-  background-color: #03694d;
-  border: #03694d 0.1rem solid; */
 
   border: #049770 0.1rem solid;
   color: #049770;
@@ -293,92 +233,6 @@ button:focus {
   animation-delay: 1s;
 }
 
-#challenge-btn-container {
-  margin-top: 4vh;
-  margin-left: 1vw;
-}
-.challenge-run-btn {
-  visibility: hidden;
-
-  font-family: "Caracteres", sans-serif;
-  border: none;
-  border-radius: 0.25rem;
-  outline: none;
-  transition: background-color 0.4s, color 0.4s;
-  cursor: pointer;
-
-  overflow: hidden;
-  background-color: transparent;
-  display: inline-flex;
-  font-size: 6.5vw;
-  align-items: center;
-  padding-top: 0.1rem;
-}
-.challenge-run-btn:hover {
-  transition: 0s;
-}
-.challenge-run-btn:active {
-  transition: 0s;
-}
-
-.neutral-btn {
-  border: #95c4ec 0.1rem solid;
-  color: #95c4ec;
-}
-.neutral-btn:hover {
-  background-color: #95c4ec;
-  color: #31475b;
-  border: transparent 0.1rem solid;
-}
-.neutral-btn:active {
-  color: #95c4ec;
-  background-color: #45749b;
-  border: #203547 0.1rem solid;
-}
-
-.warning-btn {
-  border: #de8251 0.1rem solid;
-  color: #de8251;
-}
-.warning-btn:hover {
-  background-color: #d5733e;
-  color: #582d16;
-  border: transparent 0.1rem solid;
-}
-.warning-btn:active {
-  color: #de8251;
-  background-color: #582d16;
-  border: #311a0d 0.1rem solid;
-}
-
-@keyframes spin-ccw {
-  100% {
-    transform: rotate( -360deg );
-  }
-}
-.animation-spin-cww:hover .btn-icon {
-  animation: spin-ccw 0.5s;
-}
-
-@keyframes animation-squeeze {
-  50% {
-    transform: scale3d(1.5, 0.5, 0.3);
-  }
-  100% {
-    transform: scale3d(1, 1, 1);
-  }
-}
-.animation-squeeze:hover .btn-icon {
-  animation: animation-foo 0.5s;
-}
-
-.disabled-btn {
-  background-color: transparent;
-  color: #4f4f4f;
-  border: #4f4f4f 0.1rem solid;
-  pointer-events: none;
-}
-
 .btn-icon {
   width: 9vw;
   height: 9vh;
@@ -390,30 +244,4 @@ button:focus {
 .btn-text {
   position: relative;
   top: 0.05rem;
-}
-
-#reset-btn {
-  font-size: 4vw;
-  margin-left: 8vw;
-}
-#reset-btn .btn-icon {
-  width: 6vw;
-  height: 6vh;
-}
-#reset-btn {
-  border: #bf2020 0.1rem solid;
-  color: #bf2020;
-}
-#reset-btn:hover {
-  background-color: #bf2020;
-  color: #4b0d0d;
-  border: transparent 0.1rem solid;
-}
-#reset-btn:active {
-  color: #bf2020;
-  background-color: #821818;
-  border: #390a0a 0.1rem solid;
-}
-#reset-btn .btn-text {
-  top: 0;
 }

@@ -5,6 +5,10 @@
 
 #main-time {
   color: #efefef;
-  font-size: 16vw;
+  font-size: 12vw;
+  letter-spacing: 0.1rem;
+}
+#main-time.running {
+  font-size: 16vw !important;
   letter-spacing: 0.2rem;
 }

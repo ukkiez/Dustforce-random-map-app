@@ -83,8 +83,8 @@ export const switchPage = ( currentPage, destination ) => {
 
 let iconAnimationTimeout;
 const initMainBody = () => {
-  const temp = document.getElementsByTagName( "template" )[ 0 ];
-  const clone = temp.content.cloneNode( true );
+  const template = document.getElementById( "main-hub-template" );
+  const clone = template.content.cloneNode( true );
   document.body.replaceChildren( clone );
 
   document.getElementById( "close-app-btn" ).addEventListener( "click", () => {
@@ -104,8 +104,17 @@ const initMainBody = () => {
     }, 200 );
   } );
 
+  const mapInfoElements = document.getElementsByClassName( "map-info-text" );
+  for ( const element of mapInfoElements ) {
+    element.style.display = "none";
+  }
+
   if ( settings.seed ) {
     document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
+  }
+
+  if ( settings.settingsName ) {
+    document.getElementById( "mode" ).innerText = `${ settings.settingsName } Mode`;
   }
 
   if ( !settings.skips ) {
@@ -113,6 +122,8 @@ const initMainBody = () => {
     skips.innerText = "No Skips";
     addClass( skips, "none" );
   }
+
+  console.log( "FOO" );
 
   if ( iconAnimationTimeout ) {
     clearTimeout( iconAnimationTimeout );
@@ -186,9 +197,41 @@ const initRunData = () => {
   }
 };
 
+export const initChallengeRunBody = () => {
+  const template = document.getElementById( "challenge-run-template" );
+  const clone = template.content.cloneNode( true );
+  document.body.replaceChildren( clone );
+
+  initTimers( true );
+  initRunData();
+
+  import( "./timing/auto.js" ).then( ( { initialize } ) => {
+    initialize();
+  } );
+}
+
 const { href } = window.location;
 const split = href.split( "/" );
 const page = split[ split.length - 1 ];
+
+const template = document.getElementById( "challenge-run-template" );
+const giveChildrenClass = ( tag, _class ) => {
+  if ( tag.children?.length ) {
+    for ( const child of tag.children ) {
+      addClass( child, _class );
+
+      if ( child.children?.length ) {
+        giveChildrenClass( child, _class );
+      }
+    }
+  }
+}
+if ( template?.content?.children ) {
+  for ( const child of template.content.children ) {
+    addClass( child, "challenge" );
+    giveChildrenClass( child, "challenge" );
+  }
+}
 
 export const init = () => {
   // set the user configured opacity
@@ -201,8 +244,7 @@ export const init = () => {
   else if ( !config.initialSetupDone ) {
     if ( page !== "setup.html" ) {
       // go to the initial setup page, where we'll confirm the dustforce
-      // directory, and which hotkeys the user wants to use; this will only
-      // happen the first time someone ever opens the app
+      // directory; this will only happen the first time someone opens the app
       switchPage( "", "./setup.html" );
     }
     return;
