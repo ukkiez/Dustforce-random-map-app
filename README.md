@@ -1,9 +1,9 @@
 # Random Map App (RMA)
 
-Inspired by the "RMC" plugin in Trackmania, this app automatically loads players
-into random Dustforce custom levels. The goal is to score as many points in the
-time limit. Where in Trackmania Author Medals give 1 point and Gold Medals give
-free skips, here it's SS'ing and Any%'ing levels.
+Inspired by the "RMC" plugin in Trackmania, this App automatically loads players
+into random Dustforce custom levels, and the goal is to score as many points in
+a given time limit. SS completions score 1 point each, and Any%'ing gives a free
+skip for that level.
 
 There's various settings to change the random level set and the rules of your
 runs. Features include:
