@@ -151,7 +151,7 @@
   top: 0;
 }
 
-@keyframes opacity-for-splash {
+/* @keyframes opacity-for-splash {
   0%, 80% {
     opacity: 0.3;
   }
@@ -162,8 +162,6 @@
     display: none;
   }
 }
-/* overlay an opaque rectangle over the entire screen BEHIND the splash
-images/text to give the illusion that everything behind it is opaque */
 #splash-overlay {
   position: fixed;
   padding: 0;
@@ -212,8 +210,8 @@ images/text to give the illusion that everything behind it is opaque */
 }
 .splash-slider {
   position: relative;
-  width: 30vw;
-  height: 30vw;
+  width: 25vw;
+  height: 25vw;
 }
 .slider2 {
   width: 30vw;
@@ -264,4 +262,4 @@ images/text to give the illusion that everything behind it is opaque */
   pointer-events: none;
 
   animation: splash-text 1.25s forwards;
-}
+} */
