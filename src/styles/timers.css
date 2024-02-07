@@ -9,6 +9,7 @@
   letter-spacing: 0.1rem;
 }
 #main-time.running {
+  margin-top: 4vw;
   font-size: 16vw !important;
   letter-spacing: 0.2rem;
 }

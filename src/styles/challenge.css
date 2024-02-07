@@ -21,6 +21,30 @@
   margin-left: 2vw;
 }
 
+#map-info {
+  color: #c3c3c3;
+  font-size: max( 5vh, 5vw );
+  position: relative;
+  left: 0.3rem;
+  margin-top: 0.25rem;
+  height: 11.5vh;
+}
+.map-info-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#map-info-name, #map-info-author {
+  margin: 0;
+}
+#map-info-author {
+  color: #a8a7a7;
+}
+#map-info-name.clickable:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 #challenge-btn-container {
   margin-top: 4vh;
 }
