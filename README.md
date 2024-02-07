@@ -1,14 +1,14 @@
 # Random Map App (RMA)
 
-Inspired by the "RMC" plugin in Trackmania, this app automatically loads players into
-random Dustforce custom levels. Where in Trackmania Author Medals give 1 point
-and Gold Medals give free skips, here it's SS'ing and Any%'ing levels.
+Inspired by the "RMC" plugin in Trackmania, this app automatically loads players
+into random Dustforce custom levels. The goal is to score as many points in the
+time limit. Where in Trackmania Author Medals give 1 point and Gold Medals give
+free skips, here it's SS'ing and Any%'ing levels.
 
-The level pool itself can be altered via various configurable settings, which
-also includes other settings that change the rules of the game. The settings
-consist of things such as:
-- Filter levels by minimum SS count
-- Filter levels by fastest WR SS time (and below)
+There's various settings to change the random level set and the rules of your
+runs. Features include:
+- Filtering levels by minimum SS count
+- Filtering levels by fastest WR SS time (and below)
 - How many free starting skips are given to players
 - Set seeds for racing
 
@@ -52,7 +52,7 @@ In order to be as responsive as possible, RMA does not fetch data from [Dustkid.
 Most of the time RMA can find it automatically. However, if the installation is in an unexpected location then you'll have to follow the instructions in the App. This amounts to just selecting your Dustforce folder, or any folder within it. You'll only need to do this the first time you open RMA.
 
 ---
-> *RMA does not recognize I'm completing levels.*
+> *RMA does not recognize I'm completing levels - what do I do?*
 
 Make sure when you start Dustforce, you do it manually and not have it automatically open via a link (e.g. opening a Dustkid replay, or pressing Install & Play on Atlas). At the time of writing this, there is a bug in Dustmod that doing so will not update `split.txt`.
 
