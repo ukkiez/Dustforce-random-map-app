@@ -10,7 +10,7 @@ export const modes = {
     fastestSSTime: 90000,
     skips: true,
     freeSkips: 1,
-    freeSkipAfterXSolvedLevels: 0,
+    freeSkipAfterXSolvedLevels: 10,
     CMPLevels: false
   },
 
@@ -21,7 +21,7 @@ export const modes = {
     fastestSSTime: 45000,
     skips: true,
     freeSkips: 1,
-    freeSkipAfterXSolvedLevels: 0,
+    freeSkipAfterXSolvedLevels: 10,
     CMPLevels: false
   },
 
