@@ -43,6 +43,7 @@ export const switchPage = async ( currentPage, destination ) => {
           height: windowSettingsCache.size.height,
           maxWidth: windowSettingsCache.size.maxWidth,
           maxHeight: windowSettingsCache.size.maxHeight,
+          resizable: true,
         } );
       }
       if ( windowSettingsCache?.position ) {
