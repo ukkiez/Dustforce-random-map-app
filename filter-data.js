@@ -19,7 +19,7 @@ const fs = require( "fs" );
 const solversData = require( "./src/dustkid-data/solvers.json" );
 const levelMetadata = require( "./src/dustkid-data/levels.json" );
 
-const destination = `${ __dirname }/src/dustkid-data/filtered-metadata.json`;
+const destination = "./src/dustkid-data/filtered-metadata.json";
 
 const ssCountByFilename = new Map();
 for ( const [ filename, solvers ] of Object.entries( solversData ) ) {

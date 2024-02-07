@@ -1,8 +1,10 @@
 import { log } from "./util/log.js";
 
+import { paths } from "./paths.js";
+
 import { switchPage } from "./initialize.js";
 
-const setupData = JSON.parse( await Neutralino.filesystem.readFile( "./src/user-data/configuration.json" ) );
+const setupData = JSON.parse( await Neutralino.filesystem.readFile( paths.configuration ) );
 
 const os = NL_OS; // eslint-disable-line no-undef
 log( os );
@@ -52,7 +54,7 @@ const finish = async () => {
 
   setupData.dustforceDirectory = dustforceDirectory;
 
-  await Neutralino.filesystem.writeFile( "src/user-data/configuration.json", JSON.stringify( setupData, null, 2 ) );
+  await Neutralino.filesystem.writeFile( paths.configuration, JSON.stringify( setupData, null, 2 ) );
   await sleep( 750 );
 
   switchPage( "setup.html", "index.html" );

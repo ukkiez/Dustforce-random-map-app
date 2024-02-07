@@ -1,5 +1,7 @@
 import { log } from "./util/log.js";
 
+import { paths } from "./paths.js";
+
 import { Timer } from "./classes/timer.js";
 import { objectDiff } from "./util/index.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
@@ -10,8 +12,8 @@ import { modes } from "../settings/modes.js";
 let config;
 let settings;
 try {
-  config = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/configuration.json" ) );
-  settings = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/settings.json" ) );
+  config = JSON.parse( await Neutralino.filesystem.readFile( paths.configuration ) );
+  settings = JSON.parse( await Neutralino.filesystem.readFile( paths.settings ) );
 }
 catch ( error ) {
   console.error( error );

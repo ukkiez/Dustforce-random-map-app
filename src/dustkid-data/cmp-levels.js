@@ -1,4 +1,4 @@
-[
+export const cmpLevels = [
   "4M00N-2041",
   "8pixelbit-hit-2057",
   "Abandoned-Core-2060",

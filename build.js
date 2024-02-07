@@ -1,5 +1,3 @@
-const NwBuilder = require( "nw-builder" );
-
 const fs = require( "fs" );
 const { promises: fsPromises } = fs;
 
@@ -9,14 +7,14 @@ const { exec } = require( "child_process" );
 
 const execAsync = ( command, log ) => {
   return new Promise( ( resolve, reject ) => {
-    const child = exec( command, {
+    exec( command, {
       encoding: "utf8",
-    }, ( error, stdout, stderr ) => {
+    }, ( error, stdout ) => {
       if ( error ) {
         reject( error );
       }
 
-      if ( log ) {
+      if ( log && stdout ) {
         console.log( stdout );
       }
 
@@ -46,73 +44,97 @@ async function copyDir( src, dest, exclusions = [] ) {
   }
 }
 
-// build Mac and Linux versions
-const nw = new NwBuilder( {
-  files: [ "./src/**/*" ],
-  version: "0.52.2",
-  flavor: "normal",
-  platforms: [ "osx64", "linux32", "linux64" ],
-  cacheDir: "./cache",
-  forceDownload: false,
-  buildDir: "./dist",
-  appName: "random-map-app",
-  appVersion: "0.0.1",
-  macIcns: "./src/assets/s-complete-icon.icns",
-  winIco: "./src/assets/s-complete-icon.icns",
-} );
+const baseDir = "./dist/random-map-app";
+const resources = path.join( baseDir, "resources.neu" );
+const settingsDataDir = "./default-user-data";
 
-( async () => {
-  await nw.build();
-  console.log( "> Built Mac&Linux" );
-
-  // create a tar file for distribution
-  await execAsync( "tar -cvzf dist/RMA-osx64.tar.gz dist/random-map-app/osx64", true );
-  await execAsync( "tar -cvzf dist/RMA-linux32.tar.gz dist/random-map-app/linux32", true );
-  await execAsync( "tar -cvzf dist/RMA-linux64.tar.gz dist/random-map-app/linux64", true );
-} )();
-
-// construct the Windows build manually, since this version of nw-builder can't
-// do it, and newer versions don't actually properly function; note that this
-// assumes the NW binaries have been downloaded and put in the cache beforehand
-const buildPath = "./dist/win32";
-const srcPath = "./src";
-const nwBinaries = "./cache/0.52.2-normal/win32";
-try {
-  // remove any existing build
-  fs.rmSync( buildPath, { recursive: true } );
+const chMod = async ( filepath ) => {
+  // give execution permissions
+  await execAsync( `chmod +x ${ filepath }`, true );
 }
-catch ( e ) {}
 
-fs.mkdirSync( buildPath );
-fs.mkdirSync( path.join( buildPath, "package.nw" ) );
+const filenameByArchs = {
+  "linux_x64": {
+    filename: "Random-Map-App",
+    transform: chMod,
+  },
+  "linux_armhf": {
+    filename: "Random-Map-App",
+    transform: chMod,
+  },
+  "linux_arm64": {
+    filename: "Random-Map-App",
+    transform: chMod,
+  },
+  "mac_x64": {
+    filename: "Random-Map-App.app",
+    transform: chMod,
+  },
+  "mac_universal": {
+    filename: "Random-Map-App.app",
+    transform: chMod,
+  },
+  "mac_arm64": {
+    filename: "Random-Map-App.app",
+    transform: chMod,
+  },
+  "win_x64.exe": {
+    filename: "Random-Map-App.exe",
+    dirname: "win_x64",
+  },
+};
+
+const baseFilename = "random-map-app-";
 ( async () => {
-  await copyDir( nwBinaries, buildPath );
-  await copyDir( srcPath, path.join( buildPath, "/package.nw" ), [
-    "node_modules",
-    ".eslintrc.json",
-    "package-lock.json",
-    ".DS_Store",
-  ] );
-
-  // copy the package.json to a temporary folder, build only non-dev modules,
-  // and copy the folder to the build directory
-  if ( fs.existsSync( "./temp" ) ) {
-    fs.rmSync( "./temp", { recursive: true } );
+  // clean up the dist folder
+  try {
+    // remove any existing build
+    await fsPromises.rm( "./dist/random-map-app", { recursive: true } );
   }
-  fs.mkdirSync( "./temp" );
-  fs.copyFileSync( path.join( srcPath, "/package.json" ), "./temp/package.json" );
+  catch ( error ) {
+    console.error( error );
+  }
 
-  await execAsync( "npm i --omit=dev --prefix ./temp", true );
+  await execAsync( "neu build", true );
 
-  await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
+  // build full distributable packages for each architecture
+  for ( const [ arch, { filename, dirname, transform } ] of Object.entries( filenameByArchs ) ) {
+    // create directory
+    let destination;
+    if ( dirname ) {
+      destination = path.join( baseDir, dirname );
+    }
+    else {
+      // use the arch name as the directory name
+      destination = path.join( baseDir, arch );
+    }
 
-  // rename nw.exe
-  await fsPromises.rename( path.join( buildPath, "nw.exe" ), path.join( buildPath, "random-map-app.exe" ) );
+    await fsPromises.mkdir( destination );
 
-  // clean up
-  fs.rmSync( "./temp", { recursive: true } );
+    // move executable and apply a potential transform func to it
+    const defaultFilename = baseFilename + arch;
+    await execAsync( `mv ${ path.join( baseDir, defaultFilename ) } ${ path.join( destination, filename ) }`, true );
+    if ( transform ) {
+      await transform( path.join( destination, filename ) );
+    }
 
-  // create a tar file for distribution
-  await execAsync( "tar -cvzf dist/RMA-win32.tar.gz dist/win32", true );
-  console.log( "> Built Windows" );
+    // add a copy of resources.neu
+    await execAsync( `cp ${ resources } ${ destination }`, true );
+
+    // add the default user JSON settings
+    await copyDir( settingsDataDir, path.join( destination, "user-data" ) );
+  }
+
+  try {
+    // clean up the remaining resources.neu file
+    await fsPromises.rm( "./dist/random-map-app/resources.neu" );
+  }
+  catch ( error ) {
+    console.error( error );
+  }
 } )();
+
+// build steps:
+// - uncomment the PRODUCTION paths in src/paths.js
+// - disable inspector tools in the neutralino.config.json
+// - run `node build.js`

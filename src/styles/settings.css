@@ -221,63 +221,53 @@ input[type="checkbox"] {
   font-size: 0.85rem;
 }
 
-/* buttons */
 #back-button {
   cursor: pointer;
   font-size: 1.15rem;
+
+  border-radius: 0.1rem;
+  border-style: none;
+
+  background-color: #95c4ec;
+
   margin-bottom: 0.5rem;
-
-  color: #95c4ec;
-  background-color: transparent;
-
-  border: #95c4ec 0.1rem solid;
-  border-radius: 0.25rem;
-
-  transition: background-color 0.2s, color 0.2s;
 }
 #back-button:hover {
-  transition: 0s;
   color: #13435f;
   background-color: #9bccf6;
-  border: transparent 0.1rem solid;
 }
 #back-button:active {
-  transition: 0s;
-  color: #95c4ec;
-  background-color: #6288a9;
-  border: #1c2f42 0.1rem solid;
+  color: #0e3851;
+  background-color: #80a9cd;
 }
 
 #save-button {
   cursor: pointer;
   font-size: 1.15rem;
+
+  border-radius: 0.1rem;
+  border-style: none;
+
+  color: #4f4f4f;
+  background-color: #353535;
+
+  color: #03694d;
+  background-color: #06d6a0;
+
   margin-bottom: 0.5rem;
-
-  color: #06d6a0;
-  background-color: transparent;
-
-  border: #06d6a0 0.1rem solid;
-  border-radius: 0.25rem;
-
-  transition: background-color 0.2s, color 0.2s;
 }
 #save-button.disabled {
-  background-color: transparent;
   color: #4f4f4f;
-  border: #4f4f4f 0.1rem solid;
+  background-color: #353535;
   pointer-events: none;
 }
 #save-button:hover:not(.disabled) {
-  transition: 0s;
-  color: #03694d;
-  background-color: #06d6a0;
-  border: transparent 0.1rem solid;
+  color: #027a5a;
+  background-color: #04efb1;
 }
 #save-button:active:not(.disabled) {
-  transition: 0s;
-  color: #06d6a0;
-  background-color: #00654a;
-  border: #003225 0.1rem solid;
+  color: #025c44;
+  background-color: #05b486;
 }
 
 #discard-button {

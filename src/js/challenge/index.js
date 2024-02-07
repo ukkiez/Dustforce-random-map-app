@@ -1,5 +1,7 @@
 import { log } from "../util/log.js";
 
+import { paths } from "../paths.js";
+
 import { initChallengeRunBody, runData, timers } from "../initialize.js";
 
 import { reset } from "../reset.js";
@@ -11,16 +13,15 @@ import FileWatcher from "../classes/FileWatcher.js";
 
 // parse the filtered level metadata JSON file instead of importing it, so we
 // can be sure that on window reload we're getting all the new data
-const levelData = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/filtered-metadata.json" ) );
+import { filteredMetadata } from "../../dustkid-data/filtered-metadata.js";
+import { cmpLevels } from "../../dustkid-data/cmp-levels.js";
 
 const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse(
-  await Neutralino.filesystem.readFile( "src/user-data/settings.json" )
+  await Neutralino.filesystem.readFile( paths.settings )
 );
 
-const { dustforceDirectory } = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/configuration.json" ) );
+const { dustforceDirectory } = JSON.parse( await Neutralino.filesystem.readFile( paths.configuration ) );
 const splitFile = dustforceDirectory + "split.txt";
-
-const cmpLevels = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/cmp-levels.json" ) );
 
 const authorsById = new Map();
 
@@ -183,7 +184,7 @@ const startAndSkip = async () => {
     mapPool = [];
 
     // populate the map pool
-    for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
+    for ( const [ levelFilename, metadata ] of Object.entries( filteredMetadata ) ) {
       if ( !_CMPLevelsOn ) {
         if ( cmpLevels.includes( levelFilename ) ) {
           // don't include cmp levels, as the user set them to be off

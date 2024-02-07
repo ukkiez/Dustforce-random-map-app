@@ -1,4 +1,4 @@
-{
+export const filteredMetadata = {
   "Equidream-2082": {
     "name": "Equidream",
     "author": "KrackoCloud",

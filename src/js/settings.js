@@ -1,13 +1,17 @@
+import { paths } from "./paths.js";
+
 import { objectDiff } from "./util/index.js";
 import { formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
 import { modes } from "../settings/modes.js";
 
+import { filteredMetadata } from "../dustkid-data/filtered-metadata.js";
+import { cmpLevels } from "../dustkid-data/cmp-levels.js";
+
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
-const settings = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/settings.json" ) );
-const cmpLevels = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/cmp-levels.json" ) );
+const settings = JSON.parse( await Neutralino.filesystem.readFile( paths.settings ) );
 
 const settingsNameEl = document.getElementById( "settings-name" );
 const settingsListEl = document.getElementById( "settings-list" );
@@ -34,11 +38,9 @@ let initialState = {
   ...settings,
 };
 
-const levelData = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/filtered-metadata.json" ) );
-
 const getMapPoolSize = () => {
   const mapPool = new Set();
-  for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
+  for ( const [ levelFilename, metadata ] of Object.entries( filteredMetadata ) ) {
     if ( !data.CMPLevels ) {
       if ( cmpLevels.includes( levelFilename ) ) {
         // don't include cmp levels, as the user set them to be off
@@ -164,7 +166,7 @@ const handleStateChange = ( force = false ) => {
 };
 
 const saveData = async ( _data ) => {
-  await Neutralino.filesystem.writeFile( "src/user-data/settings.json", JSON.stringify( _data, null, 2 ) );
+  await Neutralino.filesystem.writeFile( paths.settings, JSON.stringify( _data, null, 2 ) );
   // reset the initial state to the newly saved state
   initialState = {
     ..._data,
@@ -309,10 +311,7 @@ addFocusOutListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels" );
 
 let messageDisplayTimeout;
 document.getElementById( "save-button" ).addEventListener( "click", async () => {
-  saveData( data );
-
-  // save user configuration changes as well
-  const currentSetupData = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/configuration.json" ) );
+  await saveData( data );
 
   handleStateChange();
 

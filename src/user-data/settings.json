@@ -1,10 +1,10 @@
 {
-  "seed": "",
-  "startTime": 5400000,
+  "seed": "carly rae",
+  "startTime": 3600000,
   "minSSCount": 10,
   "fastestSSTime": 90000,
   "skips": true,
   "freeSkips": 1,
-  "freeSkipAfterXSolvedLevels": 0,
+  "freeSkipAfterXSolvedLevels": 10,
   "CMPLevels": false
 }
