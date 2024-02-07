@@ -25,7 +25,7 @@ export class Timer extends Emitter {
   constructor( { ...options } ) {
     super();
 
-    const { timerElementId, diffElementId, timeToCompare, tenths, hundreths, startTime = 3600000, interval, _countdown = true } = options;
+    const { timerElementId, diffElementId, timeToCompare, tenths, hundreths, startTime = 3600000, interval } = options;
 
     this.timerElement = document.getElementById( timerElementId );
     if ( diffElementId ) {

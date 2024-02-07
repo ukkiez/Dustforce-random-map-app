@@ -88,8 +88,8 @@ const block = ( ms = 1500 ) => {
 const adjustOnScreenMapInfo = ( levelId, name, author ) => {
   const nameEl = document.getElementById( "map-info-name" );
   const authorEl = document.getElementById( "map-info-author" );
-  nameEl.innerText = name;
-  authorEl.innerText = author;
+  nameEl.innerText = name.replaceAll( "-", " " );
+  authorEl.innerText = author.replaceAll( "-", " " );
 
   // allow users to go to the Atlas page by clicking on the map name
   nameEl.onclick = () => {

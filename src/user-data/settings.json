@@ -1,10 +1,10 @@
 {
   "seed": "",
-  "startTime": 1800000,
+  "startTime": 5400000,
   "minSSCount": 10,
-  "fastestSSTime": 45000,
+  "fastestSSTime": 90000,
   "skips": true,
   "freeSkips": 1,
-  "freeSkipAfterXSolvedLevels": 1,
-  "CMPLevels": true
+  "freeSkipAfterXSolvedLevels": 0,
+  "CMPLevels": false
 }
