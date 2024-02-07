@@ -22,16 +22,20 @@ And some more.
 
 ## Installation
 
-- Download one of the releases for your Operating System, and run the executable within the downloaded folder.
-
-#### Requirements
+*Requirements*
 
 - Have Dustforce with [Dustmod](http://dustmod.com/) installed.
+
+*Steps*
+- Download one of the releases for your Operating System, and run the executable within the downloaded folder.
+
 
 ## FAQ
 > *Can I update my level set?*
 
-Not at the moment - level sets are static in RMA versions. This is in part because different level sets completely change seeds, which would make set-seed races between people more of a hassle to set up. This also keeps runs on the leaderboards more consistent, and prevents [Dustkid.com](https://dustkid.com) from being potentially flooded with requests. Maybe this will change in the future.
+Not at the moment - level sets are static in RMA versions. This is in part because different level sets completely change seeds, which would make set-seed races between people more of a hassle to set up. This also keeps runs on the leaderboards more consistent, and prevents [Dustkid.com](https://dustkid.com) from being potentially flooded with requests.
+
+Maybe this will change in the future.
 
 ---
 > *Can I block/prevent levels I loathe from showing up in runs?*
@@ -45,10 +49,10 @@ ___
 
 In order to be as responsive as possible, RMA does not fetch data from [Dustkid.com](https://dustkid.com), but instead monitors the `split.txt` file locally to determine whether you've completed levels and the completion score you got for them. This file is a feature from Dustmod, which constantly updates it throughout playing.
 
-Most of the time, RMA can find it automatically. But if the installation is in an unexpected location, you'll have to follow the instructions in the App. This amounts to simply opening your Dustforce folder, or any folder within it.
+Most of the time RMA can find it automatically. However, if the installation is in an unexpected location then you'll have to follow the instructions in the App. This amounts to just selecting your Dustforce folder, or any folder within it. You'll only need to do this the first time you open RMA.
 
 ---
-> *RMA does not recognize I'm completing levels*
+> *RMA does not recognize I'm completing levels.*
 
 Make sure when you start Dustforce, you do it manually and not have it automatically open via a link (e.g. opening a Dustkid replay, or pressing Install & Play on Atlas). At the time of writing this, there is a bug in Dustmod that doing so will not update `split.txt`.
 
