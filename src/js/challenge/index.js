@@ -1,26 +1,26 @@
-import { initChallengeRunBody, runData, settingsPath, timers } from "../initialize.js";
+import { log } from "../util/log.js";
+
+import { initChallengeRunBody, runData, timers } from "../initialize.js";
 
 import { reset } from "../reset.js";
 
 import { addClass, removeClass } from "../util/dom.js";
 import { seededRandom } from "../util/random.js";
 
-import cmpLevels from "../../dustkid-data/cmp-levels.json";
-
-// use nw.require() instead of require() or import to make it actually available
-const fs = nw.require( "fs" );
-const path = nw.require( "path" );
-const { exec } = nw.require( "child_process" );
-
-const { dustforceDirectory } = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
-
-const splitFile = path.join( dustforceDirectory, "split.txt" );
-
-const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse( fs.readFileSync( settingsPath ) );
+import FileWatcher from "../classes/FileWatcher.js";
 
 // parse the filtered level metadata JSON file instead of importing it, so we
 // can be sure that on window reload we're getting all the new data
-const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+const levelData = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/filtered-metadata.json" ) );
+
+const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsOn, freeSkipAfterXSolvedLevels } = JSON.parse(
+  await Neutralino.filesystem.readFile( "src/user-data/settings.json" )
+);
+
+const { dustforceDirectory } = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/configuration.json" ) );
+const splitFile = dustforceDirectory + "split.txt";
+
+const cmpLevels = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/cmp-levels.json" ) );
 
 const authorsById = new Map();
 
@@ -54,23 +54,10 @@ const increment = ( _decrement = false ) => {
 const installPrefix = "dustforce://install";
 const installPlayPrefix = "dustforce://installPlay";
 
-const os = nw.require( "os" );
-
-let openCommand = "";
-switch ( os.platform() ) {
-  case "darwin":
-  case "linux":
-    openCommand = "open";
-    break;
-
-  case "win32":
-  default:
-    openCommand = 'start ""';
-    break;
-}
-
-const openApp = ( url ) => {
-  exec( `${ openCommand } "${ url }"` );
+const openApp = async ( url ) => {
+  // alternatively if this doesn't work on all OS's, look at spawning a child
+  // process to execute the original command
+  await Neutralino.os.open( url );
 }
 
 const installAndMaybePlay = ( level, play = false ) => {
@@ -106,7 +93,7 @@ const adjustOnScreenMapInfo = ( levelId, name, author ) => {
 
   // allow users to go to the Atlas page by clicking on the map name
   nameEl.onclick = () => {
-    nw.Shell.openExternal( `https://atlas.dustforce.com/${ levelId }` );
+    Neutralino.os.open( `https://atlas.dustforce.com/${ levelId }` );
   };
 }
 
@@ -183,7 +170,8 @@ const handleSkipsCount = ( change ) => {
 
 let initialized = false;
 let watcher;
-const startAndSkip = () => {
+
+const startAndSkip = async () => {
   if ( !initialized ) {
     initChallengeRunBody();
 
@@ -226,8 +214,12 @@ const startAndSkip = () => {
     shuffle( mapPool );
 
     // ensure split.txt exists, otherwise create an empty one
-    if ( !fs.existsSync( splitFile ) ) {
-      fs.writeFileSync( splitFile, "" );
+    try {
+      await Neutralino.filesystem.getStats( splitFile );
+    }
+    catch ( error ) {
+      // on error, the split file would not exist
+      await Neutralino.filesystem.writeFile( splitFile, "" );
     }
   }
 
@@ -269,83 +261,77 @@ const startAndSkip = () => {
   currentLevel = pickLevel();
   installAndMaybePlay( currentLevel, true );
 
-  // initiate the observer for split.txt; TODO: maybe debounce the callback in
-  // case fs.watch() fires multiple times, which seems to happen occassionally,
-  // though the code takes this into account already
-  watcher = fs.watch( splitFile, ( event ) => {
-    if ( timers[ 0 ].finished ) {
-      watcher.close();
+  const handleSplitFileChange = ( splitFileData ) => {
+    const split = splitFileData.split( "\n" )[ 1 ].split( /\s/ );
+    const [ filename, finesse, completion ] = split;
+
+    console.log( { filename, finesse, completion } );
+
+    if ( isNaN( parseInt( filename[ filename.length - 1 ], 10 ) ) ) {
+      // there is no number at the end of the filename, i.e. no atlas ID
+      // (which should mean a stock level), which we should not see in the
+      // filtered levels JSON data
       return;
     }
 
-    if ( event === "change" ) {
-      const readable = fs.createReadStream( splitFile );
-      readable.setEncoding( "utf8" );
-      readable.on( "data", ( string ) => {
-        const split = string.split( "\n" )[ 1 ].split( /\s/ );
-        const [ filename, finesse, completion ] = split;
-
-        if ( isNaN( parseInt( filename[ filename.length - 1 ], 10 ) ) ) {
-          // there is no number at the end of the filename, i.e. no atlas ID
-          // (which should mean a stock level), which we should not see in the
-          // filtered levels JSON data
-          return;
-        }
-
-        const id = filename.substring( filename.lastIndexOf( "-" ) + 1 );
-        if ( id !== currentLevel.id ) {
-          return;
-        }
-
-        const ss = ( completion === "100" ) && ( finesse === "0" );
-        if ( ss ) {
-          if ( completedLevelIds.has( id ) ) {
-            // remove a skip if this map was already any%'d
-            handleSkipsCount( -1 );
-          }
-          else {
-            completedLevelIds.add( id );
-          }
-
-          solvedLevelIds.add( id );
-
-          increment();
-
-          currentLevel = pickLevel();
-          installAndMaybePlay( currentLevel, true );
-          // see above
-          block();
-
-          if ( config.freeSkipAfterXSolvedLevels > 0 ) {
-            if ( solvedLevelIds.size > 0 && ( solvedLevelIds.size % config.freeSkipAfterXSolvedLevels ) === 0 ) {
-              // give a free skip after N solved levels, depending on the
-              // configuration
-              handleSkipsCount( 1 );
-            }
-          }
-
-          // trigger the S-icon animation
-          const el = document.getElementById( "points-icon" );
-          addClass( el, "animated2" );
-          setTimeout(() => {
-            removeClass( el, "animated2" );
-          }, 2000 );
-
-          return;
-        }
-
-        if ( !completedLevelIds.has( id ) ) {
-          completedLevelIds.add( id );
-
-          if ( !ss ) {
-            // add a skip as this level was any%'d and not already completed
-            handleSkipsCount( 1 );
-            return;
-          }
-        }
-      } );
+    const id = filename.substring( filename.lastIndexOf( "-" ) + 1 );
+    if ( id !== currentLevel.id ) {
+      return;
     }
+
+    const ss = ( completion === "100" ) && ( finesse === "0" );
+    if ( ss ) {
+      if ( completedLevelIds.has( id ) ) {
+        // remove a skip if this map was already any%'d
+        handleSkipsCount( -1 );
+      }
+      else {
+        completedLevelIds.add( id );
+      }
+
+      solvedLevelIds.add( id );
+
+      increment();
+
+      currentLevel = pickLevel();
+      installAndMaybePlay( currentLevel, true );
+      // see above
+      block();
+
+      if ( config.freeSkipAfterXSolvedLevels > 0 ) {
+        if ( solvedLevelIds.size > 0 && ( solvedLevelIds.size % config.freeSkipAfterXSolvedLevels ) === 0 ) {
+          // give a free skip after N solved levels, depending on the
+          // configuration
+          handleSkipsCount( 1 );
+        }
+      }
+
+      // trigger the S-icon animation
+      const el = document.getElementById( "points-icon" );
+      addClass( el, "animated2" );
+      setTimeout(() => {
+        removeClass( el, "animated2" );
+      }, 2000 );
+
+      return;
+    }
+
+    if ( !completedLevelIds.has( id ) ) {
+      completedLevelIds.add( id );
+
+      if ( !ss ) {
+        // add a skip as this level was any%'d and not already completed
+        handleSkipsCount( 1 );
+        return;
+      }
+    }
+  }
+
+  watcher = new FileWatcher( {
+    path: splitFile,
+    handler: handleSplitFileChange,
   } );
+  watcher.init();
 };
 
 export const initialize = () => {
@@ -355,8 +341,7 @@ export const initialize = () => {
 
   // handle the timer's finish event emitter
   timers[ 0 ].on( "finished", () => {
-    // close the watcher when the timer has finished
-    watcher.close();
+    watcher.stop();
   } );
 
   document.getElementById( "replay-btn" )?.addEventListener( "click", () => {
@@ -370,7 +355,7 @@ export const initialize = () => {
     choiceIndex = 0;
 
     if ( watcher ) {
-      watcher.close();
+      watcher.stop();
     }
 
     reset();

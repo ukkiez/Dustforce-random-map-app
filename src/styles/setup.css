@@ -4,50 +4,56 @@
     transform: rotate3d( 0, 1, 0, 1turn );
   }
 }
+@keyframes opac {
+  0% {
+    opacity: 0.8;
+  }
+
+  30% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+#title-logo {
+  position: absolute;
+  margin-top: 5vw;
+  margin-left: 2vw;
+  width: 18vw;
+  height: 18vw;
+  opacity: 0.8;
+}
+.rotate-y-animation {
+  animation: rotateWithDelay 3.5s infinite, opac 3.5s infinite;
+  animation-delay: 1s;
+}
 
 #title-container {
-  margin-bottom: 0.5rem;
+  margin-top: 5vw;
+  margin-bottom: 8vw;
   text-align: center;
-  -webkit-app-region: drag;
-}
-#title-logo {
-  width: 3rem;
-  height: 3rem;
-  position: absolute;
-  right: 12.75rem;
-  top: 0.75rem;
-}
-.setup-animation {
-  animation: rotateWithDelay 3.5s infinite;
-  animation-delay: 1s;
 }
 #title-text {
   color: aliceblue;
-  font-size: 2rem;
+  font-size: 2.5rem;
+  border-bottom: 0.15rem solid #4c677f;
+  border-radius: 0.1rem;
 }
 
 #dustforce-directory-container {
-  margin-bottom: 1.5rem;
   text-align: center;
 }
-#dustforce-directory-input-text {
-  color: #059c74;
-  font-size: 0.8rem;
-  font-style: italic;
-}
-#dustforce-directory-input-warning {
-  display: none;
-  color: #d10202;
-  font-size: 0.9rem;
-  font-style: italic;
-  margin-top: 0.1rem;
-}
-
 #open-directory-link {
   display: none;
-  color: #00a478;
-  font-size: 0.8rem;
   width: fit-content;
+  margin-bottom: 4vw;
+
+  color: #00a478;
+  font-size: 7vw;
+  font-style: italic;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -57,69 +63,38 @@
 #open-directory-input {
   display: none;
 }
-
-#hotkeys-form {
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-label {
-  color: aliceblue;
-  font-size: 0.9rem;
-  display: block;
-}
-
-input {
-  margin-top: 0.3rem;
-
-  width: fit-content;
-
-  /* have the input box cut off at the form containers padding, instead of
-  slightly further beyond */
-  box-sizing: border-box;
-
-  background-color: #708396;
-  color: aliceblue;
-
-  border-radius: 0.15rem;
-  border-style: none;
-
-  /* remove the native outline around selected inputs */
-  outline: none;
-
-  text-align: center;
-}
-input::placeholder {
-  font-family: "Caracteres", sans-serif;
-  text-align: center;
+#confirmation-text {
+  color: #059c74;
+  font-size: 8vw;
   font-style: italic;
-  color:#b6c3d0;
-  font-size: 0.7rem;
+}
+#dustforce-directory-input-warning {
+  display: none;
+  color: #d10202;
+  font-size: 6vw;
+  font-style: italic;
+  margin-top: 0.1rem;
 }
 
-#done-button-container {
-  text-align: center;
-}
-#done-button {
-  cursor: pointer;
-  font-size: 1.25rem;
-  font-family: "Caracteres", sans-serif;
-
-  border-radius: 0.1rem;
-  border-style: none;
-
-  color: #034634;
-  background-color: #04a67b;
-
-  margin-bottom: 0.5rem;
-
+#initializing-text {
+  display: none;
+  /* display should be 'flex' when wanting to show the element
+  display: flex; */
   position: relative;
+  justify-content: center;
+
+  margin-top: 10vh;
+  color: aliceblue;
+  font-size: 15vw;
+
+  animation: opac2 0.5s;
 }
-#done-button:hover {
-  color: #01654b;
-  background-color: #04d9a0;
-}
-#done-button:active {
-  color: #03684d;
-  background-color: #06bb8a;
+
+@keyframes opac2 {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

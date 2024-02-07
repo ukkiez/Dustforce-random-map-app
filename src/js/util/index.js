@@ -6,6 +6,21 @@ export const isNum = ( value ) => {
   return ( !isNaN( parseInt( value, 10 ) ) );
 };
 
+export const objectDiff = ( object1, object2, ignoredKeys = [] ) => {
+  for ( const [ key, field ] of Object.entries( object1 ) ) {
+    if ( ignoredKeys.includes( key ) ) {
+      continue;
+    }
+
+    // check whether any fields have changed
+    if ( object2[ key ] !== field ) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 // (modified from Underscore.js) returns a function, that, as long as it
 // continues to be invoked, will not be triggered; the function will be called
 // after it stops being called for N milliseconds; if `immediate` is passed,

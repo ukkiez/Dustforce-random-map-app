@@ -1,10 +1,10 @@
 @font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
 
 html {
-  user-select: none;
   -webkit-font-smoothing: antialiased;
   margin: 1rem 0.5rem 0rem 0.5rem;
   height: 100%;
+  background-color: #000000;
 }
 
 @keyframes slideInLeft {
@@ -25,16 +25,11 @@ html {
 }
 
 body {
-  /* animation: 0.3s ease-out 0s 1 slideInLeft; */
   animation: fadeIn 0.4s;
 
-  /* font-family: "Dosis", sans-serif; */
-  /* font-family: "ABeeZee", sans-serif; */
-  /* font-family: "Technology", sans-serif; */
   font-family: "Caracteres", sans-serif;
 
   color: #95c4ec;
-  background: rgba(0, 0, 0, 0.40);
 
   font-size: 1rem;
 
@@ -46,12 +41,29 @@ body {
   height: 100%;
 
   width: -webkit-fill-available;
-  /* width: 100%; */
 
   display: inline-block;
 
   margin: 0;
   padding: 0;
+
+  /* prevent text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body > * {
+  cursor: default;
+}
+
+img {
+  /* pointer events on img tags are BUGGED - if hovered over them for too long
+  Neutralino crashes */
+  pointer-events: none;
 }
 
 ::-webkit-scrollbar {

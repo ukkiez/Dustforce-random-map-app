@@ -16,13 +16,14 @@
       random map app
     </span>
 
-    <svg id="close-app-btn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon bi bi-x" viewBox="0 0 16 16">
+    <!-- <svg id="close-app-btn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon bi bi-x" viewBox="0 0 16 16">
       <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-    </svg>
+    </svg> -->
 
     <div id="points-icon-container">
       <span id="mode">??? Mode</span>
-      <img class="animated" id="points-icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
+      <span id="mode2">??? Mode</span>
+      <img draggable="false" class="animated" id="points-icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
     </div>
 
     <div class="hub-btn-container">
@@ -43,7 +44,7 @@
     <div id="seed"></div>
 
     <div id="settings-icon-container">
-      <img id="settings-icon" alt="Cog Icon" src="../assets/settings-icon.png" />
+      <img id="settings-icon" src="../assets/settings-icon.png" />
       <span class="tooltip-text">Settings</span>
     </div>
 
@@ -51,7 +52,6 @@
       <span id="skips" class="skip-class">Skips remaining: 1</span>
     </div>
   </template>
-
 
 
   <template id="challenge-run-template">
@@ -65,15 +65,15 @@
       </div>
     </div>
 
-    <div id="map-info">
-      <div id="map-info-name" class="map-info-text clickable">map</div>
-      <div id="map-info-author" class="map-info-text">author</div>
-    </div>
-
     <div id="points-icon-container">
       <img id="points-icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
 
       <span id="points-icon-text">0</span>
+
+      <div id="map-info">
+        <div id="map-info-name" class="map-info-text clickable">map</div>
+        <div id="map-info-author" class="map-info-text">author</div>
+      </div>
     </div>
 
     <div id="skips-container">
@@ -96,7 +96,7 @@
         <span class="btn-text">Skip</span>
       </button>
 
-      <button id="reset-btn" type="button" class="challenge-run-btn animation-slow-fade-repeat">
+      <button id="reset-btn" type="button" class="challenge-run-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon bi bi-x" viewBox="0 0 16 16">
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
@@ -111,5 +111,6 @@
     according to stored data and user configuration -->
   </body>
 
-  <script src="../app/bundle/index.js"></script>
+  <script src="../neutralino-lib/neutralino.js"></script>
+  <script type="module" src="../js/index.js"></script>
 </html>

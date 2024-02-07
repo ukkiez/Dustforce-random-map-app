@@ -1,19 +1,13 @@
-// use nw.require() instead of require() or import to make it actually available
-// in the browser context
-const fs = nw.require( "fs" );
-
-import { settingsPath } from "./initialize.js";
-
+import { objectDiff } from "./util/index.js";
 import { formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
-import cmpLevels from "../dustkid-data/cmp-levels.json";
+import { modes } from "../settings/modes.js";
 
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
-const settings = JSON.parse( fs.readFileSync( settingsPath ) );
-const modes = JSON.parse( fs.readFileSync( `${ global.__dirname }/settings/modes.json` ) );
-const userConfiguration = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+const settings = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/settings.json" ) );
+const cmpLevels = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/cmp-levels.json" ) );
 
 const settingsNameEl = document.getElementById( "settings-name" );
 const settingsListEl = document.getElementById( "settings-list" );
@@ -40,7 +34,8 @@ let initialState = {
   ...settings,
 };
 
-const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+const levelData = JSON.parse( await Neutralino.filesystem.readFile( "src/dustkid-data/filtered-metadata.json" ) );
+
 const getMapPoolSize = () => {
   const mapPool = new Set();
   for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
@@ -76,9 +71,21 @@ const setMapPoolSize = () => {
   }
 }
 
+const handleSettingsName = () => {
+  // check whether the current settings are the same as for one of the
+  // predefined modes
+  for ( const [ key, mode ] of Object.entries( modes ) ) {
+    if ( !objectDiff( mode, data ) ) {
+      settingsNameEl.innerText = `${ key } Mode`;
+      return;
+    }
+  }
+
+  settingsNameEl.innerText = "Custom Mode";
+};
+
 const setInputValues = ( _settings ) => {
   const {
-    settingsName,
     seed,
     startTime,
     minSSCount,
@@ -88,8 +95,6 @@ const setInputValues = ( _settings ) => {
     freeSkipAfterXSolvedLevels,
     CMPLevels,
   } = _settings;
-
-  settingsNameEl.innerText = `${ settingsName } Mode`;
 
   // set initial values
   seedEl.value = seed;
@@ -116,48 +121,13 @@ const setInputValues = ( _settings ) => {
   }
 }
 
-const { styling } = userConfiguration;
-const { opacity } = styling;
-const opacitySlider = document.getElementById( "app-opacity-range" );
-opacitySlider.value = opacity;
-let initialOpacity = opacity;
-
 // initialize the input values and map pool size
 setInputValues( settings );
 setMapPoolSize();
-
-const objectDiff = ( object1, object2, ignoredKeys = [] ) => {
-  for ( const [ key, field ] of Object.entries( object1 ) ) {
-    if ( ignoredKeys.includes( key ) ) {
-      continue;
-    }
-
-    // check whether any fields have changed
-    if ( object2[ key ] !== field ) {
-      return true;
-    }
-  }
-
-  return false;
-};
+handleSettingsName();
 
 const stateHasChanged = () => {
-  return objectDiff( initialState, data, [ "settingsName" ] );
-};
-
-const handleSettingsName = () => {
-  // check whether the current settings are the same as for one of the
-  // predefined modes
-  for ( const mode of Object.values( modes ) ) {
-    if ( !objectDiff( mode, data, [ "settingsName" ] ) ) {
-      settingsNameEl.innerText = mode.settingsName;
-      data.settingsName = mode.settingsName;
-      return;
-    }
-  }
-
-  settingsNameEl.innerText = "Custom Mode";
-  data.settingsName = "Custom";
+  return objectDiff( initialState, data );
 };
 
 const can = {
@@ -193,8 +163,8 @@ const handleStateChange = ( force = false ) => {
   setMapPoolSize();
 };
 
-const saveData = ( _data ) => {
-  fs.writeFileSync( settingsPath, JSON.stringify( _data, null, 2 ) );
+const saveData = async ( _data ) => {
+  await Neutralino.filesystem.writeFile( "src/user-data/settings.json", JSON.stringify( _data, null, 2 ) );
   // reset the initial state to the newly saved state
   initialState = {
     ..._data,
@@ -292,11 +262,9 @@ for ( const button of settingsListEl.children ) {
     }
 
     const mode = modes[ modeName ];
-    for ( const [ field, setting ] of Object.entries( mode ) ) {
-      data[ field ] = setting;
+    for ( const [ key, setting ] of Object.entries( mode ) ) {
+      data[ key ] = setting;
     }
-
-    data.settingsName = value;
 
     setInputValues( data );
 
@@ -340,20 +308,11 @@ addInputListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels", null, false, 
 addFocusOutListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels" );
 
 let messageDisplayTimeout;
-document.getElementById( "save-button" ).addEventListener( "click", () => {
+document.getElementById( "save-button" ).addEventListener( "click", async () => {
   saveData( data );
 
   // save user configuration changes as well
-  const currentSetupData = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
-  fs.writeFileSync( `${ global.__dirname }/user-data/configuration.json`, JSON.stringify( {
-    ...currentSetupData,
-    styling: {
-      ...currentSetupData.styling,
-      opacity: parseInt( opacitySlider.value, 10 ),
-    }
-  }, null, 2 ) );
-
-  initialOpacity = parseInt( opacitySlider.value, 10 );
+  const currentSetupData = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/configuration.json" ) );
 
   handleStateChange();
 
@@ -370,8 +329,6 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
 document.getElementById( "discard-button" ).addEventListener( "click", () => {
   data = { ...initialState };
   setInputValues( { ...initialState } );
-  opacitySlider.value = initialOpacity;
-  document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ initialOpacity / 100 })`;
   handleStateChange();
 } );
 
@@ -491,9 +448,4 @@ importSettingsInput.addEventListener( "change", () => {
   } );
 
   reader.readAsBinaryString( file );
-} );
-
-opacitySlider.addEventListener( "input", event => {
-  document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ event.target.value / 100 })`;
-  handleStateChange( true );
 } );

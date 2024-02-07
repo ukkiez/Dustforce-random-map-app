@@ -9,8 +9,8 @@ button {
 }
 
 .settings-header {
-  -webkit-app-region: drag;
   font-size: 2rem;
+  color: #ededed;
 }
 
 .grid {
@@ -150,6 +150,7 @@ button {
   font-size: 1rem;
   text-align: start;
   color: black;
+  background-color: inherit;
   text-decoration: none;
 
   border-radius: 0.15rem;
@@ -210,7 +211,7 @@ input[type="checkbox"] {
   position: absolute;
   top: 2.25rem;
   right: 1.5rem;
-  color: aliceblue;
+  color: #ededed;
   font-style: italic;
   white-space: pre-wrap;
   text-align: center;
@@ -224,50 +225,59 @@ input[type="checkbox"] {
 #back-button {
   cursor: pointer;
   font-size: 1.15rem;
-
-  border-radius: 0.1rem;
-  border-style: none;
-
-  background-color: #95c4ec;
-
   margin-bottom: 0.5rem;
+
+  color: #95c4ec;
+  background-color: transparent;
+
+  border: #95c4ec 0.1rem solid;
+  border-radius: 0.25rem;
+
+  transition: background-color 0.2s, color 0.2s;
 }
 #back-button:hover {
+  transition: 0s;
   color: #13435f;
   background-color: #9bccf6;
+  border: transparent 0.1rem solid;
 }
 #back-button:active {
-  color: #0e3851;
-  background-color: #80a9cd;
+  transition: 0s;
+  color: #95c4ec;
+  background-color: #6288a9;
+  border: #1c2f42 0.1rem solid;
 }
 
 #save-button {
   cursor: pointer;
   font-size: 1.15rem;
-
-  border-radius: 0.1rem;
-  border-style: none;
-
-  color: #4f4f4f;
-  background-color: #353535;
-
-  color: #03694d;
-  background-color: #06d6a0;
-
   margin-bottom: 0.5rem;
+
+  color: #06d6a0;
+  background-color: transparent;
+
+  border: #06d6a0 0.1rem solid;
+  border-radius: 0.25rem;
+
+  transition: background-color 0.2s, color 0.2s;
 }
 #save-button.disabled {
+  background-color: transparent;
   color: #4f4f4f;
-  background-color: #353535;
+  border: #4f4f4f 0.1rem solid;
   pointer-events: none;
 }
-#save-button:hover {
-  color: #027a5a;
-  background-color: #04efb1;
+#save-button:hover:not(.disabled) {
+  transition: 0s;
+  color: #03694d;
+  background-color: #06d6a0;
+  border: transparent 0.1rem solid;
 }
-#save-button:active {
-  color: #025c44;
-  background-color: #05b486;
+#save-button:active:not(.disabled) {
+  transition: 0s;
+  color: #06d6a0;
+  background-color: #00654a;
+  border: #003225 0.1rem solid;
 }
 
 #discard-button {
@@ -326,43 +336,4 @@ input[type="checkbox"] {
   font-size: 1rem;
   font-style: italic;
   color: #287661;
-}
-
-.slider-container {
-  width: 100%;
-}
-
-.slider {
-  appearance: none;
-  width: 100%;
-  height: 1vh;
-  border-radius: 1rem;
-  background: #708396;
-  outline: none;
-  opacity: 0.7;
-  transition: opacity .2s;
-}
-.slider:hover {
-  cursor: pointer;
-}
-
-.slider::-webkit-slider-thumb {
-  appearance: none;
-  appearance: none;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background: #04a077;
-  cursor: pointer;
-}
-.slider::-webkit-slider-thumb:hover {
-  background: #06d59e;
-}
-
-.slider::-moz-range-thumb {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background: #04a077;
-  cursor: pointer;
 }

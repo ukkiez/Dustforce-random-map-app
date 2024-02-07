@@ -1,17 +1,23 @@
-// use nw.require() instead of require() or import to make it actually available
-// in the browser context
-const fs = nw.require( "fs" );
+import { log } from "./util/log.js";
 
 import { Timer } from "./classes/timer.js";
+import { objectDiff } from "./util/index.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
-const config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+import { modes } from "../settings/modes.js";
 
-export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
-const settings = JSON.parse( fs.readFileSync( settingsPath ) );
+let config;
+let settings;
+try {
+  config = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/configuration.json" ) );
+  settings = JSON.parse( await Neutralino.filesystem.readFile( "src/user-data/settings.json" ) );
+}
+catch ( error ) {
+  console.error( error );
+}
 
-export const switchPage = ( currentPage, destination ) => {
+export const switchPage = async ( currentPage, destination ) => {
   const split = destination.split( "/" );
   if ( split.length === 1 ) {
     destination = split[ 0 ];
@@ -20,101 +26,58 @@ export const switchPage = ( currentPage, destination ) => {
     destination = split[ split.length - 1 ];
   }
 
-  if ( destination === "settings.html" ) {
-    // open a new window with the settings configuration
-
-    // get the current window
-    const currentWindow = nw.Window.get();
-    currentWindow.hide();
-
-    nw.Window.open( "views/settings.html", {
-      position: "center",
-      width: 360,
-      height: 470,
-      frame: false,
-      always_on_top: true,
-      transparent: true,
-      resizable: true,
-      // hide the window initially, and only show it after focusing the window;
-      // this way, we can e.g. resize / move the window without janky initial
-      // visuals; this may be causing an issue on Windows
-      show: false,
-    }, function( win ) {
-      if ( typeof win !== "undefined" ) {
-        win.on( "closed", function() {
-          currentWindow.reload();
-          currentWindow.show();
-        } );
-        win.on( "loaded", function() {
-          // move the settings window to the position of the main window
-          // win.moveTo( currentWindow.x, currentWindow.y - 100 );
-          win.focus();
-          win.show();
-        } );
-      }
-    } );
-
-    return;
-  }
-
-  switch ( currentPage ) {
-    case "index.html":
-      // set the display style of all body tags to "none" before switching
-      // pages; there is a bug with -webkit-app-region: drag, where the region
-      // remains draggable even when the relevant tag is gone; setting display
-      // style to "none" fixes it, though it makes the switching of pages look
-      // kind of jerky if you only do it to one tag, so just do it to all tags
-      // instead of just the draggable ones
+  if ( destination === "index.html" ) {
+    if ( currentPage === "settings.html" ) {
+      // set the display style of all body tags to "none" before switching pages
+      // to help avoid visual flickering
       for ( const child of document.body.children ) {
         child.style.display = "none";
       }
-      break;
 
-    case "settings.html": {
-        // close the external settings window
-        const settingsWindow = nw.Window.get();
-        settingsWindow.close();
-        break;
+      // move and resize the window to the original settings before the user
+      // went to the settings
+      const windowSettingsCache = JSON.parse( await Neutralino.storage.getData( "windowSettings" ) || {} );
+      if ( windowSettingsCache?.size ) {
+        await Neutralino.window.setSize( {
+          width: windowSettingsCache.size.width,
+          height: windowSettingsCache.size.height,
+          maxWidth: windowSettingsCache.size.maxWidth,
+          maxHeight: windowSettingsCache.size.maxHeight,
+        } );
       }
+      if ( windowSettingsCache?.position ) {
+        await Neutralino.window.move( windowSettingsCache.position.x, windowSettingsCache.position.y );
+      }
+    }
+
+    window.location.replace( "/views/" );
+    return;
   }
 
-  window.location.href = destination;
+  window.location.replace( destination );
 }
 
 let iconAnimationTimeout;
-const initMainBody = () => {
+const initMainBody = async () => {
   const template = document.getElementById( "main-hub-template" );
   const clone = template.content.cloneNode( true );
   document.body.replaceChildren( clone );
 
-  document.getElementById( "close-app-btn" ).addEventListener( "click", () => {
-    // close the application
-    nw.Window.get().close();
-  } );
-
-  const currentWindow = nw.Window.get();
-
-  // max width / max height
-  const aspectRatio = 250 / 260;
-  let resize;
-  currentWindow.on( "resize", function( width ) {
-    clearTimeout( resize );
-    resize = setTimeout( () => {
-      currentWindow.resizeTo( width, Math.round( width / aspectRatio ) );
-    }, 200 );
-  } );
-
-  const mapInfoElements = document.getElementsByClassName( "map-info-text" );
-  for ( const element of mapInfoElements ) {
-    element.style.display = "none";
+  let _predefinedMode = false;
+  for ( const [ key, mode ] of Object.entries( modes ) ) {
+    if ( !objectDiff( mode, settings ) ) {
+      document.getElementById( "mode" ).innerText = `${ key } Mode`;
+      document.getElementById( "mode2" ).innerText = `${ key } Mode`;
+      _predefinedMode = true;
+    }
+  }
+  if ( !_predefinedMode ) {
+    document.getElementById( "mode" ).innerText = "Custom Mode";
+    document.getElementById( "mode2" ).innerText = "Custom Mode";
   }
 
   if ( settings.seed ) {
     document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
-  }
-
-  if ( settings.settingsName ) {
-    document.getElementById( "mode" ).innerText = `${ settings.settingsName } Mode`;
   }
 
   if ( !settings.skips ) {
@@ -122,8 +85,6 @@ const initMainBody = () => {
     skips.innerText = "No Skips";
     addClass( skips, "none" );
   }
-
-  console.log( "FOO" );
 
   if ( iconAnimationTimeout ) {
     clearTimeout( iconAnimationTimeout );
@@ -135,27 +96,48 @@ const initMainBody = () => {
     removeClass( document.getElementById( "points-icon" ), "animated" );
   }, 2000 );
 
-  document.getElementById( "settings-icon" ).addEventListener( "click", () => {
+  document.getElementById( "settings-icon-container" ).addEventListener( "click", () => {
     switchPage( "index.html", "./settings.html" );
   } );
 }
 
-const initSettingsBody = () => {
-  document.getElementById( "download-settings-link" ).href = "../user-data/settings.json";
+const initSettingsBody = async () => {
+  log( "initSettingsBody" );
+  try {
+    await Neutralino.storage.setData( "windowSettings", JSON.stringify( {
+      size: await Neutralino.window.getSize(),
+      position: await Neutralino.window.getPosition(),
+    } ) );
+  }
+  catch ( e ) {
+    console.log( e );
+  }
+
+  await Neutralino.window.setSize( {
+    width: 330,
+    height: 475,
+    resizable: false,
+  } );
+
+  document.getElementById( "download-settings-link" ).addEventListener( "click", async () => {
+    try {
+      await Neutralino.os.showOpenDialog( "Open A Thing", {
+        filters: [
+          // filter extensions are fucked - the first element has to be
+          // nonsensical in order for it to properly pick up the second element
+          { name: "JSON", extensions: [ "__-gibberish-__", "JSON" ] },
+        ]
+      } );
+    }
+    catch ( e ) {
+      console.log( e );
+    }
+  } );
 
   document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, true );
 
   document.getElementById( "back-button" ).addEventListener( "click", () => {
     switchPage( "settings.html", "./index.html" );
-  } );
-
-  const currentWindow = nw.Window.get();
-  currentWindow.on( "loaded", function() {
-    // get the height and width of the container div, and match the window size
-    // with it (with some extra height to make sure nothing is cut off at the
-    // bottom)
-    const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
-    currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 35 );
   } );
 }
 
@@ -205,7 +187,7 @@ export const initChallengeRunBody = () => {
   initTimers( true );
   initRunData();
 
-  import( "./timing/auto.js" ).then( ( { initialize } ) => {
+  import( "./challenge/index.js" ).then( ( { initialize } ) => {
     initialize();
   } );
 }
@@ -234,9 +216,7 @@ if ( template?.content?.children ) {
 }
 
 export const init = () => {
-  // set the user configured opacity
-  document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;
-
+  log( "init(), page: ", page );
   if ( page === "setup.html" ) {
     import( "./setup.js" );
     return;
@@ -247,16 +227,17 @@ export const init = () => {
       // directory; this will only happen the first time someone opens the app
       switchPage( "", "./setup.html" );
     }
+
     return;
   }
 
-  if ( page === "index.html" ) {
+  if ( !page ) {
     initMainBody();
 
     initTimers();
     initRunData();
 
-    import( "./timing/auto.js" ).then( ( { initialize } ) => {
+    import( "./challenge/index.js" ).then( ( { initialize } ) => {
       initialize();
     } );
   }

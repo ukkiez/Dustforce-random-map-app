@@ -1,31 +1,5 @@
 @font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
 
-#close-app-btn {
-  position: absolute;
-  right: 1vw;
-  top: 0.5vw;
-  height: 10vw;
-  width: 10vw;
-  color: #bf2020;
-  /* border: #bf2020 0.1rem solid;
-  border-radius: 0.25rem; */
-  outline: none;
-  cursor: pointer;
-  transition: background-color 0.4s, color 0.4s;
-}
-#close-app-btn:hover {
-  color: #ff3939;
-  /* background-color: #bf2020; */
-  transition: 0s;
-  /* border: transparent 0.1rem solid; */
-}
-#close-app-btn:active {
-  color: #bf2020;
-  /* background-color: #821818; */
-  transition: 0s;
-  /* border: transparent 0.1rem solid; */
-}
-
 #rma-header {
   position: absolute;
   font-size: 4vw;
@@ -46,15 +20,10 @@
     transform: rotate( 360deg );
   }
 }
-@keyframes spin3d {
-  100% {
-    transform: rotate3d( 3, 2, 3, 2turn );
-  }
-}
 
 @keyframes opac {
   0% {
-    opacity: 1;
+    opacity: 0.8;
   }
 
   100% {
@@ -63,11 +32,9 @@
 }
 
 #points-icon-container {
-  -webkit-app-region: drag;
   display: flex;
   position: relative;
   height: 16vh;
-  width: 80vw;
   margin-top: 4vw;
   margin-left: 0.3rem;
   margin-bottom: 2.5vw;
@@ -75,23 +42,46 @@
 }
 #mode {
   font-size: 13vw;
-  color: #dadada;
-  border-bottom: 0.15rem solid #4c677f;
-  outline: aliceblue;
+  color: #4c677f47;
+  border-bottom: 0.15rem solid #4c677f14;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  position: absolute;
 }
+/* mode2 is what the user eventually sees */
+#mode2 {
+  font-size: 13vw;
+  color: #dadada;
+  border-bottom: 0.15rem solid #4c677f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: absolute;
+
+  animation: animate 1.25s;
+}
+@keyframes animate {
+  0% {
+    clip-path: circle(0%);
+  }
+
+  100% {
+    clip-path: circle(100%);
+  }
+}
+
 #points-icon {
   position: absolute;
   height: 222%;
   left: 21vw;
   top: -3vw;
   opacity: 0.15;
+  pointer-events: none;
   z-index: -1;
 }
 #points-icon.animated {
-  animation: spin3d 0.75s, opac 0.75s;
+  animation: spin 0.8s, opac 0.75s;
 }
 #points-icon.animated2 {
   animation: spin 0.5s;
@@ -116,20 +106,17 @@
 
 #settings-icon-container {
   position: absolute;
-  width: 100%;
-  text-align: end;
+  right: 8vw;
+  width: 2.5rem;
+  cursor: pointer;
 }
 #settings-icon {
   position: relative;
-  width: 15vh;
-  height: 15vh;
-  max-width: 3rem;
-  max-height: 3rem;
-  right: 2rem;
+  width: 14vw;
+  height: 14vw;
   transition: 1s, width 0s, height 0s;
-  cursor: pointer;
 }
-#settings-icon:hover {
+#settings-icon-container:hover #settings-icon {
   transition-duration: 0.3s;
 
   background-color: #1e384ec9;
@@ -141,15 +128,15 @@
 }
 .tooltip-text {
   visibility: hidden;
-  width: 30vh;
+  width: 4.5rem;
   height: 1rem;
   background-color: #4177a7c9;
   color: #dadada;
   text-align: center;
   border-radius: 6px;
   position: absolute;
-  right: 6vh;
-  bottom: 22vh;
+  right: -5.5vw;
+  bottom: 20vw;
 
   cursor: pointer;
   z-index: 1;
@@ -168,7 +155,7 @@
   border-style: solid;
   border-color: #4177a796 transparent transparent transparent;
 }
-#settings-icon:hover +.tooltip-text {
+#settings-icon-container:hover #settings-icon +.tooltip-text {
   visibility: visible;
   opacity: 1;
 }
@@ -178,7 +165,7 @@
   height: 9vh;
   fill: currentColor;
   position: relative;
-  right: 0.15rem;
+  right: 0.2rem;
 }
 
 .btn-text {
@@ -191,7 +178,7 @@
   margin-bottom: 3.5vh;
 }
 .hub-btn {
-  font-family: "Caracteres", sans-serif;
+  font-family: inherit;
   border-radius: 0.25rem;
   outline: none;
   transition: background-color 0.4s, color 0.4s;
@@ -235,4 +222,3 @@
   animation: slow-fade-repeat 3s infinite;
   animation-delay: 1s;
 }
-

@@ -1,0 +1,58 @@
+{
+  "applicationId": "js.neutralino.rma",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/src/",
+  "url": "/views/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "tokenSecurity": "one-time",
+  "logging": {
+    "enabled": true,
+    "writeToLogFile": true
+  },
+  "nativeAllowList": [
+    "app.*",
+    "os.*",
+    "debug.log",
+    "filesystem.*",
+    "window.*",
+    "storage.*",
+    "computer.getOSInfo"
+  ],
+  "globalVariables": {},
+  "modes": {
+    "window": {
+      "title": "Random Map App",
+      "icon": "/src/assets/s-complete-icon.icns",
+      "width": 250,
+      "height": 260,
+      "minWidth": 250,
+      "minHeight": 260,
+      "maxWidth": 350,
+      "maxHeight": 364,
+      "center": true,
+      "fullScreen": false,
+      "alwaysOnTop": true,
+      "enableInspector": true,
+      "borderless": false,
+      "maximize": false,
+      "maximizable": false,
+      "hidden": true,
+      "resizable": true,
+      "exitProcessOnClose": false
+    },
+    "browser": {},
+    "cloud": {},
+    "chrome": {}
+  },
+  "cli": {
+    "binaryName": "random-map-app",
+    "resourcesPath": "/src/",
+    "extensionsPath": "/extensions/",
+    "clientLibrary": "/src/neutralino-lib/neutralino.js",
+    "binaryVersion": "5.0.0",
+    "clientVersion": "5.0.0"
+  }
+}

@@ -4,7 +4,9 @@
   margin-top: 1rem;
   height: 22vh;
   position: relative;
-  display: block;
+  display: flex;
+  align-items: center;
+  word-break: break-all;
 }
 #points-icon.challenge {
   height: 92%;
@@ -15,30 +17,25 @@
 #points-icon-text.challenge {
   color: #95c4ec;
   font-size: 14vh;
-  position: absolute;
-  top: 50%;
-  margin-top: -8vh;
-  margin-left: 2vw;
+  margin-left: 0.5rem;
+  word-break: keep-all;
+  min-width: 17vw;
 }
 
 #map-info {
+  margin-left: 1rem;
+  height: 11.5vh;
+  width: fit-content;
   color: #c3c3c3;
   font-size: max( 5vh, 5vw );
-  position: relative;
-  left: 0.3rem;
-  margin-top: 0.25rem;
-  height: 11.5vh;
 }
 .map-info-text {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
 }
 #map-info-name, #map-info-author {
   margin: 0;
 }
 #map-info-author {
-  color: #a8a7a7;
+  color: #969696;
 }
 #map-info-name.clickable:hover {
   text-decoration: underline;
@@ -74,12 +71,12 @@
   border: #95c4ec 0.1rem solid;
   color: #95c4ec;
 }
-.neutral-btn:hover {
+.neutral-btn:hover:not(.disabled-btn) {
   background-color: #95c4ec;
   color: #31475b;
   border: transparent 0.1rem solid;
 }
-.neutral-btn:active {
+.neutral-btn:active:not(.disabled-btn) {
   color: #95c4ec;
   background-color: #45749b;
   border: #203547 0.1rem solid;
@@ -89,12 +86,12 @@
   border: #de8251 0.1rem solid;
   color: #de8251;
 }
-.warning-btn:hover {
+.warning-btn:hover:not(.disabled-btn) {
   background-color: #d5733e;
   color: #582d16;
   border: transparent 0.1rem solid;
 }
-.warning-btn:active {
+.warning-btn:active:not(.disabled-btn) {
   color: #de8251;
   background-color: #582d16;
   border: #311a0d 0.1rem solid;
@@ -110,15 +107,17 @@
 }
 
 @keyframes animation-squeeze {
-  50% {
-    transform: scale3d(1.5, 0.5, 0.3);
+  25% {
+
+    transform: scaleY( 0 );
   }
-  100% {
-    transform: scale3d(1, 1, 1);
+  50% {
+    transform: scale3d( 1, 1, 1 );
   }
 }
-.animation-squeeze:hover .btn-icon {
-  animation: animation-foo 0.5s;
+.animation-squeeze:hover:not(.disabled-btn) .btn-icon {
+  animation: animation-squeeze 4s infinite;
+  animation-delay: 1s;
 }
 
 .disabled-btn {
@@ -140,12 +139,12 @@
   border: #bf2020 0.1rem solid;
   color: #bf2020;
 }
-#reset-btn:hover {
+#reset-btn:hover:not(.disabled-btn) {
   background-color: #bf2020;
   color: #4b0d0d;
   border: transparent 0.1rem solid;
 }
-#reset-btn:active {
+#reset-btn:active:not(.disabled-btn) {
   color: #bf2020;
   background-color: #821818;
   border: #390a0a 0.1rem solid;

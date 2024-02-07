@@ -1,9 +1,9 @@
-import { EventEmitter } from "events";
+import Emitter from "./Emitter.js";
 
 import { addClass, removeClass } from "../util/dom.js";
 import { formatTime } from "../util/format.js";
 
-export class Timer extends EventEmitter {
+export class Timer extends Emitter {
   timerElement;
   diffElement;
 

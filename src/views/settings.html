@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../styles/base.css" />
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/settings.css" />
-    <link rel="stylesheet" href="../styles/hotkeySetup.css" />
     <title>Settings</title>
   </head>
 
@@ -18,7 +17,7 @@
       </div>
 
       <div class="links-container">
-        <a id="download-settings-link" download="settings.json">Download</a>
+        <span id="download-settings-link">Download</a>
         <span id="settings-link-separator">/</span>
         <label id="import-settings-link">
           Import
@@ -35,7 +34,7 @@
 
       <div class="dropdown">
         <button class="dropdown-btn">
-          <span id="settings-name">Classic Mode</span>
+          <span id="settings-name"></span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="dropdown-btn-icon bi bi-play-fill" viewBox="0 0 16 16">
             <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
           </svg>
@@ -109,11 +108,6 @@
         </div>
       </form>
 
-      <div class="slider-container">
-        <span>Background Opacity</span>
-        <input type="range" min="0" max="100" value="50" class="slider" id="app-opacity-range">
-      </div>
-
       <button id="back-button" type="button">
         BACK
       </button>
@@ -132,5 +126,6 @@
     </div>
   </body>
 
-  <script src="../app/bundle/index.js"></script>
+  <script src="../neutralino-lib/neutralino.js"></script>
+  <script type="module" src="../js/index.js"></script>
 </html>

@@ -4,37 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles/base.css" />
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/setup.css" />
     <title>Random Map App Setup</title>
   </head>
 
   <body>
+    <span id="rma-header">
+      random map app
+    </span>
+
+    <img id="title-logo" class="rotate-y-animation" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
+
     <div id="title-container">
-      <img class="setup-animation" id="title-logo" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
       <span id="title-text">
         Setup
       </span>
     </div>
 
     <div id="dustforce-directory-container">
-      <div id="dustforce-directory-text">
-        Dustforce Directory
-      </div>
-      <div id="dustforce-directory-input-text"></div>
-      <div id="dustforce-directory-input-warning">Can't verify directory</div>
       <label id="open-directory-link">
-        Select Directory
-        <input type="file" id="open-directory-input" nwdirectory />
+        Select Your Dustforce Directory
       </label>
+      <span id="confirmation-text"></span>
+
+      <div id="dustforce-directory-input-warning"></div>
     </div>
 
-    <div id="done-button-container">
-      <button id="done-button" type="button">
-        DONE
-      </button>
+    <div id="initializing-text">
+      Initializing
     </div>
   </body>
 
-  <script src="../app/bundle/index.js"></script>
+  <script src="../neutralino-lib/neutralino.js"></script>
+  <script type="module" src="../js/index.js"></script>
 </html>

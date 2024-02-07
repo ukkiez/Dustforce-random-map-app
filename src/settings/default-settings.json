@@ -6,6 +6,5 @@
   "skips": true,
   "freeSkips": 1,
   "freeSkipAfterXSolvedLevels": 10,
-  "CMPLevels": true,
-  "settingsName": "classic"
+  "CMPLevels": true
 }

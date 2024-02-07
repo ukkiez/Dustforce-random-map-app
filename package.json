@@ -1,22 +1,14 @@
 {
-  "name": "random-map-app",
+  "name": "neutralino-test",
   "version": "1.0.0",
-  "main": "src/app/bundle/index.js",
+  "description": "The default template for a Neutralinojs app. It's possible to use your favorite frontend framework by using [these steps](https://neutralino.js.org/docs/getting-started/using-frontend-libraries).",
+  "main": "src/js/index.js",
   "scripts": {
-    "build": "cd src/ && npm run build",
-    "dev": "cd src/ && npm run build && cd .. && nw src/ --user-data-dir=../random-map-app-user-data/",
-    "dev-no-build": "nw src/ --user-data-dir=../random-map-app-user-data/",
-    "prod-with-build": "cd src/ && npm run build && cd .. && nwbuild --platforms osx64 --srcDir src/* --buildDir dist/* src/* --flavor normal --cacheDir cache/ --version 0.52.2",
-    "prod": "nwbuild --platforms osx64 --srcDir src/ --buildDir dist/ src/ --flavor normal --cacheDir cache/ --version 0.52.2"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
-    "nw": "^0.52.2-sdk",
-    "nw-builder": "^3.5.7"
-  },
-  "dependencies": {
+    "eslint": "^8.56.0"
   }
 }
