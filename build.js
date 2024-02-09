@@ -69,23 +69,24 @@ const nw = new NwBuilder( {
   await execAsync( "tar -cvzf dist/RMA-osx64.tar.gz dist/random-map-app/osx64", true );
   await execAsync( "tar -cvzf dist/RMA-linux32.tar.gz dist/random-map-app/linux32", true );
   await execAsync( "tar -cvzf dist/RMA-linux64.tar.gz dist/random-map-app/linux64", true );
+  console.log( "> Compressed Mac&Linux" );
 } )();
 
-// construct the Windows build manually, since this version of nw-builder can't
-// do it, and newer versions don't actually properly function; note that this
-// assumes the NW binaries have been downloaded and put in the cache beforehand
-const buildPath = "./dist/win32";
-const srcPath = "./src";
-const nwBinaries = "./cache/0.52.2-normal/win32";
-try {
-  // remove any existing build
-  fs.rmSync( buildPath, { recursive: true } );
-}
-catch ( e ) {}
+const buildWindows = async () => {
+  // construct the Windows build manually, since this version of nw-builder can't
+  // do it, and newer versions don't actually properly function; note that this
+  // assumes the NW binaries have been downloaded and put in the cache beforehand
+  const buildPath = "./dist/win32";
+  const srcPath = "./src";
+  const nwBinaries = "./cache/0.52.2-normal/win32";
+  try {
+    // remove any existing build
+    fs.rmSync( buildPath, { recursive: true } );
+  }
+  catch ( e ) {}
 
-fs.mkdirSync( buildPath );
-fs.mkdirSync( path.join( buildPath, "package.nw" ) );
-( async () => {
+  fs.mkdirSync( buildPath );
+  fs.mkdirSync( path.join( buildPath, "package.nw" ) );
   await copyDir( nwBinaries, buildPath );
   await copyDir( srcPath, path.join( buildPath, "/package.nw" ), [
     "node_modules",
@@ -115,4 +116,10 @@ fs.mkdirSync( path.join( buildPath, "package.nw" ) );
   // create a tar file for distribution
   await execAsync( "tar -cvzf dist/RMA-win32.tar.gz dist/win32", true );
   console.log( "> Built Windows" );
-} )();
+}
+
+if ( process.argv.includes( "win" ) || process.argv.includes( "windows" ) ) {
+  ( async () => {
+    await buildWindows();
+  } )();
+}
