@@ -20,7 +20,8 @@ const { seed, minSSCount, fastestSSTime, CMPLevels: _CMPLevelsOn, skips: _skipsO
 
 // parse the filtered level metadata JSON file instead of importing it, so we
 // can be sure that on window reload we're getting all the new data
-const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+// const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+import { filteredMetadata as levelData } from "../../dustkid-data/filtered-metadata.js";
 
 const authorsById = new Map();
 

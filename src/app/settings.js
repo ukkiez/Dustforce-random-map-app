@@ -40,7 +40,8 @@ let initialState = {
   ...settings,
 };
 
-const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+// const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
+import { filteredMetadata as levelData } from "../dustkid-data/filtered-metadata.js";
 const getMapPoolSize = () => {
   const mapPool = new Set();
   for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
@@ -215,18 +216,23 @@ const addCheckboxListener = ( element, field = "", callback ) => {
   } );
 }
 
-const addInputListener = ( element, field = "", transform, hasMin = false, hasMax = false, callback ) => {
+const addInputListener = ( element, field = "", { ...options } ) => {
+  const { transform, min = false, max = false, constraint, callback } = options;
   element.addEventListener( "input", ( event ) => {
+    if ( constraint ) {
+      event.target.value = constraint( event );
+    }
+
     const isNum = event.target.attributes[ 0 ].nodeValue === "number";
 
     let value = isNum ? parseInt( event.target.value, 10 ) : event.target.value;
-    if ( hasMin ) {
+    if ( min ) {
       const { min } = event.target;
       if ( value < min ) {
         event.target.value = parseInt( min, 10 );
       }
     }
-    if ( hasMax ) {
+    if ( max ) {
       const { max } = event.target;
       if ( value > max ) {
         event.target.value = parseInt( max, 10 );
@@ -309,17 +315,28 @@ for ( const button of settingsListEl.children ) {
   } );
 }
 
-addInputListener( seedEl, "seed", ( value ) => value.toLowerCase() );
+addInputListener( seedEl, "seed", {
+  transform: ( value ) => value.toLowerCase(),
+  constraint: ( event ) => event.target.value.replace( /[^a-zA-Z0-9 ]+/g, "" ),
+} );
 
-addInputListener( timeEl, "startTime", ( value ) => value * 60 * 1000, true, true );
+addInputListener( timeEl, "startTime", {
+  transform: ( value ) => value * 60 * 1000,
+  min: true,
+  max: true,
+} );
 addFocusOutListener( timeEl, "startTime", ( value ) => ( value / 1000 ) / 60 );
 
-addInputListener( minSSCountEl, "minSSCount", null, false, true );
+addInputListener( minSSCountEl, "minSSCount", { min: true, max: true } );
 addFocusOutListener( minSSCountEl, "minSSCount" );
 
-addInputListener( fastestSSTimeEl, "fastestSSTime", null, false, true, function( event ) {
-  const milliseconds = Math.floor( event.target.value );
-  formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, true );
+addInputListener( fastestSSTimeEl, "fastestSSTime", {
+  min: true,
+  max: true,
+  callback: function( event ) {
+    const milliseconds = Math.floor( event.target.value );
+    formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, true );
+  }
 } );
 addFocusOutListener( fastestSSTimeEl, "fastestSSTime" );
 
@@ -333,10 +350,10 @@ addCheckboxListener( skipsEl, "skips", ( event ) => {
     freeSkipsContainer.classList.remove( "disabled" );
   }
 } );
-addInputListener( freeSkipsEl, "freeSkips", null, false, true );
+addInputListener( freeSkipsEl, "freeSkips", { min: true, max: true } );
 addFocusOutListener( freeSkipsEl, "freeSkips" );
 
-addInputListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels", null, false, true );
+addInputListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels", { min: true, max: true } );
 addFocusOutListener( freeSkipsAfterXEl, "freeSkipAfterXSolvedLevels" );
 
 let messageDisplayTimeout;

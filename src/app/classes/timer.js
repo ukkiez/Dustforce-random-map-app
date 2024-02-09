@@ -66,7 +66,14 @@ export class Timer extends EventEmitter {
 
     this.expected += this.interval;
 
-    this.timerElement.innerHTML = formatTime( this.time, this.tenths, this.hundreths );
+    let hundredths = this.hundreths;
+    if ( this.time >= ( 1000 * 60 * 60 * 10 ) ) {
+      // reduce the amount of space the timer needs so it fits easier on the
+      // screen
+      hundredths = false;
+    }
+
+    this.timerElement.innerHTML = formatTime( this.time, this.tenths, hundredths );
 
     if ( this.hasStarted ) {
       if ( this.time <= 0 ) {

@@ -3,6 +3,12 @@ body {
   overflow-y: scroll;
 }
 
+#rma-header {
+  position: absolute;
+  font-size: 0.6rem;
+  top: 0.5rem;
+}
+
 button {
   font-family: "Caracteres", sans-serif;
   margin-right: 0.25rem;
@@ -11,6 +17,8 @@ button {
 .settings-header {
   -webkit-app-region: drag;
   font-size: 2rem;
+  color: #ededed;
+  margin-top: 0.5rem;
 }
 
 .grid {
@@ -150,6 +158,7 @@ button {
   font-size: 1rem;
   text-align: start;
   color: black;
+  background-color: inherit;
   text-decoration: none;
 
   border-radius: 0.15rem;
@@ -210,7 +219,7 @@ input[type="checkbox"] {
   position: absolute;
   top: 2.25rem;
   right: 1.5rem;
-  color: aliceblue;
+  color: #ededed;
   font-style: italic;
   white-space: pre-wrap;
   text-align: center;
@@ -220,7 +229,6 @@ input[type="checkbox"] {
   font-size: 0.85rem;
 }
 
-/* buttons */
 #back-button {
   cursor: pointer;
   font-size: 1.15rem;
@@ -261,11 +269,11 @@ input[type="checkbox"] {
   background-color: #353535;
   pointer-events: none;
 }
-#save-button:hover {
+#save-button:hover:not(.disabled) {
   color: #027a5a;
   background-color: #04efb1;
 }
-#save-button:active {
+#save-button:active:not(.disabled) {
   color: #025c44;
   background-color: #05b486;
 }

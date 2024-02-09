@@ -92,22 +92,17 @@ const initMainBody = () => {
     nw.Window.get().close();
   } );
 
-  const currentWindow = nw.Window.get();
 
-  // max width / max height
-  const aspectRatio = 250 / 260;
-  let resize;
-  currentWindow.on( "resize", function( width ) {
-    clearTimeout( resize );
-    resize = setTimeout( () => {
-      currentWindow.resizeTo( width, Math.round( width / aspectRatio ) );
-    }, 200 );
-  } );
-
-  const mapInfoElements = document.getElementsByClassName( "map-info-text" );
-  for ( const element of mapInfoElements ) {
-    element.style.display = "none";
-  }
+  // // max width / max height
+  // const currentWindow = nw.Window.get();
+  // const aspectRatio = 250 / 260;
+  // let resize;
+  // currentWindow.on( "resize", function( width ) {
+  //   clearTimeout( resize );
+  //   resize = setTimeout( () => {
+  //     currentWindow.resizeTo( width, Math.round( width / aspectRatio ) );
+  //   }, 200 );
+  // } );
 
   if ( settings.seed ) {
     document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
@@ -115,6 +110,7 @@ const initMainBody = () => {
 
   if ( settings.settingsName ) {
     document.getElementById( "mode" ).innerText = `${ settings.settingsName } Mode`;
+    document.getElementById( "mode2" ).innerText = `${ settings.settingsName } Mode`;
   }
 
   if ( !settings.skips ) {
@@ -122,8 +118,6 @@ const initMainBody = () => {
     skips.innerText = "No Skips";
     addClass( skips, "none" );
   }
-
-  console.log( "FOO" );
 
   if ( iconAnimationTimeout ) {
     clearTimeout( iconAnimationTimeout );
@@ -156,6 +150,8 @@ const initSettingsBody = () => {
     // bottom)
     const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
     currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 35 );
+    currentWindow.setMinimumSize( parseInt( clientRectangle.width - 50, 10 ), parseInt( clientRectangle.height - 50, 10 ) );
+    currentWindow.setMaximumSize( parseInt( clientRectangle.width + 100, 10 ), parseInt( clientRectangle.height + 135, 10 ) );
   } );
 }
 
@@ -175,7 +171,7 @@ const initTimers = () => {
 }
 
 export let runData = {};
-const initRunData = () => {
+const initRunData = ( _isChallengeRun ) => {
   // keep track of skips, which levels have been completed (SS or any%), and
   // which have been solved (SS'd only), and which levels have been picked
   // already
@@ -193,7 +189,12 @@ const initRunData = () => {
       addClass( element, "none" );
     }
 
-    element.innerText = `Skips remaining: ${ runData.skips }`;
+    if ( _isChallengeRun ) {
+      element.innerText = `Skips Remaining: ${ runData.skips }`;
+    }
+    else {
+      element.innerText = `Free Skips: ${ runData.skips }`;
+    }
   }
 };
 
@@ -203,7 +204,7 @@ export const initChallengeRunBody = () => {
   document.body.replaceChildren( clone );
 
   initTimers( true );
-  initRunData();
+  initRunData( true );
 
   import( "./timing/auto.js" ).then( ( { initialize } ) => {
     initialize();
