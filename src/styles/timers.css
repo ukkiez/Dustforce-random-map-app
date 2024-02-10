@@ -3,13 +3,22 @@
   -webkit-app-region: drag;
 }
 
-#main-time {
+.timer {
   color: #efefef;
+}
+
+#main-time {
   font-size: 16vw;
   letter-spacing: 0.1rem;
 }
 #main-time.running {
-  margin-top: 4vw;
+  margin-top: 2vw;
   font-size: 16vw !important;
   letter-spacing: 0.2rem;
+}
+
+#map-timer.running {
+  font-size: 10vw;
+  letter-spacing: 0.1rem;
+  margin-left: 0.25rem;
 }

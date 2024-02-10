@@ -20,8 +20,7 @@
 
 #title-logo {
   position: absolute;
-  margin-top: 5vw;
-  margin-left: 2vw;
+  margin-top: 0.9rem;
   width: 18vw;
   height: 18vw;
   opacity: 0.8;
@@ -52,16 +51,13 @@
   margin-bottom: 4vw;
 
   color: #00a478;
-  font-size: 7vw;
+  font-size: 8vw;
   font-style: italic;
   text-decoration: underline;
   cursor: pointer;
 }
 #open-directory-link:hover {
   color: #06d6a0;
-}
-#open-directory-input {
-  display: none;
 }
 #confirmation-text {
   color: #059c74;
@@ -97,4 +93,8 @@
   100% {
     opacity: 1;
   }
+}
+
+#open-directory-input {
+  display: none;
 }

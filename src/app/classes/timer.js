@@ -5,9 +5,6 @@ import { formatTime } from "../util/format.js";
 
 export class Timer extends EventEmitter {
   timerElement;
-  diffElement;
-
-  timeToCompare;
 
   // milliseconds
   time = 0;
@@ -17,6 +14,9 @@ export class Timer extends EventEmitter {
   tenths = false;
   hundreths = false;
 
+  // establishes whether this is a timer counting down, or up like a stopwatch
+  _countdown = true;
+
   hasStarted = false;
   stopped = false;
 
@@ -25,18 +25,15 @@ export class Timer extends EventEmitter {
   constructor( { ...options } ) {
     super();
 
-    const { timerElementId, diffElementId, timeToCompare, tenths, hundreths, startTime = 3600000, interval, _countdown = true } = options;
+    const { timerElementId, tenths, hundreths, startTime, interval, _countdown = true } = options;
 
     this.timerElement = document.getElementById( timerElementId );
-    if ( diffElementId ) {
-      this.diffElement = document.getElementById( diffElementId );
-    }
-    this.timeToCompare = timeToCompare;
 
     this.tenths = tenths;
     this.hundreths = hundreths;
     this.time = ( startTime || this.time );
     this.interval = ( interval || this.interval );
+    this._countdown = _countdown;
   }
 
   start() {
@@ -46,8 +43,7 @@ export class Timer extends EventEmitter {
 
     this.hasStarted = true;
 
-    // completely overwrite the classNames to ensure we didn't miss one
-    this.timerElement.className = "running";
+    addClass( this.timerElement, "running" );
 
     // reset the expected date
     this.expected = Date.now() + this.interval;
@@ -62,7 +58,12 @@ export class Timer extends EventEmitter {
 
     const drift = Date.now() - this.expected;
 
-    this.time -= this.interval;
+    if ( this._countdown ) {
+      this.time -= this.interval;
+    }
+    else {
+      this.time += this.interval;
+    }
 
     this.expected += this.interval;
 
@@ -76,7 +77,7 @@ export class Timer extends EventEmitter {
     this.timerElement.innerHTML = formatTime( this.time, this.tenths, hundredths );
 
     if ( this.hasStarted ) {
-      if ( this.time <= 0 ) {
+      if ( this._countdown && this.time <= 0 ) {
         this.finish();
         return;
       }
@@ -127,10 +128,6 @@ export class Timer extends EventEmitter {
       }
     }
     this.timerElement.innerHTML = text;
-
-    if ( this.diffElement ) {
-      this.diffElement.innerHTML = "";
-    }
 
     this.finished = false;
 

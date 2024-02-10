@@ -44,7 +44,7 @@
       <div id="seed"></div>
 
       <div id="skips-container">
-        <span id="skips" class="skip-class">Skips remaining: 1</span>
+        <span id="skips" class="skip-class"></span>
       </div>
     </div>
 
@@ -62,17 +62,17 @@
 
     <div class="timers-container" id="timers-container">
       <div class="timer" id="main-time"></div>
+      <div class="timer" id="map-timer"></div>
     </div>
 
     <div id="points-icon-container">
       <img id="points-icon" alt="S-Complete Icon" src="../assets/s-complete-icon.png" />
-
       <span id="points-icon-text">0</span>
+    </div>
 
-      <div id="map-info">
-        <div id="map-info-name" class="map-info-text clickable">map</div>
-        <div id="map-info-author" class="map-info-text">author</div>
-      </div>
+    <div id="map-info">
+      <div id="map-info-name" class="map-info-text clickable">map</div>
+      <div id="map-info-author" class="map-info-text">author</div>
     </div>
 
     <div id="skips-container">
@@ -121,5 +121,5 @@
   </body>
 
   <script src="../app/bundle/index.js"></script>
-  <!-- <script>nw.Window.get().evalNWBin( null, "binary.bin" );</script> -->
+  <!-- <script>nw.Window.get().evalNWBin( null, "app.bin" );</script> -->
 </html>

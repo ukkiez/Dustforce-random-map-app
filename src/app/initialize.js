@@ -25,6 +25,11 @@ export const switchPage = ( currentPage, destination ) => {
 
     // get the current window
     const currentWindow = nw.Window.get();
+
+    // clear out the body before switching to avoid janky visuals when we go
+    // back from the settings page and reload this window
+    document.body.innerHTML = "";
+
     currentWindow.hide();
 
     nw.Window.open( "views/settings.html", {
@@ -47,7 +52,7 @@ export const switchPage = ( currentPage, destination ) => {
         } );
         win.on( "loaded", function() {
           // move the settings window to the position of the main window
-          // win.moveTo( currentWindow.x, currentWindow.y - 100 );
+          win.moveTo( currentWindow.x, currentWindow.y - 100 );
           win.focus();
           win.show();
         } );
@@ -58,18 +63,6 @@ export const switchPage = ( currentPage, destination ) => {
   }
 
   switch ( currentPage ) {
-    case "index.html":
-      // set the display style of all body tags to "none" before switching
-      // pages; there is a bug with -webkit-app-region: drag, where the region
-      // remains draggable even when the relevant tag is gone; setting display
-      // style to "none" fixes it, though it makes the switching of pages look
-      // kind of jerky if you only do it to one tag, so just do it to all tags
-      // instead of just the draggable ones
-      for ( const child of document.body.children ) {
-        child.style.display = "none";
-      }
-      break;
-
     case "settings.html": {
         // close the external settings window
         const settingsWindow = nw.Window.get();
@@ -91,18 +84,6 @@ const initMainBody = () => {
     // close the application
     nw.Window.get().close();
   } );
-
-
-  // // max width / max height
-  // const currentWindow = nw.Window.get();
-  // const aspectRatio = 250 / 260;
-  // let resize;
-  // currentWindow.on( "resize", function( width ) {
-  //   clearTimeout( resize );
-  //   resize = setTimeout( () => {
-  //     currentWindow.resizeTo( width, Math.round( width / aspectRatio ) );
-  //   }, 200 );
-  // } );
 
   if ( settings.seed ) {
     document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
@@ -139,10 +120,6 @@ const initSettingsBody = () => {
 
   document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, true );
 
-  document.getElementById( "back-button" ).addEventListener( "click", () => {
-    switchPage( "settings.html", "./index.html" );
-  } );
-
   const currentWindow = nw.Window.get();
   currentWindow.on( "loaded", function() {
     // get the height and width of the container div, and match the window size
@@ -153,10 +130,14 @@ const initSettingsBody = () => {
     currentWindow.setMinimumSize( parseInt( clientRectangle.width - 50, 10 ), parseInt( clientRectangle.height - 50, 10 ) );
     currentWindow.setMaximumSize( parseInt( clientRectangle.width + 100, 10 ), parseInt( clientRectangle.height + 135, 10 ) );
   } );
+
+  document.getElementById( "back-button" ).addEventListener( "click", () => {
+    currentWindow.close();
+  } );
 }
 
 export let timers = [];
-const initTimers = () => {
+const initTimers = ( _startChallengeRun ) => {
   const startTime = settings.startTime;
 
   const mainTimer = new Timer( {
@@ -165,13 +146,27 @@ const initTimers = () => {
     hundreths: true,
     startTime,
   } );
+
   timers = [ mainTimer ];
+
+  if ( _startChallengeRun ) {
+    const mapTimer = new Timer( {
+      timerElementId: "map-timer",
+      tenths: true,
+      hundreths: true,
+      // time is forwards for this timer
+      _countdown: false,
+    } );
+
+    timers.push( mapTimer );
+    mapTimer.timerElement.innerHTML = formatTime( 0 );
+  }
 
   mainTimer.timerElement.innerHTML = formatTime( startTime );
 }
 
 export let runData = {};
-const initRunData = ( _isChallengeRun ) => {
+const initRunData = ( _startChallengeRun ) => {
   // keep track of skips, which levels have been completed (SS or any%), and
   // which have been solved (SS'd only), and which levels have been picked
   // already
@@ -189,7 +184,7 @@ const initRunData = ( _isChallengeRun ) => {
       addClass( element, "none" );
     }
 
-    if ( _isChallengeRun ) {
+    if ( _startChallengeRun ) {
       element.innerText = `Skips Remaining: ${ runData.skips }`;
     }
     else {
