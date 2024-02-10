@@ -61,7 +61,16 @@ const nw = new NwBuilder( {
   winIco: "./src/assets/s-complete-icon.icns",
 } );
 
+const modulesPath = "./src/node_modules";
 ( async () => {
+  try {
+    // remove node modules (since we only use dev modules anyway)
+    fs.rmSync( modulesPath, { recursive: true } );
+  }
+  catch ( e ) {
+    console.error( e );
+  }
+
   await nw.build();
   console.log( "> Built Mac&Linux" );
 
@@ -95,23 +104,23 @@ const buildWindows = async () => {
     ".DS_Store",
   ] );
 
-  // copy the package.json to a temporary folder, build only non-dev modules,
-  // and copy the folder to the build directory
-  if ( fs.existsSync( "./temp" ) ) {
-    fs.rmSync( "./temp", { recursive: true } );
-  }
-  fs.mkdirSync( "./temp" );
-  fs.copyFileSync( path.join( srcPath, "/package.json" ), "./temp/package.json" );
+  // // copy the package.json to a temporary folder, build only non-dev modules,
+  // // and copy the folder to the build directory
+  // if ( fs.existsSync( "./temp" ) ) {
+  //   fs.rmSync( "./temp", { recursive: true } );
+  // }
+  // fs.mkdirSync( "./temp" );
+  // fs.copyFileSync( path.join( srcPath, "/package.json" ), "./temp/package.json" );
 
-  await execAsync( "npm i --omit=dev --prefix ./temp", true );
+  // await execAsync( "npm i --omit=dev --prefix ./temp", true );
 
-  await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
+  // await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
 
   // rename nw.exe
   await fsPromises.rename( path.join( buildPath, "nw.exe" ), path.join( buildPath, "random-map-app.exe" ) );
 
-  // clean up
-  fs.rmSync( "./temp", { recursive: true } );
+  // // clean up
+  // fs.rmSync( "./temp", { recursive: true } );
 
   // create a tar file for distribution
   await execAsync( "tar -cvzf dist/RMA-win32.tar.gz dist/win32", true );
