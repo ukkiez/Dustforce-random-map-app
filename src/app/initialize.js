@@ -2,14 +2,14 @@
 // in the browser context
 const fs = nw.require( "fs" );
 
-import { Timer } from "./classes/timer.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
-const config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
-
 export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
-const settings = JSON.parse( fs.readFileSync( settingsPath ) );
+let settings;
+let config;
+
+export let init;
 
 export const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
@@ -21,17 +21,12 @@ export const switchPage = ( currentPage, destination ) => {
   }
 
   if ( destination === "settings.html" ) {
+    // add an opaque black overlay to the main window and disable pointer events
+    // while the user is altering the settings
+    document.getElementById( "obscuring-overlay" ).style.display = "block";
+    document.body.style[ "pointer-events" ] = "none";
+
     // open a new window with the settings configuration
-
-    // get the current window
-    const currentWindow = nw.Window.get();
-
-    // clear out the body before switching to avoid janky visuals when we go
-    // back from the settings page and reload this window
-    document.body.innerHTML = "";
-
-    currentWindow.hide();
-
     nw.Window.open( "views/settings.html", {
       position: "center",
       width: 360,
@@ -47,14 +42,17 @@ export const switchPage = ( currentPage, destination ) => {
     }, function( win ) {
       if ( typeof win !== "undefined" ) {
         win.on( "closed", function() {
-          currentWindow.reload();
-          currentWindow.show();
+          init();
+
+          // ensure pointer events are enabled in case we disabled them while e.g. the
+          // Settings are open
+          document.body.style[ "pointer-events" ] = "auto";
         } );
         win.on( "loaded", function() {
-          // move the settings window to the position of the main window
-          win.moveTo( currentWindow.x, currentWindow.y - 100 );
-          win.focus();
+          // // move the settings window to the position of the main window
+          // win.moveTo( currentWindow.x, currentWindow.y - 100 );
           win.show();
+          win.focus();
         } );
       }
     } );
@@ -85,6 +83,10 @@ const initMainBody = () => {
     nw.Window.get().close();
   } );
 
+  import( "./runs/challenge.js" ).then( ( { initialize } ) => {
+    document.getElementById( "start-btn" )?.addEventListener( "click", initialize );
+  } );
+
   if ( settings.seed ) {
     document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
   }
@@ -94,11 +96,20 @@ const initMainBody = () => {
     document.getElementById( "mode2" ).innerText = `${ settings.settingsName } Mode`;
   }
 
-  if ( !settings.skips ) {
-    const skips = document.getElementById( "skips" );
-    skips.innerText = "No Skips";
-    addClass( skips, "none" );
+  // set the proper skips starting count
+  const skipsElement = document.getElementById( "skips" );
+  if ( !settings.skips || settings.freeSkips <= 0 ) {
+    addClass( skipsElement, "none" );
   }
+
+  if ( !settings.skips ) {
+    skipsElement.innerText = "No Skips";
+  }
+  else {
+    skipsElement.innerText = `Free Skips: ${ settings.freeSkips }`;
+  }
+
+  document.getElementById( "main-time" ).innerHTML = formatTime( settings.startTime );
 
   if ( iconAnimationTimeout ) {
     clearTimeout( iconAnimationTimeout );
@@ -107,10 +118,12 @@ const initMainBody = () => {
     // remove the animated class so we can toggle the animation whenever we want
     // (but only after a timeout, since we want the animation to finish playing
     // on pageload first)
-    removeClass( document.getElementById( "points-icon" ), "animated" );
+    if ( document.getElementById( "points-icon" ) ) {
+      removeClass( document.getElementById( "points-icon" ), "animated" );
+    }
   }, 2000 );
 
-  document.getElementById( "settings-icon" ).addEventListener( "click", () => {
+  document.getElementById( "settings-icon" )?.addEventListener( "click", () => {
     switchPage( "index.html", "./settings.html" );
   } );
 }
@@ -133,76 +146,6 @@ const initSettingsBody = () => {
 
   document.getElementById( "back-button" ).addEventListener( "click", () => {
     currentWindow.close();
-  } );
-}
-
-export let timers = [];
-const initTimers = ( _startChallengeRun ) => {
-  const startTime = settings.startTime;
-
-  const mainTimer = new Timer( {
-    timerElementId: "main-time",
-    tenths: true,
-    hundreths: true,
-    startTime,
-  } );
-
-  timers = [ mainTimer ];
-
-  if ( _startChallengeRun ) {
-    const mapTimer = new Timer( {
-      timerElementId: "map-timer",
-      tenths: true,
-      hundreths: true,
-      // time is forwards for this timer
-      _countdown: false,
-    } );
-
-    timers.push( mapTimer );
-    mapTimer.timerElement.innerHTML = formatTime( 0 );
-  }
-
-  mainTimer.timerElement.innerHTML = formatTime( startTime );
-}
-
-export let runData = {};
-const initRunData = ( _startChallengeRun ) => {
-  // keep track of skips, which levels have been completed (SS or any%), and
-  // which have been solved (SS'd only), and which levels have been picked
-  // already
-  runData = {
-    skips: settings.freeSkips,
-    completedLevelIds: new Set(),
-    solvedLevelIds: new Set(),
-    chosenLevelCache: new Set(),
-  };
-
-  if ( settings.skips ) {
-    // set the proper skips starting count
-    const element = document.getElementById( "skips" );
-    if ( runData.skips <= 0 ) {
-      addClass( element, "none" );
-    }
-
-    if ( _startChallengeRun ) {
-      element.innerText = `Skips Remaining: ${ runData.skips }`;
-    }
-    else {
-      element.innerText = `Free Skips: ${ runData.skips }`;
-    }
-  }
-};
-
-export const initChallengeRunBody = () => {
-  const template = document.getElementById( "challenge-run-template" );
-  const clone = template.content.cloneNode( true );
-  document.body.replaceChildren( clone );
-
-  initTimers( true );
-  initRunData( true );
-
-  import( "./timing/auto.js" ).then( ( { initialize } ) => {
-    initialize();
   } );
 }
 
@@ -229,7 +172,10 @@ if ( template?.content?.children ) {
   }
 }
 
-export const init = () => {
+init = () => {
+  settings = JSON.parse( fs.readFileSync( settingsPath ) );
+  config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+
   // set the user configured opacity
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;
 
@@ -248,13 +194,6 @@ export const init = () => {
 
   if ( page === "index.html" ) {
     initMainBody();
-
-    initTimers();
-    initRunData();
-
-    import( "./timing/auto.js" ).then( ( { initialize } ) => {
-      initialize();
-    } );
   }
   else if ( page === "settings.html" ) {
     initSettingsBody();
