@@ -71,6 +71,9 @@ const modulesPath = "./src/node_modules";
     console.error( e );
   }
 
+  // clear out the dist folder
+  await fsPromises.rm( "./dist/", { recursive: true } );
+
   // overwrite the user settings and configuration with the defaults
   await fsPromises.rm( "./src/user-data/settings.json" );
   await fsPromises.rm( "./src/user-data/configuration.json" );
