@@ -60,7 +60,7 @@ const finish = () => {
 
 if ( fs.existsSync( dustforceDirectory ) ) {
   // the Dustforce directory is where it is expected to be
-  confirmationTextEl.innerText = "Directory Found.";
+  confirmationTextEl.innerText = "Dustforce directory Found.";
 
   finish();
 }
