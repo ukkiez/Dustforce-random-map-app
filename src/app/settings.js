@@ -502,9 +502,14 @@ importSettingsInput.addEventListener( "change", () => {
     // finally, show the imported settings (but don't save, the user should do
     // that themselves)
     setInputValues( importedSettings );
+    data = {
+      ...importedSettings,
+    };
 
     // reset the input
     importSettingsInput.value = "";
+
+    handleStateChange();
   } );
 
   reader.readAsBinaryString( file );
