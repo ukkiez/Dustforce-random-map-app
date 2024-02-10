@@ -444,6 +444,8 @@ export const initialize = () => {
   timers[ 0 ].on( "finished", () => {
     // close the watcher when the timer has finished
     watcher.close();
+
+    timers[ 1 ].finish();
   } );
 
   document.getElementById( "replay-btn" )?.addEventListener( "click", () => {
