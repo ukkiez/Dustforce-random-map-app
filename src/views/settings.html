@@ -84,7 +84,7 @@
             <span id="fastestSSTime-formatted">0:00:00.000</span>
           </div>
 
-          <div class="setting-container">
+          <div class="setting-container single-column">
             <label for="CMPLevels">CMP levels</label>
             <input type="checkbox" id="CMPLevels-input" name="CMPLevels"/>
           </div>
@@ -92,6 +92,10 @@
           <div class="setting-container">
             <label for="skips">Skips</label>
             <input type="checkbox" id="skips-input" name="skips"/>
+          </div>
+          <div id="infinite-skips" class="setting-container">
+            <label for="infinite-skips">Infinite Skips</label>
+            <input type="checkbox" id="infinite-skips-input" name="infinite-skips"/>
           </div>
         </div>
 
@@ -104,10 +108,10 @@
           </div>
 
           <div class="setting-container">
-            <input type="number" id="freeSkips-input" name="freeskips" max="100">
+            <input type="number" id="freeSkips-input" name="freeskips" max="50">
           </div>
           <div class="setting-container">
-            <input type="number" id="freeSkipsAfterX-input" name="freeskipsafterx" max="10"/>
+            <input type="number" id="freeSkipsAfterX-input" name="freeskipsafterx" max="100"/>
           </div>
         </div>
       </form>

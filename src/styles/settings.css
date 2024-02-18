@@ -35,12 +35,13 @@ button {
   margin-left: 0.1rem;
 }
 
-.disabled * > label {
+.disabled > label, .disabled * > label {
   color: #4c5763;
 }
-.disabled * > input {
+.disabled > input, .disabled * > input {
   color: #4c5763;
   background-color: #384049;
+  pointer-events: none;
 }
 
 .error {

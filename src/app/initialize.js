@@ -105,6 +105,9 @@ const initMainBody = () => {
   if ( !settings.skips ) {
     skipsElement.innerText = "No Skips";
   }
+  else if ( settings.infiniteSkips ) {
+    skipsElement.innerText = "Infinite Skips";
+  }
   else {
     skipsElement.innerText = `Free Skips: ${ settings.freeSkips }`;
   }

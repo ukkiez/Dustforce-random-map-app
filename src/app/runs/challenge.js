@@ -171,6 +171,11 @@ const handleSkipsCount = ( change ) => {
     return;
   }
 
+  if ( settings.infiniteSkips ) {
+    // the user has infinite skips, so nothing needs to be done
+    return;
+  }
+
   const skipsElement = document.getElementById( "skips" );
   const skipButtonElement = document.getElementById( "skip-btn" );
 
@@ -345,7 +350,7 @@ const skip = () => {
       return;
     }
 
-    if ( runData.skips <= 0 ) {
+    if ( !settings.infiniteSkips && ( runData.skips <= 0 ) ) {
       return;
     }
 
@@ -390,12 +395,15 @@ const initVars = () => {
 const initRunData = () => {
   // set the proper skips starting count
   const element = document.getElementById( "skips" );
-  if ( !settings.skips || settings.freeSkips <= 0 ) {
+  if ( !settings.skips || ( settings.freeSkips <= 0 && !settings.infiniteSkips ) ) {
     addClass( element, "none" );
   }
 
   if ( !settings.skips ) {
     element.innerText = "No Skips";
+  }
+  else if ( settings.infiniteSkips ) {
+    element.innerText = "Infinite Skips";
   }
   else {
     element.innerText = `Skips Remaining: ${ settings.freeSkips }`;

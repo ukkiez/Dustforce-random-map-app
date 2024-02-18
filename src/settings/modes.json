@@ -7,6 +7,7 @@
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 10,
+    "infiniteSkips": false,
     "CMPLevels": false,
     "settingsName": "classic"
   },
@@ -19,6 +20,7 @@
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 10,
+    "infiniteSkips": false,
     "CMPLevels": false,
     "settingsName": "rapid"
   },
@@ -31,6 +33,7 @@
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 0,
+    "infiniteSkips": false,
     "CMPLevels": false,
     "settingsName": "blitz"
   },
@@ -41,8 +44,9 @@
     "minSSCount": 40,
     "fastestSSTime": 120000,
     "skips": true,
-    "freeSkips": 1,
-    "freeSkipAfterXSolvedLevels": 5,
+    "freeSkips": 0,
+    "freeSkipAfterXSolvedLevels": 0,
+    "infiniteSkips": true,
     "CMPLevels": false,
     "settingsName": "casual"
   },
@@ -55,6 +59,7 @@
     "skips": false,
     "freeSkips": 0,
     "freeSkipAfterXSolvedLevels": 0,
+    "infiniteSkips": false,
     "CMPLevels": false,
     "settingsName": "hard"
   }

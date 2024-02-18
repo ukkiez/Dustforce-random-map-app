@@ -28,6 +28,8 @@ const formattedFastestTimeEl = document.getElementById( "fastestSSTime-formatted
 const CMPLevelsEl = document.getElementById( "CMPLevels-input" );
 
 const skipsEl = document.getElementById( "skips-input" );
+const infiniteSkipsEl = document.getElementById( "infinite-skips" );
+const infiniteSkipsInputEl = document.getElementById( "infinite-skips-input" );
 const freeSkipsEl = document.getElementById( "freeSkips-input" );
 const freeSkipsAfterXEl = document.getElementById( "freeSkipsAfterX-input" );
 
@@ -85,6 +87,7 @@ const setInputValues = ( _settings ) => {
     minSSCount,
     fastestSSTime,
     skips,
+    infiniteSkips,
     freeSkips,
     freeSkipAfterXSolvedLevels,
     CMPLevels,
@@ -104,6 +107,7 @@ const setInputValues = ( _settings ) => {
   CMPLevelsEl.checked = CMPLevels;
 
   skipsEl.checked = skips;
+  infiniteSkipsInputEl.checked = infiniteSkips;
   freeSkipsEl.value = freeSkips;
   freeSkipsAfterXEl.value = freeSkipAfterXSolvedLevels;
 
@@ -344,12 +348,38 @@ addCheckboxListener( CMPLevelsEl, "CMPLevels" );
 
 addCheckboxListener( skipsEl, "skips", ( event ) => {
   if ( !event.target.checked ) {
-    freeSkipsContainer.classList.add( "disabled" );
+    addClass( freeSkipsContainer, "disabled" );
+
+    infiniteSkipsInputEl.disabled = true;
+    infiniteSkipsInputEl.checked = false;
+    addClass( infiniteSkipsEl, "disabled" );
+
+    if ( data.infiniteSkips ) {
+      data.infiniteSkips = false;
+    }
   }
   else {
-    freeSkipsContainer.classList.remove( "disabled" );
+    infiniteSkipsInputEl.disabled = false;
+    removeClass( infiniteSkipsEl, "disabled" );
+
+    if ( !data.infiniteSkips ) {
+      // possibly remove the disabled skips input UI styles, granted that
+      // infinite skips are not on as they also disable those
+      removeClass( freeSkipsContainer, "disabled" );
+    }
   }
 } );
+
+addCheckboxListener( infiniteSkipsInputEl, "infiniteSkips", ( event ) => {
+  if ( event.target.checked ) {
+    addClass( freeSkipsContainer, "disabled" );
+  }
+  else if ( data.skips ) {
+    // remove the disabled skips input UI styles, granted that skips are on
+    removeClass( freeSkipsContainer, "disabled" );
+  }
+} );
+
 addInputListener( freeSkipsEl, "freeSkips", { min: true, max: true } );
 addFocusOutListener( freeSkipsEl, "freeSkips" );
 
