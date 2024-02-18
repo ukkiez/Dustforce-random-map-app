@@ -26,22 +26,23 @@ body.challenge {
 #map-info {
   margin-left: 0.5rem;
   height: 11.5vh;
-  width: fit-content;
   color: #c3c3c3;
   font-size: max( 5vh, 6vw );
   flex-grow: 1;
 }
-.map-info-text {
-}
-#map-info-name, #map-info-author {
+.map-info-text-wrapper {
   margin: 0;
-}
-#map-info-author {
-  color: #969696;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
 }
 #map-info-name.clickable:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+#map-info-author {
+  color: #969696;
 }
 
 #skips-container.challenge {
@@ -119,16 +120,19 @@ body.challenge {
   animation: spin-ccw 0.5s;
 }
 
-@keyframes animation-squeeze {
-  10% {
-    transform: scaleY( 0 );
+@keyframes animation-fading {
+  0% {
+    opacity: 1;
   }
   20% {
-    transform: scale3d( 1, 1, 1 );
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
   }
 }
-.animation-squeeze:hover:not(.disabled-btn) .btn-icon {
-  animation: animation-squeeze 3s infinite;
+.animation-fading:hover:not(.disabled-btn) .btn-icon {
+  animation: animation-fading 3s infinite;
 }
 
 .disabled-btn {
@@ -162,9 +166,6 @@ body.challenge {
   color: #bf2020;
   background-color: #821818;
   border: #390a0a 0.1rem solid;
-}
-#reset-btn .btn-text {
-  top: 0;
 }
 
 /* @keyframes opacity-for-splash {

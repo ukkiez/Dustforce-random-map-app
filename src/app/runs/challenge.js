@@ -121,7 +121,6 @@ const initChallengeRunBody = () => {
 
   addClass( document.body, "challenge" );
 
-  console.log( { ...settings } );
   if ( !settings.skips ) {
     addClass( document.getElementById( "skips" ), "none" );
     addClass( document.getElementById( "skip-btn" ), "disabled-btn" )
@@ -140,7 +139,6 @@ let runData = {
 let mapPool = [];
 let choiceIndex = 0;
 const pickLevel = () => {
-  console.log( mapPool.length );
   // the map pool was already shuffled at the start of the run, so simply pick
   // maps start to end
   const choice = mapPool[ choiceIndex ];
