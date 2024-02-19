@@ -90,6 +90,9 @@ const initMainBody = () => {
   if ( settings.seed ) {
     document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
   }
+  else {
+    document.getElementById( "seed" ).innerText = "Random Seed";
+  }
 
   if ( settings.settingsName ) {
     document.getElementById( "mode" ).innerText = `${ settings.settingsName } Mode`;
@@ -98,7 +101,7 @@ const initMainBody = () => {
 
   // set the proper skips starting count
   const skipsElement = document.getElementById( "skips" );
-  if ( !settings.skips || settings.freeSkips <= 0 ) {
+  if ( !settings.skips || ( !settings.infiniteSkips && settings.freeSkips <= 0 ) ) {
     addClass( skipsElement, "none" );
   }
 

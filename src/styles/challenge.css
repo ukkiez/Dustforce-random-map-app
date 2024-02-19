@@ -124,15 +124,15 @@ body.challenge {
   0% {
     opacity: 1;
   }
-  20% {
+  10% {
     opacity: 0;
   }
-  40% {
+  20% {
     opacity: 1;
   }
 }
 .animation-fading:hover:not(.disabled-btn) .btn-icon {
-  animation: animation-fading 3s infinite;
+  animation: animation-fading 4.5s infinite;
 }
 
 .disabled-btn {

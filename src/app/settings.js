@@ -6,8 +6,7 @@ import { settingsPath } from "./initialize.js";
 
 import { formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
-
-import cmpLevels from "../dustkid-data/cmp-levels.json";
+import { getMapPoolSize } from "./util/levelData.js";
 
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
@@ -42,30 +41,10 @@ let initialState = {
   ...settings,
 };
 
-// const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
-import { filteredMetadata as levelData } from "../dustkid-data/filtered-metadata.js";
-const getMapPoolSize = () => {
-  const mapPool = new Set();
-  for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
-    if ( !data.CMPLevels ) {
-      if ( cmpLevels.includes( levelFilename ) ) {
-        // don't include cmp levels, as the user set them to be off
-        continue;
-      }
-    }
-
-    const { ss_count, fastest_time } = metadata;
-    if ( ss_count >= data.minSSCount && fastest_time <= data.fastestSSTime ) {
-      mapPool.add( levelFilename );
-    }
-  }
-
-  return mapPool.size;
-}
 const setMapPoolSize = () => {
   const mapPoolEl = document.getElementById( "map-pool-size" );
   const mapPoolNumberEl = document.getElementById( "map-pool-size-number" );
-  const poolSize = getMapPoolSize();
+  const poolSize = getMapPoolSize( data );
   mapPoolNumberEl.innerText = poolSize.toLocaleString( "en-US" );
 
   if ( poolSize <= 0 ) {

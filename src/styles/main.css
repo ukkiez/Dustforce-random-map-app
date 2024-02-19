@@ -103,26 +103,22 @@
   align-content: flex-start;
   justify-content: flex-start;
   flex-grow: 1;
-  gap: 2vh;
+  gap: 4vh;
 
   margin-top: 0.5rem;
   margin-left: 0.3rem;
+
+  font-size: 7vw;
 }
 
 #seed {
-  font-size: 7.5vw;
-  color: #95c4ec;
   min-height: 9vw;
-}
-
-#skips-container {
-}
-#skips {
+  color: #95c4ec;
   font-size: 9vw;
 }
 
-.skip-class {
-  color: #dadada;
+#personal-best-score {
+  color: #de8251;
 }
 
 .none {

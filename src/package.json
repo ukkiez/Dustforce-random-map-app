@@ -26,11 +26,13 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.13.15",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/preset-env": "^7.13.15",
     "babelify": "^10.0.0",
     "eslint": "^7.24.0",
     "fs": "0.0.1-security"
   },
   "dependencies": {
+    "bson": "^6.3.0"
   }
 }
