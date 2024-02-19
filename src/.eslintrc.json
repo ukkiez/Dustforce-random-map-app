@@ -10,7 +10,8 @@
     },
     "globals": {
       "nw": true,
-      "global": true
+      "global": true,
+      "Buffer": true
     },
     "rules": {
     }

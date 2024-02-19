@@ -1,11 +1,9 @@
 // use nw.require() instead of require() or import to make it actually available
 // in the browser context
-const fs = nw.require( "fs" );
-
+import { getData } from "./util/data.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
-export const settingsPath = `${ global.__dirname }/user-data/settings.json`;
 let settings;
 let config;
 
@@ -179,8 +177,7 @@ if ( template?.content?.children ) {
 }
 
 init = () => {
-  settings = JSON.parse( fs.readFileSync( settingsPath ) );
-  config = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+  ( { settings, userConfiguration: config } = getData( { settings: true, userConfiguration: true } ) );
 
   // set the user configured opacity
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;

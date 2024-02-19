@@ -1,8 +1,7 @@
-import { settingsPath } from "../initialize.js";
-
 import { reset } from "../reset.js";
 
 import { Timer } from "../classes/timer.js";
+import { getData } from "../util/data.js";
 import { addClass, removeClass } from "../util/dom.js";
 import { formatTime } from "../util/format.js";
 import { seededRandom } from "../util/random.js";
@@ -14,12 +13,13 @@ const fs = nw.require( "fs" );
 const path = nw.require( "path" );
 const { exec } = nw.require( "child_process" );
 
-const { dustforceDirectory } = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
 
-// parse the filtered level metadata JSON file instead of importing it, so we
-// can be sure that on window reload we're getting all the new data
-// const levelData = JSON.parse( fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.json` ) );
-import { filteredMetadata as levelData } from "../../dustkid-data/filtered-metadata.js";
+const { levelData, userConfiguration } = getData( {
+  levelData: true,
+  userConfiguration: true,
+} );
+
+const { dustforceDirectory } = userConfiguration;
 
 const splitFile = path.join( dustforceDirectory, "split.txt" );
 
@@ -374,7 +374,7 @@ const skip = () => {
 };
 
 const initVars = () => {
-  settings = JSON.parse( fs.readFileSync( settingsPath ) );
+  ( { settings } = getData( { settings: true } ) );
 
   currentLevel = {
     name: "",

@@ -3,7 +3,8 @@ const path = nw.require( "path" );
 
 import { switchPage } from "./initialize.js";
 
-const setupData = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+import { getData } from "./util/data.js";
+const { userConfiguration: setupData } = getData( { userConfiguration: true } );
 
 const os = nw.require( "os" );
 const homedir = os.homedir();

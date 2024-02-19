@@ -33,6 +33,5 @@
     "fs": "0.0.1-security"
   },
   "dependencies": {
-    "bson": "^6.3.0"
   }
 }

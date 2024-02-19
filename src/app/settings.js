@@ -2,17 +2,17 @@
 // in the browser context
 const fs = nw.require( "fs" );
 
-import { settingsPath } from "./initialize.js";
-
 import { formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
-import { getMapPoolSize } from "./util/levelData.js";
+import { getData, getMapPoolSize, writeHexData } from "./util/data.js";
 
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
-const settings = JSON.parse( fs.readFileSync( settingsPath ) );
-const modes = JSON.parse( fs.readFileSync( `${ global.__dirname }/settings/modes.json` ) );
-const userConfiguration = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+const { modes, settings, userConfiguration } = getData( {
+  settings: true,
+  modes: true,
+  userConfiguration: true,
+} );
 
 const settingsNameEl = document.getElementById( "settings-name" );
 const settingsListEl = document.getElementById( "settings-list" );
@@ -178,7 +178,8 @@ const handleStateChange = ( force = false ) => {
 };
 
 const saveData = ( _data ) => {
-  fs.writeFileSync( settingsPath, JSON.stringify( _data, null, 2 ) );
+  writeHexData( `${ global.__dirname }/user-data/settings.bin`, _data );
+
   // reset the initial state to the newly saved state
   initialState = {
     ..._data,
@@ -370,7 +371,7 @@ document.getElementById( "save-button" ).addEventListener( "click", () => {
   saveData( data );
 
   // save user configuration changes as well
-  const currentSetupData = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+  const { userConfiguration: currentSetupData } = getData( { userConfiguration: true } );
   fs.writeFileSync( `${ global.__dirname }/user-data/configuration.json`, JSON.stringify( {
     ...currentSetupData,
     styling: {
