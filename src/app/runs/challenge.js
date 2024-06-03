@@ -1,7 +1,7 @@
 import { reset } from "../reset.js";
 
 import { Timer } from "../classes/timer.js";
-import { getData } from "../util/data.js";
+import { getData, writeHexData } from "../util/data.js";
 import { addClass, removeClass } from "../util/dom.js";
 import { formatTime } from "../util/format.js";
 import { seededRandom } from "../util/random.js";
@@ -12,7 +12,6 @@ import cmpLevels from "../../dustkid-data/cmp-levels.json";
 const fs = nw.require( "fs" );
 const path = nw.require( "path" );
 const { exec } = nw.require( "child_process" );
-
 
 const { levelData, userConfiguration } = getData( {
   levelData: true,
@@ -134,6 +133,9 @@ let runData = {
   completedLevelIds: new Set(),
   solvedLevelIds: new Set(),
   chosenLevelCache: new Set(),
+
+  // used to display a history at the end of a run
+  history: [],
 };
 
 let mapPool = [];
@@ -280,7 +282,8 @@ const start = () => {
           const ss = ( completion === "100" ) && ( finesse === "0" );
           if ( ss ) {
             if ( runData.completedLevelIds.has( id ) ) {
-              // remove a skip if this map was already any%'d
+              // remove a skip if this map was already any%'d, as that would've
+              // incremented the skip counter
               handleSkipsCount( -1 );
             }
             else {
@@ -288,6 +291,14 @@ const start = () => {
             }
 
             runData.solvedLevelIds.add( id );
+
+            runData.history.push( {
+              levelname: currentLevel.name,
+              filename: `${ currentLevel.name }-${ currentLevel.id }`,
+              time: timers[ 0 ].elapsedTime,
+              segment: timers[ 1 ].time,
+              skipped: false,
+            } );
 
             increment();
 
@@ -354,6 +365,14 @@ const skip = () => {
       return;
     }
 
+    runData.history.push( {
+      levelname: currentLevel.name,
+      filename: `${ currentLevel.name }-${ currentLevel.id }`,
+      time: timers[ 0 ].elapsedTime,
+      segment: timers[ 1 ].time,
+      skipped: true,
+    } );
+
     // skip to the next map, if user has a skip left
     currentLevel = pickLevel();
     installAndMaybePlay( currentLevel, true );
@@ -386,6 +405,8 @@ const initVars = () => {
     completedLevelIds: new Set(),
     solvedLevelIds: new Set(),
     chosenLevelCache: new Set(),
+
+    history: [],
   };
 
   mapPool = [];
@@ -465,15 +486,148 @@ export const initialize = () => {
       watcher.close();
     }
 
-    for ( const timer of timers ) {
-      if ( timer.hasStarted && !timer.finished ) {
-        timer.finish();
-      }
+    timerAction( "finish" );
 
-      timer.reset();
+    removeClass( document.body, "challenge" );
+
+    const template = document.getElementById( "score-screen-template" );
+    const clone = template.content.cloneNode( true );
+    document.body.replaceChildren( clone );
+
+    document.getElementById( "done-btn" ).addEventListener( "click", () => {
+      // exit the score screen and return to the main menu
+      reset();
+    } );
+
+    const scoreEl = document.getElementById( "score-screen-points" );
+    scoreEl.innerText = runData.solvedLevelIds.size;
+
+    const { personalBests } = getData( { personalBests: true } );
+
+    const previousBest = personalBests[ settings.settingsName ];
+    let _newPersonalBest = false;
+    if ( !previousBest || ( runData.solvedLevelIds.size > previousBest.score ) ) {
+      _newPersonalBest = true;
+      addClass( scoreEl, "pb" );
     }
 
-    reset();
+    const comparePbToggleEl = document.getElementById( "compare-pb-toggle" );
+    if ( previousBest ) {
+      comparePbToggleEl.onclick = () => {
+        const elements = document.getElementsByClassName( "history-element-time" );
+        for ( const e of elements ) {
+          if ( e.classList.contains( "hidden" ) ) {
+            removeClass( e, "hidden" );
+          }
+          else {
+            addClass( e, "hidden" );
+          }
+        }
+
+        if ( comparePbToggleEl.innerText.includes( "compare" ) ) {
+          comparePbToggleEl.innerText = "segments";
+        }
+        else {
+          comparePbToggleEl.innerText = "compare"
+        }
+      }
+    }
+    else {
+      addClass( comparePbToggleEl, "hidden" );
+    }
+
+    const runHistoryContainerEl = document.getElementById( "run-history-container" );
+
+    // process the run data to create a run history in the UI
+    let previousCheckedDiff;
+    for ( let i = 0; i < runData.history.length; i++ ) {
+      const { levelname, filename, time, segment, skipped } = runData.history[ i ];
+      /* HTML layout:
+        <!-- <div class="history-element-container">
+          <span class="history-element-index"></span>
+          <span class="history-element-levelname clickable"></span>
+          <span class="history-element-time history-element-current-time"></span>
+          <span class="history-element-time history-element-time-diff"></span>
+        </div> -->
+      */
+      const containerEl = document.createElement( "div" );
+      addClass( containerEl, "history-element-container" );
+
+      const levelEl = document.createElement( "span" );
+      levelEl.innerText = levelname;
+      addClass( levelEl, "history-element-levelname" );
+      addClass( levelEl, "clickable" );
+      const levelId = filename.split( "-" ).pop();
+      // allow users to go to the Atlas page by clicking on the map name
+      levelEl.onclick = () => {
+        nw.Shell.openExternal( `https://atlas.dustforce.com/${ levelId }` );
+      };
+
+      if ( skipped ) {
+        addClass( levelEl, "skipped" );
+      }
+
+      const indexEl = document.createElement( "span" );
+      addClass( indexEl, "history-element-index" );
+      indexEl.innerText = `${ i + 1 }`;
+
+      const timeEl = document.createElement( "span" );
+      addClass( timeEl, "history-element-time" );
+      addClass( timeEl, "history-element-current-time" );
+      timeEl.innerText = `${ formatTime( segment, true ) }`;
+
+      runHistoryContainerEl.appendChild( containerEl );
+
+      containerEl.appendChild( indexEl );
+      containerEl.appendChild( levelEl );
+      containerEl.appendChild( timeEl );
+
+      if ( previousBest && previousBest.history?.length ) {
+        const previousRunElement = previousBest.history[ i ];
+
+        // add a hidden (display: none;) span that the user can view via a
+        // toggle, which hides timeEl
+        const timeDiffEl = document.createElement( "span" );
+        addClass( timeDiffEl, "history-element-time" );
+        addClass( timeDiffEl, "history-element-time-diff" );
+        addClass( timeDiffEl, "hidden" );
+        if ( previousRunElement ) {
+          const timeDiff = previousRunElement.time - time;
+          timeDiffEl.innerText = formatTime( timeDiff, true, false, true );
+
+          // colour-code the split to indicate time gain/loss
+          if ( !previousCheckedDiff ) {
+            timeDiff >= 0 ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-behind-lost" )
+          }
+          else if ( timeDiff >= 0 ) {
+            previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-ahead-lost" );
+          }
+          else {
+            previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-behind-gained" ) : addClass( timeDiffEl, "time-behind-lost" );
+          }
+
+          previousCheckedDiff = timeDiff;
+        }
+        else {
+          timeDiffEl.innerText = formatTime( time, true );
+        }
+
+        containerEl.appendChild( timeDiffEl );
+      }
+    }
+
+    if ( _newPersonalBest ) {
+      const userHistoryData = runData.history.map( ( { filename, time, segment, skipped } ) => {
+        return { filename, time, segment, skipped };
+      } );
+
+      const newPersonalBestData = { ...personalBests };
+      newPersonalBestData[ settings.settingsName ] = {
+        score: runData.solvedLevelIds.size,
+        history: [ ...userHistoryData ],
+      };
+      writeHexData( `${ global.__dirname }/user-data/personal-bests.bin`, newPersonalBestData );
+    }
   } );
 
   // start the actual run

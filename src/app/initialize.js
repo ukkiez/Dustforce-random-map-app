@@ -6,6 +6,7 @@ import { addClass, removeClass } from "./util/dom.js";
 
 let settings;
 let config;
+let personalBests;
 
 export let init;
 
@@ -114,6 +115,11 @@ const initMainBody = () => {
   }
 
   document.getElementById( "main-time" ).innerHTML = formatTime( settings.startTime );
+  console.log( personalBests );
+  const pb = personalBests[ settings.settingsName ];
+  if ( pb?.score ) {
+    document.getElementById( "personal-best-score" ).innerText = pb.score;
+  }
 
   if ( iconAnimationTimeout ) {
     clearTimeout( iconAnimationTimeout );
@@ -177,7 +183,7 @@ if ( template?.content?.children ) {
 }
 
 init = () => {
-  ( { settings, userConfiguration: config } = getData( { settings: true, userConfiguration: true } ) );
+  ( { settings, personalBests, userConfiguration: config } = getData( { settings: true, personalBests: true, userConfiguration: true } ) );
 
   // set the user configured opacity
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;

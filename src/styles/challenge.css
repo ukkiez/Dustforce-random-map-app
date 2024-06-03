@@ -37,10 +37,6 @@ body.challenge {
   overflow: hidden;
   display: block;
 }
-#map-info-name.clickable:hover {
-  text-decoration: underline;
-  cursor: pointer;
-}
 #map-info-author {
   color: #969696;
 }

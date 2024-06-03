@@ -86,3 +86,8 @@ button:focus {
   opacity: 0.5;
   pointer-events: none;
 }
+
+.clickable:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}

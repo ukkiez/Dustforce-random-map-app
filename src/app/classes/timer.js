@@ -16,6 +16,7 @@ export class Timer extends EventEmitter {
 
   // establishes whether this is a timer counting down, or up like a stopwatch
   _countdown = true;
+  elapsedTime = 0;
 
   hasStarted = false;
   stopped = false;
@@ -64,6 +65,8 @@ export class Timer extends EventEmitter {
     else {
       this.time += this.interval;
     }
+
+    this.elapsedTime += this.interval;
 
     this.expected += this.interval;
 

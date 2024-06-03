@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/timers.css" />
     <link rel="stylesheet" href="../styles/challenge.css" />
+    <link rel="stylesheet" href="../styles/score-screen.css" />
     <title>Random Map App</title>
   </head>
 
@@ -40,8 +41,7 @@
     </div>
 
     <div class="timers-container" id="timers-container">
-      <div class="timer" id="main-time">
-      </div>
+      <div class="timer" id="main-time"></div>
     </div>
 
     <div id="run-settings-container">
@@ -49,7 +49,7 @@
 
       <div id="personal-best">
         Personal Best:
-        <span id="personal-best-score">29</span>
+        <span id="personal-best-score">none</span>
       </div>
 
       <div id="skips-container">
@@ -62,7 +62,6 @@
       <span class="tooltip-text">Settings</span>
     </div>
   </template>
-
 
   <template id="challenge-run-template">
     <span id="rma-header">
@@ -131,8 +130,45 @@
     <span id="splash-text" class="splash">Let's Dust</span> -->
   </template>
 
-  <template id="finished-challenge-run-template">
+  <template id="score-screen-template">
+    <span id="rma-header">
+      random map app
+    </span>
 
+    <div id="score-screen-container">
+      <div id="score-screen-title-container">
+        <span id="score-screen-title">
+          Finished!
+        </span>
+
+        <button id="done-btn" type="button" class="hub-btn warning-btn">
+          done
+        </button>
+      </div>
+
+      <div id="score-screen-points-container">
+        Final Score:
+        <span id="score-screen-points">
+          0
+        </span>
+        <span id="score-screen-pb-text">
+          New Personal Best!
+        </span>
+      </div>
+    </div>
+
+    <div id="run-history-header">
+      History
+      <span id="compare-pb-toggle">compare</span>
+    </div>
+    <div id="run-history-container">
+      <!-- <div class="history-element-container">
+        <span class="history-element-index"></span>
+        <span class="history-element-levelname clickable"></span>
+        <span class="history-element-time history-element-current-time"></span>
+        <span class="history-element-time history-element-time-diff"></span>
+      </div> -->
+    </div>
   </template>
 
   <body>
