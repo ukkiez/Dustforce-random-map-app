@@ -23,6 +23,8 @@ export class Timer extends EventEmitter {
 
   finished = false;
 
+  updateTimeout = null;
+
   constructor( { ...options } ) {
     super();
 
@@ -86,7 +88,7 @@ export class Timer extends EventEmitter {
       }
 
       // update the timer at ~30fps (33.3ms), taking into account possible drift
-      setTimeout( () => {
+      this.updateTimeout = setTimeout( () => {
         this.update();
       }, Math.max( 0, this.interval - drift ) );
     }
@@ -119,6 +121,7 @@ export class Timer extends EventEmitter {
     }
 
     this.hasStarted = false;
+    clearTimeout( this.updateTimeout );
 
     this.time = 0;
 
