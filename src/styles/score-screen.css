@@ -42,7 +42,23 @@
 }
 #new-pb-icon.pb {
   display: inline-flex;
+  animation: shake 4s infinite;
 }
+@keyframes shake {
+  0%, 10% {
+    transform: rotate( 0 );
+  }
+  20% {
+    transform: rotate( 15deg );
+  }
+  30% {
+    transform: rotate( -15deg );
+  }
+  50% {
+    transform: rotate( 0 );
+  }
+}
+
 #score-screen-points-base-text {
   display: inline-flex;
   margin-right: 0.25rem;
