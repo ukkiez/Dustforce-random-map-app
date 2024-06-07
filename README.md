@@ -38,11 +38,11 @@ Not at the moment - level sets are static in RMA versions. This is in part becau
 Maybe this will change in the future.
 
 ---
-> *Can I block/prevent levels I loathe from showing up in runs?*
+> *Can I block/prevent levels from showing up in runs?*
 
-You cannot block specific levels - this is part of the challenge! This also keeps runs on the leaderboards more balanced.
+There is no option to block specific levels - this is part of the challenge! This also keeps runs on the leaderboards more balanced.
 
-If the levels you encounter are generally too hard/annoying for you, consider tweaking settings like "Minimum SS Count", or giving yourself more skips to work with.
+If the levels you encounter are generally too hard/annoying for you, consider tweaking settings like "Minimum SS Count", or giving yourself more skips to work with. *Note: this would invalidate leaderboard runs.*
 
 ___
 > *Why does RMA need to know my Dustforce folder location?*
