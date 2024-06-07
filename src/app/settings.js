@@ -90,9 +90,9 @@ const setInputValues = ( _settings ) => {
   freeSkipsEl.value = freeSkips;
   freeSkipsAfterXEl.value = freeSkipAfterXSolvedLevels;
 
-  // possibly hide all skip options, depending on whether the user enabled skips
-  // or not
-  if ( !skips ) {
+  // possibly hide all skip options, depending on whether the user enabled
+  // (infinite) skips or not
+  if ( !skips || infiniteSkips ) {
     freeSkipsContainer.classList.add( "disabled" );
   }
   else {
@@ -134,14 +134,14 @@ const handleSettingsName = () => {
   // predefined modes
   for ( const mode of Object.values( modes ) ) {
     if ( !objectDiff( mode, data, [ "settingsName" ] ) ) {
-      settingsNameEl.innerText = mode.settingsName;
+      settingsNameEl.innerText = `${ mode.settingsName } mode`;
       data.settingsName = mode.settingsName;
       return;
     }
   }
 
-  settingsNameEl.innerText = "Custom Mode";
-  data.settingsName = "Custom";
+  settingsNameEl.innerText = "custom mode";
+  data.settingsName = "custom";
 };
 
 const can = {
