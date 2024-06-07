@@ -71,6 +71,8 @@
   font-size: max(9vw, 7vh);
   color: #95c4ec;
   margin-top: 1rem;
+  position: absolute;
+  bottom: 3.5rem;
 }
 #score-screen-stats-container {
   display: none;
@@ -265,9 +267,6 @@
   border: transparent 0.1rem solid;
 }
 #review-btn:active {
-  /* color: #4c677f;
-  background-color: #2f404e; */
-
   color: #97a3ad;
   background-color: #344757;
   border: #051f35 0.1rem solid;
@@ -275,18 +274,14 @@
 #review-btn.toggled #review-dropdown-btn2 {
   transform: rotate( 90deg );
 }
-
 #review-btn-text {
   margin-right: 0.25rem;
   margin-left: 0.15rem;
+  font-size: max(9vw,8vh);
+}
+#review-btn.toggled #review-btn-text {
   font-size: 9vw;
 }
 #review-dropdown-btn2 {
   fill: currentColor;
 }
-/* #review-dropdown-btn2:hover {
-  fill: #daefe9;
-}
-#review-dropdown-btn2:active {
-  fill: #4c677f;
-} */
