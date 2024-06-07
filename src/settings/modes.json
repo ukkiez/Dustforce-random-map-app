@@ -3,7 +3,7 @@
     "seed": "",
     "startTime": 3600000,
     "minSSCount": 10,
-    "fastestSSTime": 90000,
+    "fastestSSTime": 60000,
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 10,
@@ -47,14 +47,14 @@
     "freeSkips": 0,
     "freeSkipAfterXSolvedLevels": 0,
     "infiniteSkips": true,
-    "CMPLevels": false,
+    "CMPLevels": true,
     "settingsName": "casual"
   },
 
   "hard": {
     "seed": "",
     "startTime": 3600000,
-    "minSSCount": 1,
+    "minSSCount": 3,
     "fastestSSTime": 180000,
     "skips": false,
     "freeSkips": 0,
