@@ -87,6 +87,12 @@ button:focus {
   pointer-events: none;
 }
 
+.image {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .clickable:hover {
   text-decoration: underline;
   cursor: pointer;
