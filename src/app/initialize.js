@@ -115,9 +115,12 @@ const initMainBody = () => {
   }
 
   document.getElementById( "main-time" ).innerHTML = formatTime( settings.startTime );
-  console.log( personalBests );
+
   const pb = personalBests[ settings.settingsName ];
-  if ( pb?.score ) {
+  if ( settings.settingsName.toLowerCase() === "custom" ) {
+    document.getElementById( "personal-best-score" ).innerText = "N/A";
+  }
+  else if ( pb?.score ) {
     document.getElementById( "personal-best-score" ).innerText = pb.score;
   }
 

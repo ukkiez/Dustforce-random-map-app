@@ -27,9 +27,14 @@ let settings = {};
 const authorsById = new Map();
 
 let timers = [];
-const timerAction = ( action ) => {
+const timerAction = ( action, bool = false ) => {
   for ( const timer of timers ) {
-    timer[ action ]();
+    if ( bool ) {
+      timer[ action ]( bool );
+    }
+    else {
+      timer[ action ]();
+    }
   }
 }
 
@@ -87,7 +92,8 @@ const installAndMaybePlay = ( level, play = false ) => {
 
 let blocked = false;
 let timeout = null;
-const block = ( ms = 1500 ) => {
+// const block = ( ms = 1500 ) => {
+const block = ( ms = 10 ) => {
   if ( timeout ) {
     // clear any previously active timeouts that would unblock before the
     // current function call
@@ -134,8 +140,9 @@ let runData = {
   solvedLevelIds: new Set(),
   chosenLevelCache: new Set(),
 
-  // used to display a history at the end of a run
-  history: [],
+  // used to display a review at the end of a run
+  review: [],
+  seed: null,
 };
 
 let mapPool = [];
@@ -144,6 +151,14 @@ const pickLevel = () => {
   // the map pool was already shuffled at the start of the run, so simply pick
   // maps start to end
   const choice = mapPool[ choiceIndex ];
+
+  if ( !choice ) {
+    // no maps remain, end the run
+    runData._ranOutOfMaps = true;
+    timerAction( "finish" );
+    return false;
+  }
+
   choiceIndex++;
 
   runData.chosenLevelCache.add( choice );
@@ -231,6 +246,8 @@ const start = () => {
       _seed = `${ Math.floor( Math.random() * 90000 ) + 10000 }`;
     }
 
+    runData.seed = _seed;
+
     // initialize the seeder
     const { shuffle } = seededRandom( { seed: _seed } );
 
@@ -249,6 +266,10 @@ const start = () => {
     block();
 
     currentLevel = pickLevel();
+    if ( !currentLevel ) {
+      return;
+    }
+
     installAndMaybePlay( currentLevel, true );
 
     // initiate the observer for split.txt; TODO: maybe debounce the callback in
@@ -292,7 +313,7 @@ const start = () => {
 
             runData.solvedLevelIds.add( id );
 
-            runData.history.push( {
+            runData.review.push( {
               levelname: currentLevel.name,
               filename: `${ currentLevel.name }-${ currentLevel.id }`,
               time: timers[ 0 ].elapsedTime,
@@ -303,6 +324,9 @@ const start = () => {
             increment();
 
             currentLevel = pickLevel();
+            if ( !currentLevel ) {
+              return;
+            }
             installAndMaybePlay( currentLevel, true );
             // see above
             block();
@@ -365,7 +389,7 @@ const skip = () => {
       return;
     }
 
-    runData.history.push( {
+    runData.review.push( {
       levelname: currentLevel.name,
       filename: `${ currentLevel.name }-${ currentLevel.id }`,
       time: timers[ 0 ].elapsedTime,
@@ -375,6 +399,9 @@ const skip = () => {
 
     // skip to the next map, if user has a skip left
     currentLevel = pickLevel();
+    if ( !currentLevel ) {
+      return;
+    }
     installAndMaybePlay( currentLevel, true );
     handleSkipsCount( -1 );
 
@@ -406,7 +433,8 @@ const initVars = () => {
     solvedLevelIds: new Set(),
     chosenLevelCache: new Set(),
 
-    history: [],
+    review: [],
+    seed: null,
   };
 
   mapPool = [];
@@ -457,6 +485,234 @@ const initTimers = () => {
   mainTimer.timerElement.innerHTML = formatTime( startTime );
 }
 
+const processScoreScreen = () => {
+  removeClass( document.body, "challenge" );
+
+  const template = document.getElementById( "score-screen-template" );
+  const clone = template.content.cloneNode( true );
+  document.body.replaceChildren( clone );
+
+  document.getElementById( "done-btn" ).addEventListener( "click", () => {
+    // exit the score screen and return to the main menu
+    reset();
+  } );
+
+  const modeEl = document.getElementById( "score-screen-mode" );
+  modeEl.innerText = `${ settings.settingsName } Mode`;
+
+  const scoreEl = document.getElementById( "score-screen-points" );
+  scoreEl.innerText = runData.solvedLevelIds.size;
+
+  if ( runData.solvedLevelIds.size >= 100 ) {
+    // adjust the font size to everything fit on one line
+    scoreEl.style.fontSize = "11vw";
+  }
+
+  const seedEl = document.getElementById( "score-screen-seed" );
+  if ( settings.seed ) {
+    seedEl.innerText = `Seed: ${ runData.seed }`;
+  }
+  else {
+    seedEl.innerText = `Random Seed: ${ runData.seed }`;
+  }
+
+  const { personalBests } = getData( { personalBests: true } );
+
+  let previousBest;
+  let _newPersonalBest = false;
+  // PBs for seeded runs and custom settings are not tracked and stored
+  if ( !settings.seed && settings.settingsName.toLowerCase() !== "custom" ) {
+    if ( personalBests[ settings.settingsName ]?.score ) {
+      previousBest = personalBests[ settings.settingsName ];
+    }
+
+    if ( runData.solvedLevelIds.size && ( !previousBest || runData.solvedLevelIds.size > previousBest.score ) ) {
+      _newPersonalBest = true;
+    }
+  }
+
+  if ( _newPersonalBest ) {
+    addClass( scoreEl, "pb" );
+    addClass( document.getElementById( "new-pb-icon" ), "pb" );
+  }
+
+  const comparePbToggleEl = document.getElementById( "compare-pb-toggle" );
+  if ( previousBest ) {
+    comparePbToggleEl.onclick = () => {
+      const elements = document.getElementsByClassName( "review-element-time" );
+      for ( const e of elements ) {
+        if ( e.classList.contains( "hidden" ) ) {
+          removeClass( e, "hidden" );
+        }
+        else {
+          addClass( e, "hidden" );
+        }
+      }
+
+      if ( comparePbToggleEl.innerText.includes( "segments" ) ) {
+        comparePbToggleEl.innerText = "splits";
+      }
+      else {
+        comparePbToggleEl.innerText = "segments";
+      }
+    }
+  }
+  else {
+    addClass( comparePbToggleEl, "hidden" );
+  }
+
+  const runreviewContainerEl = document.getElementById( "run-review-container" );
+
+  // process the run data to create a run review in the UI
+  let previousCheckedDiff;
+  let scoredLevelIndex = 0;
+  for ( let i = 0; i < runData.review.length; i++ ) {
+    const { levelname, filename, time, segment, skipped } = runData.review[ i ];
+    /* HTML layout:
+      <!-- <div class="review-element-container">
+        <span class="review-element-index"></span>
+        <span class="review-element-levelname clickable"></span>
+        <span class="review-element-time review-element-current-time"></span>
+        <span class="review-element-time review-element-time-diff"></span>
+      </div> -->
+    */
+    const containerEl = document.createElement( "div" );
+    addClass( containerEl, "review-element-container" );
+
+    const levelEl = document.createElement( "span" );
+    levelEl.innerText = levelname;
+    addClass( levelEl, "review-element-levelname" );
+    addClass( levelEl, "clickable" );
+    const levelId = filename.split( "-" ).pop();
+    // allow users to go to the Atlas page by clicking on the map name
+    levelEl.onclick = () => {
+      nw.Shell.openExternal( `https://atlas.dustforce.com/${ levelId }` );
+    };
+
+    const indexEl = document.createElement( "span" );
+    addClass( indexEl, "review-element-index" );
+
+    if ( skipped ) {
+      addClass( levelEl, "skipped" );
+      indexEl.innerText = "-";
+    }
+    else {
+      scoredLevelIndex++;
+      indexEl.innerText = `${ scoredLevelIndex }`;
+    }
+
+    const timeEl = document.createElement( "span" );
+    addClass( timeEl, "review-element-time" );
+    addClass( timeEl, "review-element-current-time" );
+    timeEl.innerText = `${ formatTime( segment, true ) }`;
+
+    runreviewContainerEl.appendChild( containerEl );
+
+    containerEl.appendChild( indexEl );
+    containerEl.appendChild( levelEl );
+    containerEl.appendChild( timeEl );
+
+    if ( previousBest ) {
+      console.log( previousBest.review?.[ i ] );
+      const previousRunElement = previousBest.review?.[ i ];
+
+      // add a hidden (display: none;) span that the user can view via a
+      // toggle, which hides timeEl
+      const timeDiffEl = document.createElement( "span" );
+      addClass( timeDiffEl, "review-element-time" );
+      addClass( timeDiffEl, "review-element-time-diff" );
+      addClass( timeDiffEl, "hidden" );
+      if ( previousRunElement ) {
+        const timeDiff = previousRunElement.time - time;
+        timeDiffEl.innerText = formatTime( timeDiff, true, false, true );
+
+        // colour-code the split to indicate time gain/loss
+        if ( !previousCheckedDiff ) {
+          timeDiff >= 0 ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-behind-lost" )
+        }
+        else if ( timeDiff >= 0 ) {
+          previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-ahead-lost" );
+        }
+        else {
+          previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-behind-gained" ) : addClass( timeDiffEl, "time-behind-lost" );
+        }
+
+        previousCheckedDiff = timeDiff;
+      }
+      else {
+        timeDiffEl.innerText = formatTime( time, true );
+      }
+
+      containerEl.appendChild( timeDiffEl );
+    }
+  }
+
+  // const reviewDropdownBtn = document.getElementById( "review-dropdown-btn" );
+  const reviewDropdownBtn = document.getElementById( "review-btn" );
+  reviewDropdownBtn.onclick = () => {
+    const container = document.getElementById( "run-review-container" );
+    if ( !container.classList.contains( "toggled" ) ) {
+      addClass( document.getElementById( "score-screen-container" ), "toggled" );
+      addClass( container, "toggled" );
+      addClass( reviewDropdownBtn, "toggled" );
+      addClass( document.getElementById( "run-review-header" ), "toggled" );
+      addClass( document.getElementById( "compare-pb-toggle" ), "toggled" );
+      addClass( document.getElementById( "score-screen-stats-container" ), "toggled" );
+    }
+    else {
+      removeClass( document.getElementById( "score-screen-container" ), "toggled" );
+      removeClass( container, "toggled" );
+      removeClass( reviewDropdownBtn, "toggled" );
+      removeClass( document.getElementById( "run-review-header" ), "toggled" );
+      removeClass( document.getElementById( "compare-pb-toggle" ), "toggled" );
+      removeClass( document.getElementById( "score-screen-stats-container" ), "toggled" );
+    }
+  };
+
+  // calculate and display some statistics
+  const averageTimeEl = document.getElementById( "score-screen-average-time" );
+  const skippedLevelTimeEl = document.getElementById( "score-screen-skipped-time-loss" );
+  let scoredSegments = [];
+  let skippedSegments = [];
+  for ( const { segment, skipped } of runData.review ) {
+    if ( skipped ) {
+      skippedSegments.push( segment );
+    }
+    else {
+      scoredSegments.push( segment );
+    }
+  }
+
+  if ( scoredSegments.length ) {
+    averageTimeEl.innerText = `Avg. Score Time: ${ formatTime( settings.startTime / scoredSegments.length, true ) }`;
+  }
+
+  if ( settings.skips ) {
+    addClass( skippedLevelTimeEl, "applicable" );
+    if ( skippedSegments.length ) {
+      skippedLevelTimeEl.innerText = `Skip Time Loss: ${ formatTime( skippedSegments.reduce( ( a, b ) => a + b, 0 ), true ) }`;
+    }
+    else {
+      skippedLevelTimeEl.innerText = "Skip Time Loss: None";
+    }
+  }
+
+  // save the new personal best data immediately
+  if ( _newPersonalBest ) {
+    const userReviewData = runData.review.map( ( { filename, time, segment, skipped } ) => {
+      return { filename, time, segment, skipped };
+    } );
+
+    const newPersonalBestData = { ...personalBests };
+    newPersonalBestData[ settings.settingsName ] = {
+      score: runData.solvedLevelIds.size,
+      review: [ ...userReviewData ],
+      seed: runData.seed,
+    };
+    writeHexData( `${ global.__dirname }/user-data/personal-bests.bin`, newPersonalBestData );
+  }
+}
+
 export const initialize = () => {
   initialized = false;
 
@@ -472,7 +728,10 @@ export const initialize = () => {
     // close the watcher when the timer has finished
     watcher.close();
 
-    timers[ 1 ].finish();
+    timers[ 1 ].finish( true );
+
+    // TODO: run logic for score screen
+    processScoreScreen();
   } );
 
   document.getElementById( "replay-btn" )?.addEventListener( "click", () => {
@@ -486,148 +745,10 @@ export const initialize = () => {
       watcher.close();
     }
 
-    timerAction( "finish" );
+    timerAction( "finish", true );
 
-    removeClass( document.body, "challenge" );
-
-    const template = document.getElementById( "score-screen-template" );
-    const clone = template.content.cloneNode( true );
-    document.body.replaceChildren( clone );
-
-    document.getElementById( "done-btn" ).addEventListener( "click", () => {
-      // exit the score screen and return to the main menu
-      reset();
-    } );
-
-    const scoreEl = document.getElementById( "score-screen-points" );
-    scoreEl.innerText = runData.solvedLevelIds.size;
-
-    const { personalBests } = getData( { personalBests: true } );
-
-    const previousBest = personalBests[ settings.settingsName ];
-    let _newPersonalBest = false;
-    if ( !previousBest || ( runData.solvedLevelIds.size > previousBest.score ) ) {
-      _newPersonalBest = true;
-      addClass( scoreEl, "pb" );
-    }
-
-    const comparePbToggleEl = document.getElementById( "compare-pb-toggle" );
-    if ( previousBest ) {
-      comparePbToggleEl.onclick = () => {
-        const elements = document.getElementsByClassName( "history-element-time" );
-        for ( const e of elements ) {
-          if ( e.classList.contains( "hidden" ) ) {
-            removeClass( e, "hidden" );
-          }
-          else {
-            addClass( e, "hidden" );
-          }
-        }
-
-        if ( comparePbToggleEl.innerText.includes( "compare" ) ) {
-          comparePbToggleEl.innerText = "segments";
-        }
-        else {
-          comparePbToggleEl.innerText = "compare"
-        }
-      }
-    }
-    else {
-      addClass( comparePbToggleEl, "hidden" );
-    }
-
-    const runHistoryContainerEl = document.getElementById( "run-history-container" );
-
-    // process the run data to create a run history in the UI
-    let previousCheckedDiff;
-    for ( let i = 0; i < runData.history.length; i++ ) {
-      const { levelname, filename, time, segment, skipped } = runData.history[ i ];
-      /* HTML layout:
-        <!-- <div class="history-element-container">
-          <span class="history-element-index"></span>
-          <span class="history-element-levelname clickable"></span>
-          <span class="history-element-time history-element-current-time"></span>
-          <span class="history-element-time history-element-time-diff"></span>
-        </div> -->
-      */
-      const containerEl = document.createElement( "div" );
-      addClass( containerEl, "history-element-container" );
-
-      const levelEl = document.createElement( "span" );
-      levelEl.innerText = levelname;
-      addClass( levelEl, "history-element-levelname" );
-      addClass( levelEl, "clickable" );
-      const levelId = filename.split( "-" ).pop();
-      // allow users to go to the Atlas page by clicking on the map name
-      levelEl.onclick = () => {
-        nw.Shell.openExternal( `https://atlas.dustforce.com/${ levelId }` );
-      };
-
-      if ( skipped ) {
-        addClass( levelEl, "skipped" );
-      }
-
-      const indexEl = document.createElement( "span" );
-      addClass( indexEl, "history-element-index" );
-      indexEl.innerText = `${ i + 1 }`;
-
-      const timeEl = document.createElement( "span" );
-      addClass( timeEl, "history-element-time" );
-      addClass( timeEl, "history-element-current-time" );
-      timeEl.innerText = `${ formatTime( segment, true ) }`;
-
-      runHistoryContainerEl.appendChild( containerEl );
-
-      containerEl.appendChild( indexEl );
-      containerEl.appendChild( levelEl );
-      containerEl.appendChild( timeEl );
-
-      if ( previousBest && previousBest.history?.length ) {
-        const previousRunElement = previousBest.history[ i ];
-
-        // add a hidden (display: none;) span that the user can view via a
-        // toggle, which hides timeEl
-        const timeDiffEl = document.createElement( "span" );
-        addClass( timeDiffEl, "history-element-time" );
-        addClass( timeDiffEl, "history-element-time-diff" );
-        addClass( timeDiffEl, "hidden" );
-        if ( previousRunElement ) {
-          const timeDiff = previousRunElement.time - time;
-          timeDiffEl.innerText = formatTime( timeDiff, true, false, true );
-
-          // colour-code the split to indicate time gain/loss
-          if ( !previousCheckedDiff ) {
-            timeDiff >= 0 ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-behind-lost" )
-          }
-          else if ( timeDiff >= 0 ) {
-            previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-ahead-lost" );
-          }
-          else {
-            previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-behind-gained" ) : addClass( timeDiffEl, "time-behind-lost" );
-          }
-
-          previousCheckedDiff = timeDiff;
-        }
-        else {
-          timeDiffEl.innerText = formatTime( time, true );
-        }
-
-        containerEl.appendChild( timeDiffEl );
-      }
-    }
-
-    if ( _newPersonalBest ) {
-      const userHistoryData = runData.history.map( ( { filename, time, segment, skipped } ) => {
-        return { filename, time, segment, skipped };
-      } );
-
-      const newPersonalBestData = { ...personalBests };
-      newPersonalBestData[ settings.settingsName ] = {
-        score: runData.solvedLevelIds.size,
-        history: [ ...userHistoryData ],
-      };
-      writeHexData( `${ global.__dirname }/user-data/personal-bests.bin`, newPersonalBestData );
-    }
+    processScoreScreen();
+    // reset();
   } );
 
   // start the actual run

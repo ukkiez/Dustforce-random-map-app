@@ -142,7 +142,7 @@ export class Timer extends EventEmitter {
     }
   }
 
-  finish() {
+  finish( _preventEmit = false ) {
     if ( !this.hasStarted ) {
       return;
     }
@@ -153,6 +153,8 @@ export class Timer extends EventEmitter {
 
     this.timerElement.innerHTML = formatTime( 0, this.tenths, this.hundreths );
 
-    this.emit( "finished" );
+    if ( !_preventEmit ) {
+      this.emit( "finished" );
+    }
   }
 }
