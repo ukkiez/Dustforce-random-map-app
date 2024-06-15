@@ -70,7 +70,8 @@
   color: #de8251;
 }
 #score-screen-points.pb {
-  margin-bottom: unset;
+  /* margin-bottom: unset; */
+  color: #00bf8d;
 }
 
 #score-screen-pb-text {
@@ -81,6 +82,11 @@
 }
 #score-screen-points.pb +#score-screen-pb-text {
   display: inline-block;
+}
+
+#score-screen-remaining-skips {
+  font-size: max(9vw, 7vh);
+  margin-top: 0.75rem;
 }
 
 #score-screen-seed {

@@ -508,6 +508,14 @@ const processScoreScreen = () => {
     scoreEl.style.fontSize = "11vw";
   }
 
+  const scoreScreenSkipsEl = document.getElementById( "score-screen-remaining-skips" );
+  if ( !settings.infiniteSkips ) {
+    scoreScreenSkipsEl.innerText = `Skips Remaining: ${ runData.skips }`;
+  }
+  else {
+    scoreScreenSkipsEl.innerText = `Infinite Skips`;
+  }
+
   const seedEl = document.getElementById( "score-screen-seed" );
   if ( settings.seed ) {
     seedEl.innerText = `Seed: ${ runData.seed }`;
@@ -530,6 +538,8 @@ const processScoreScreen = () => {
       _newPersonalBest = true;
     }
   }
+
+  _newPersonalBest = true;
 
   if ( _newPersonalBest ) {
     addClass( scoreEl, "pb" );
@@ -730,7 +740,6 @@ export const initialize = () => {
 
     timers[ 1 ].finish( true );
 
-    // TODO: run logic for score screen
     processScoreScreen();
   } );
 
