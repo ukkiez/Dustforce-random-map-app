@@ -16,11 +16,13 @@ runs. Notable features include:
 
 ---
 
-#### [Installation](#installation)
+#### [Installation](#installation-heading)
 
-#### [FAQ](#faq)
+#### [FAQ](#faq-heading)
 
-## Installation
+#### [Leaderboard Submissions](#leaderboard-submissions-heading)
+
+## <a id="installation-heading"></a> Installation
 
 *Requirements*
 
@@ -30,7 +32,7 @@ runs. Notable features include:
 - Download one of the releases for your Operating System, and run the executable within the downloaded folder.
 
 
-## FAQ
+## <a id="faq-heading"></a> FAQ
 > *Can I update my level set?*
 
 Not at the moment - level sets are static in RMA versions. This is in part because different level sets completely change seeds, which would make set-seed races between people more of a hassle to set up. This also keeps runs on the leaderboards more consistent, and prevents [Dustkid.com](https://dustkid.com) from being potentially flooded with requests.
@@ -64,3 +66,8 @@ ___
 > *I have a different issue that's not mentioned here.*
 
 Please send a message to "Ukkiez" on Discord. You can find my exact profile in the Dustforce Discord Server.
+
+## <a id="leaderboard-submissions-heading"></a> Leaderboard Submissions
+There's currently two [leaderboards](https://www.speedrun.com/dustforce_dx?h=random-map-challenge-classic&x=xd1p77zd-rn1ygm1n.qyz44r21), for the built-in Classic and Blitz Modes. Submissions require a VOD, from the time of starting your run to when the score screen comes up.
+
+Speedrun.com does not support scores, so we have to use time instead. Your final score (number of SS completions) are your minutes, and your skips remaining are the seconds (important for ties!). For example: if you get a final score of 14, and you have 2 skips remaining, your submission time is `14m 2s`.
