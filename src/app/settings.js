@@ -4,7 +4,7 @@ const fs = nw.require( "fs" );
 
 import { formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
-import { getData, getMapPoolSize, writeHexData } from "./util/data.js";
+import { getData, getMapPoolSize, writeData, writeHexData } from "./util/data.js";
 
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
@@ -181,6 +181,9 @@ const handleStateChange = ( force = false ) => {
 };
 
 const saveData = ( _data ) => {
+  // keep both the JSON and .bin file up-to-date, as we use JSON to make the
+  // import/download files readable for the user
+  writeData( `${ global.__dirname }/user-data/settings.json`, JSON.stringify( _data, null, 2 ) );
   writeHexData( `${ global.__dirname }/user-data/settings.bin`, _data );
 
   // reset the initial state to the newly saved state

@@ -30,6 +30,18 @@ export const dataToHex = ( data, isJSON = false ) => {
   return Buffer.from( data ).toString( "hex" );
 }
 
+export const writeData = ( path, data ) => {
+  try {
+    fs.writeFileSync( path, data );
+  }
+  catch ( error ) {
+    console.error( error );
+    return false;
+  }
+
+  return true;
+}
+
 export const writeHexData = ( path, data, isJSON = true ) => {
   const dataHex = dataToHex( data, isJSON );
 
