@@ -233,7 +233,7 @@ const start = () => {
       }
 
       const { ss_count, fastest_time, author, atlas_id } = metadata;
-      if ( ss_count >= settings.minSSCount && fastest_time <= settings.fastestSSTime ) {
+      if ( ss_count >= settings.minSSCount && ss_count <= settings.maxSSCount && fastest_time <= settings.fastestSSTime ) {
         mapPool.push( levelFilename );
       }
 
@@ -538,8 +538,6 @@ const processScoreScreen = () => {
       _newPersonalBest = true;
     }
   }
-
-  _newPersonalBest = true;
 
   if ( _newPersonalBest ) {
     addClass( scoreEl, "pb" );

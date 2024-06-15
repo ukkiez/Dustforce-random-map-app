@@ -20,6 +20,7 @@ const settingsListEl = document.getElementById( "settings-list" );
 const seedEl = document.getElementById( "seed-input" );
 const timeEl = document.getElementById( "time-input" );
 const minSSCountEl = document.getElementById( "minSSCount-input" );
+const maxSSCountEl = document.getElementById( "maxSSCount-input" );
 
 const fastestSSTimeEl = document.getElementById( "fastestSSTime-input" );
 const formattedFastestTimeEl = document.getElementById( "fastestSSTime-formatted" );
@@ -64,6 +65,7 @@ const setInputValues = ( _settings ) => {
     seed,
     startTime,
     minSSCount,
+    maxSSCount,
     fastestSSTime,
     skips,
     infiniteSkips,
@@ -78,6 +80,7 @@ const setInputValues = ( _settings ) => {
   seedEl.value = seed;
   timeEl.value = ( startTime / 1000 / 60 );
   minSSCountEl.value = minSSCount;
+  maxSSCountEl.value = maxSSCount;
 
   fastestSSTimeEl.value = fastestSSTime;
   const milliseconds = Math.floor( fastestSSTime );
@@ -313,6 +316,9 @@ addFocusOutListener( timeEl, "startTime", ( value ) => ( value / 1000 ) / 60 );
 
 addInputListener( minSSCountEl, "minSSCount", { min: true, max: true } );
 addFocusOutListener( minSSCountEl, "minSSCount" );
+
+addInputListener( maxSSCountEl, "maxSSCount", { min: true, max: true } );
+addFocusOutListener( maxSSCountEl, "maxSSCount" );
 
 addInputListener( fastestSSTimeEl, "fastestSSTime", {
   min: true,

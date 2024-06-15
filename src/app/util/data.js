@@ -73,7 +73,7 @@ export const getData = ( { ...options } ) => {
 }
 
 export const getMapPoolSize = ( settings ) => {
-  const { minSSCount, fastestSSTime, CMPLevels } = settings;
+  const { minSSCount, maxSSCount, fastestSSTime, CMPLevels } = settings;
 
   const { levelData } = getData( { levelData: true } );
 
@@ -87,7 +87,7 @@ export const getMapPoolSize = ( settings ) => {
     }
 
     const { ss_count, fastest_time } = metadata;
-    if ( ss_count >= minSSCount && fastest_time <= fastestSSTime ) {
+    if ( ss_count >= minSSCount && ss_count <= maxSSCount && fastest_time <= fastestSSTime ) {
       mapPool.add( levelFilename );
     }
   }
