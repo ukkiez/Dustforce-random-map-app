@@ -160,6 +160,17 @@ const initSettingsBody = () => {
   document.getElementById( "back-button" ).addEventListener( "click", () => {
     currentWindow.close();
   } );
+
+  document.getElementById( "map-search-btn" ).addEventListener( "click", () => {
+    addClass( document.getElementById( "map-search-container" ), "opened" );
+    addClass( document.getElementById( "map-list-container" ), "opened" );
+    addClass( document.getElementById( "settings-container" ), "hidden" );
+  } );
+  document.getElementById( "map-search-back-btn" ).addEventListener( "click", () => {
+    removeClass( document.getElementById( "map-search-container" ), "opened" );
+    removeClass( document.getElementById( "map-list-container" ), "opened" );
+    removeClass( document.getElementById( "settings-container" ), "hidden" );
+  } );
 }
 
 const { href } = window.location;

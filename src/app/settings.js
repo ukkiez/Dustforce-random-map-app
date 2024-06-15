@@ -8,10 +8,11 @@ import { getData, getMapPoolSize, writeData, writeHexData } from "./util/data.js
 
 // read instead of import, to make sure the data is updated when we change
 // pages, something which does not seem to happen when importing
-const { modes, settings, userConfiguration } = getData( {
+const { levelData, modes, settings, userConfiguration } = getData( {
   settings: true,
   modes: true,
   userConfiguration: true,
+  levelData: true,
 } );
 
 const settingsNameEl = document.getElementById( "settings-name" );
@@ -537,4 +538,99 @@ importSettingsInput.addEventListener( "change", () => {
 opacitySlider.addEventListener( "input", event => {
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ event.target.value / 100 })`;
   handleStateChange( true );
+} );
+
+document.getElementById( "map-search-input" ).addEventListener( "input", ( event ) => {
+  const { value } = event.target;
+
+  const mapListContainer = document.getElementById( "map-list-container" );
+
+  const addListItem = ( filename, author, atlasId, _noLink = false ) => {
+    const container = document.createElement( "div" );
+    addClass( container, "map-list-element-container" );
+
+    const filenameEl = document.createElement( "span" );
+    addClass( filenameEl, "filename" );
+    if ( !_noLink ) {
+      addClass( filenameEl, "clickable" );
+
+      // allow users to go to the Atlas page by clicking on the map name
+      filenameEl.onclick = () => {
+        nw.Shell.openExternal( `https://atlas.dustforce.com/${ atlasId }` );
+      };
+    }
+    filenameEl.innerText = filename;
+
+    const authorEl = document.createElement( "span" );
+    addClass( authorEl, "author" );
+    authorEl.innerText = author;
+
+    mapListContainer.appendChild( container );
+    container.appendChild( filenameEl );
+    container.appendChild( authorEl );
+  };
+
+  if ( !value ) {
+    // clear the search list and add placeholder
+    mapListContainer.innerText = "";
+    addListItem( "Map", "Author" );
+    return;
+  }
+
+  let startMatches = [];
+  let partialMatches = [];
+
+  for ( const [ filename, { name, author, atlas_id } ] of Object.entries( levelData ) ) {
+    const filenameNoHyphen = filename.replaceAll( "-", " " );
+    if ( filename.match( new RegExp( `^${ value }`, "ig" ) ) || filenameNoHyphen.match( new RegExp( `^${ value }`, "ig" ) ) ) {
+      startMatches.push( { name, author, atlas_id } );
+    }
+    else if ( filename.match( new RegExp( `${ value }`, "ig" ) ) || filenameNoHyphen.match( new RegExp( `${ value }`, "ig" ) ) ) {
+      partialMatches.push( { name, author, atlas_id } );
+    }
+    else if ( author.toLowerCase() === value.toLowerCase() ) {
+      startMatches.push( { name, author, atlas_id } );
+    }
+  }
+
+  startMatches = startMatches.sort( function( a, b ) {
+    return a.name.localeCompare( b.name );
+  } );
+  partialMatches = partialMatches.sort( function( a, b ) {
+    return a.name.localeCompare( b.name );
+  } );
+
+  console.log( "Start matches: ", startMatches );
+  console.log( "Partial Matches: ", partialMatches );
+
+  mapListContainer.innerText = "";
+
+  const max = 200;
+  const jointLength = startMatches.length + partialMatches.length;
+  let index = 0;
+  let _maxReached = false;
+  for ( const { name, author, atlas_id } of startMatches ) {
+    addListItem( name, author, atlas_id );
+    index++;
+
+    if ( index >= max ) {
+      addListItem( `And ${ jointLength - max } more...`, "", null, true );
+      _maxReached = true;
+      break;
+    }
+  }
+
+  if ( !_maxReached ) {
+    // add an empty line
+    addListItem( "----------- Partial Matches -----------", "", null, true );
+    for ( const { name, author, atlas_id } of partialMatches ) {
+      addListItem( name, author, atlas_id );
+      index++;
+
+      if ( index >= max ) {
+        addListItem( `----------- And ${ jointLength - max } more... -----------`, "", null, true );
+        break;
+      }
+    }
+  }
 } );

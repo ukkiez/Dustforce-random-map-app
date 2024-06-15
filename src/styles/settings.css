@@ -14,6 +14,10 @@ button {
   margin-right: 0.25rem;
 }
 
+#settings-container.hidden {
+  display: none;
+}
+
 .settings-header {
   -webkit-app-region: drag;
   font-size: 2rem;
@@ -219,15 +223,49 @@ input[type="checkbox"] {
   width: auto;
 }
 
+.generic-btn {
+  font-size: 1rem;
+  font-family: inherit;
+  border-radius: 0.25rem;
+  outline: none;
+  transition: background-color 0.4s, color 0.4s;
+  cursor: pointer;
+
+  overflow: hidden;
+  background-color: transparent;
+
+  color: #597e9e;
+  border: #527089 0.1rem solid;
+}
+.generic-btn:hover {
+  transition: 0s;
+  color: #f1f1f1;
+  background-color: #527089;
+  border: transparent 0.1rem solid;
+}
+.generic-btn:active {
+  color: #97a3ad;
+  background-color: #344757;
+  border: #051f35 0.1rem solid;
+}
+
 #map-pool-size {
   font-size: 1rem;
   position: absolute;
-  top: 2.25rem;
+  top: 4.25rem;
   right: 1.5rem;
   color: #ededed;
   font-style: italic;
   white-space: pre-wrap;
   text-align: center;
+}
+
+#map-search-btn {
+  position: absolute;
+  top: 8rem;
+  right: 0.5rem;
+  align-items: center;
+  padding-top: 0.1rem;
 }
 
 #fastestSSTime-formatted {
@@ -378,4 +416,87 @@ input[type="checkbox"] {
   border-radius: 50%;
   background: #04a077;
   cursor: pointer;
+}
+
+#map-search-container {
+  display: none;
+
+  margin-top: 0.5rem;
+}
+#map-search-container.opened {
+  display: block;
+}
+
+#map-search-header {
+  font-size: 2rem;
+  display: block;
+  width: 70%;
+  -webkit-app-region: drag;
+}
+
+#map-search-back-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 2rem;
+}
+
+#map-search-label {
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+#map-search-input {
+  font-size: 1rem;
+  text-align: center;
+  width: -webkit-fill-available;
+  height: 1.75rem;
+}
+#map-search-input::placeholder {
+  font-size: 1rem;
+}
+
+#map-list-container {
+  display: none;
+
+  padding: 0;
+  margin: 0;
+  margin-left: 0.5rem;
+  border-left: 0.15rem solid #4c677f;
+  overflow-y: scroll;
+}
+#map-list-container.opened {
+  display: block;
+}
+#map-list-container::-webkit-scrollbar {
+  width: 0.5rem;
+  background: #4c677f;
+}
+#map-list-container::-webkit-scrollbar-thumb {
+  background-color: #334454;
+  border-radius: 0.3rem;
+}
+#map-list-container::-webkit-scrollbar-thumb:hover {
+  background-color: #3c5062;
+}
+#map-list-container::-webkit-scrollbar-thumb:active {
+  background-color: #334454;
+}
+.map-list-element-container {
+  display: flex;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.filename {
+  margin-left: 0.5rem;
+  color: aliceblue;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.author {
+  margin-left: 1rem;
+  color: #a9b5bb;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

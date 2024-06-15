@@ -15,7 +15,7 @@
       random map app
     </span>
 
-    <div class="container">
+    <div id="settings-container" class="container">
       <div class="settings-header">
         Settings
       </div>
@@ -35,6 +35,10 @@
         Matches:
         <span id="map-pool-size-number">...</span> Maps
       </span>
+
+      <button id="map-search-btn" class="generic-btn">
+        <span id="map-search-btn-text">Search Maps</span>
+      </button>
 
       <div class="dropdown">
         <button class="dropdown-btn">
@@ -141,6 +145,26 @@
       <span id="saved-message">
         saved!
       </span>
+    </div>
+
+    <div id="map-search-container">
+      <div id="map-search-header">
+        Map Search
+      </div>
+
+      <label for="search" id="map-search-label">Name / id / Author</label>
+      <input type="text" id="map-search-input" name="map-search" placeholder="Cyber Complex"/>
+
+      <button id="map-search-back-btn" class="generic-btn" type="button">
+        settings
+      </button>
+    </div>
+
+    <div id="map-list-container">
+      <div class="map-list-element-container">
+        <span class="filename">Map</span>
+        <span class="author">Author</span>
+      </div>
     </div>
   </body>
 
