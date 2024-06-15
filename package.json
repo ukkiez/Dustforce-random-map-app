@@ -10,7 +10,7 @@
     "prod": "nwbuild --platforms osx64 --srcDir src/ --buildDir dist/ src/ --flavor normal --cacheDir cache/ --version 0.52.2"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ukkiez",
   "license": "ISC",
   "description": "",
   "devDependencies": {
