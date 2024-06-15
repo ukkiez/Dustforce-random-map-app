@@ -600,10 +600,15 @@ document.getElementById( "map-search-input" ).addEventListener( "input", ( event
     return a.name.localeCompare( b.name );
   } );
 
-  console.log( "Start matches: ", startMatches );
-  console.log( "Partial Matches: ", partialMatches );
-
+  // empty out the map list
   mapListContainer.innerText = "";
+
+  if ( !startMatches.length && !partialMatches.length ) {
+    // add placeholder
+    mapListContainer.innerText = "";
+    addListItem( "", "No Matches", null, true );
+    return;
+  }
 
   const max = 200;
   const jointLength = startMatches.length + partialMatches.length;
@@ -620,7 +625,7 @@ document.getElementById( "map-search-input" ).addEventListener( "input", ( event
     }
   }
 
-  if ( !_maxReached ) {
+  if ( !_maxReached && partialMatches.length ) {
     // add an empty line
     addListItem( "----------- Partial Matches -----------", "", null, true );
     for ( const { name, author, atlas_id } of partialMatches ) {
