@@ -286,7 +286,11 @@ const start = () => {
         readable.setEncoding( "utf8" );
         readable.on( "data", ( string ) => {
           const split = string.split( "\n" )[ 1 ].split( /\s/ );
-          const [ filename, finesse, completion ] = split;
+
+          split.pop();
+          const completion = split[ split.length - 1 ];
+          const finesse = split[ split.length - 2 ];
+          const filename = split[ split.length - 3 ];
 
           if ( isNaN( parseInt( filename[ filename.length - 1 ], 10 ) ) ) {
             // there is no number at the end of the filename, i.e. no atlas ID
