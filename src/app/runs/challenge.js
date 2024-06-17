@@ -327,6 +327,7 @@ const start = () => {
             if ( !currentLevel ) {
               return;
             }
+
             installAndMaybePlay( currentLevel, true );
             // see above
             block();
@@ -733,8 +734,10 @@ export const initialize = () => {
 
   // handle the timer's finish event emitter
   timers[ 0 ].on( "finished", () => {
-    // close the watcher when the timer has finished
-    watcher.close();
+    if ( watcher ) {
+      // close the watcher when the timer has finished
+      watcher.close();
+    }
 
     timers[ 1 ].finish( true );
 

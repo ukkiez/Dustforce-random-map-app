@@ -87,7 +87,7 @@ else {
       pathToRoot = path.join( pathToRoot, "Dustforce/Dustforce.app/Contents/Resources" );
     }
     else {
-      pathToRoot = path.join( pathToRoot, "Dustforce" )
+      pathToRoot = path.join( pathToRoot, "Dustforce" );
     }
 
     dustforceDirectory = pathToRoot;
