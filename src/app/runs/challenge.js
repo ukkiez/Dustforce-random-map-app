@@ -491,6 +491,15 @@ const initTimers = () => {
 }
 
 const processScoreScreen = () => {
+  // add the last level for the review, and consider it as "skipped"
+  runData.review.push( {
+    levelname: currentLevel.name,
+    filename: `${ currentLevel.name }-${ currentLevel.id }`,
+    time: timers[ 0 ].elapsedTime,
+    segment: timers[ 1 ].time,
+    skipped: true,
+  } );
+
   removeClass( document.body, "challenge" );
 
   const template = document.getElementById( "score-screen-template" );
@@ -697,7 +706,7 @@ const processScoreScreen = () => {
   }
 
   if ( scoredSegments.length ) {
-    averageTimeEl.innerText = `Avg. Score Time: ${ formatTime( settings.startTime / scoredSegments.length, true ) }`;
+    averageTimeEl.innerText = `Avg. Score Time: ${ formatTime( timers[ 0 ].elapsedTime / scoredSegments.length, true ) }`;
   }
 
   if ( settings.skips ) {
