@@ -1,6 +1,7 @@
 /**
  Constructs `filtered-metadata.json`, under the following parameters:
 
+ * filter out levels from the list of exlusions
  * Filter out levels with no ID (i.e. stock levels)
  * Filter out levels that are not Normal or Dustmod type (0 and 6 respectively)
  * Filter out levels without a level end
@@ -16,10 +17,13 @@ const fs = require( "fs" );
 // "solvers" refers to players that SS'd levels; object keys are level file
 // names (e.g. "Tower-Construction-1026"), values are arrays of player IDs that
 // have SS'd the levels
-const solversData = require( "./src/dustkid-data/solvers.json" );
-const levelMetadata = require( "./src/dustkid-data/levels.json" );
+const solversData = require( "../src/dustkid-data/solvers.json" );
+const levelMetadata = require( "../src/dustkid-data/levels.json" );
 
-const destination = `${ __dirname }/src/dustkid-data/filtered-metadata.json`;
+const { excludedLevelIds } = require( "./exclusions.js" );
+
+const destination = `${ __dirname }/../src/dustkid-data/filtered-metadata.json`;
+const destinationBin = `${ __dirname }/../src/dustkid-data/filtered-metadata.bin`;
 
 const ssCountByFilename = new Map();
 for ( const [ filename, solvers ] of Object.entries( solversData ) ) {
@@ -37,6 +41,11 @@ for ( const [ filename, metadata ] of Object.entries( levelMetadata ) ) {
   //   // filter out the user's SS'd maps
   //   continue;
   // }
+
+  if ( excludedLevelIds.includes( atlas_id ) ) {
+    console.log( "Excluded level ID: ", atlas_id );
+    continue;
+  }
 
   if ( atlas_id === 0 ) {
     // filter out ID-less levels (i.e. stock levels)
@@ -91,3 +100,8 @@ const sortedData = Object.fromEntries(
 );
 
 fs.writeFileSync( destination, JSON.stringify( sortedData, null, 2 ) );
+
+const sortedDataB = Buffer.from( JSON.stringify( sortedData ) ).toString( "hex" );
+
+// save the settings file as a binary
+fs.writeFileSync( destinationBin, sortedDataB );
