@@ -9,7 +9,7 @@ const { userConfiguration: setupData } = getData( { userConfiguration: true } );
 const os = nw.require( "os" );
 const homedir = os.homedir();
 
-let dustforceDirectory;
+let dustforceDirectory = "";
 switch ( os.platform() ) {
   case "darwin":
     dustforceDirectory = `${ homedir }/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/`;
@@ -59,15 +59,17 @@ const finish = () => {
   }, 750 * 3 );
 }
 
-if ( fs.existsSync( dustforceDirectory ) ) {
-  // the Dustforce directory is where it is expected to be
+if ( fs.existsSync( path.join( dustforceDirectory, "split.txt" ) ) ) {
+  // the Dustforce directory and split.txt file are where they are expected to
+  // be
   confirmationTextEl.innerText = "Dustforce directory Found.";
 
   finish();
 }
 else {
-  // the directory location is unknown, so force the user to provide it to us
-  // (e.g. some Windows users put their installation on a different drive)
+  // the directory location is unknown - for example, some Windows users put
+  // their installation on a different drive - so force the user to provide it
+  // to us
   confirmationTextEl.style.display = "none";
   openDirectoryLinkEl.style.display = "inline-block";
 
@@ -75,22 +77,27 @@ else {
   openDirectoryLink.addEventListener( "change", ( event ) => {
     const { value: absolutePath } = event.target;
 
-    const rootIndex = absolutePath.indexOf( "Dustforce" );
-    if ( rootIndex < 0 ) {
-      event.target.value = "";
-      warnAboutDirectory( "Invalid Path: select any folder of/in your Dustforce directory." );
-      return;
-    }
+    // ensure split.txt exists, if not then the user might not have Dustmod
+    // installed or they've selected the wrong directory
+    switch ( os.platform() ) {
+      case "darwin":
+        if ( !fs.existsSync( path.join( absolutePath, "Dustforce.app/Contents/Resources/split.txt" ) ) ) {
+          warnAboutDirectory( "Error: Could not find 'split.txt'.\n\nMake sure Dustmod is installed, and choose your root Dustforce directory." );
+          return;
+        }
 
-    let pathToRoot = absolutePath.substring( 0, rootIndex );
-    if ( os.platform() === "darwin" ) {
-      pathToRoot = path.join( pathToRoot, "Dustforce/Dustforce.app/Contents/Resources" );
-    }
-    else {
-      pathToRoot = path.join( pathToRoot, "Dustforce" );
-    }
+        dustforceDirectory = path.join( absolutePath, "Dustforce.app/Contents/Resources" );
+        break;
 
-    dustforceDirectory = pathToRoot;
+      default:
+        if ( !fs.existsSync( path.join( absolutePath, "split.txt" ) ) ) {
+          warnAboutDirectory( "Error: Could not find 'split.txt'.\n\nMake sure Dustmod is installed, and choose your root Dustforce directory." );
+          return;
+        }
+
+        dustforceDirectory = absolutePath;
+        break;
+    }
 
     openDirectoryLinkEl.style.display = "none";
     confirmationTextEl.innerText = `Path Seems Valid...`;

@@ -286,7 +286,11 @@ const start = () => {
         readable.setEncoding( "utf8" );
         readable.on( "data", ( string ) => {
           const split = string.split( "\n" )[ 1 ].split( /\s/ );
-          const [ filename, finesse, completion ] = split;
+
+          split.pop();
+          const completion = split[ split.length - 1 ];
+          const finesse = split[ split.length - 2 ];
+          const filename = split[ split.length - 3 ];
 
           if ( isNaN( parseInt( filename[ filename.length - 1 ], 10 ) ) ) {
             // there is no number at the end of the filename, i.e. no atlas ID
@@ -487,6 +491,15 @@ const initTimers = () => {
 }
 
 const processScoreScreen = () => {
+  // add the last level for the review, and consider it as "skipped"
+  runData.review.push( {
+    levelname: currentLevel.name,
+    filename: `${ currentLevel.name }-${ currentLevel.id }`,
+    time: timers[ 0 ].elapsedTime,
+    segment: timers[ 1 ].time,
+    skipped: true,
+  } );
+
   removeClass( document.body, "challenge" );
 
   const template = document.getElementById( "score-screen-template" );
@@ -693,7 +706,7 @@ const processScoreScreen = () => {
   }
 
   if ( scoredSegments.length ) {
-    averageTimeEl.innerText = `Avg. Score Time: ${ formatTime( settings.startTime / scoredSegments.length, true ) }`;
+    averageTimeEl.innerText = `Avg. Score Time: ${ formatTime( timers[ 0 ].elapsedTime / scoredSegments.length, true ) }`;
   }
 
   if ( settings.skips ) {

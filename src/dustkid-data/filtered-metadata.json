@@ -5403,13 +5403,6 @@
     "fastest_time": 4516,
     "ss_count": 103
   },
-  "Traksu-Lita-0061-3665": {
-    "name": "Traksu Lita 0061",
-    "author": "DustingForce",
-    "atlas_id": 3665,
-    "fastest_time": 13683,
-    "ss_count": 103
-  },
   "Melic-5925": {
     "name": "Melic",
     "author": "bengarrr",
@@ -12193,13 +12186,6 @@
     "fastest_time": 7549,
     "ss_count": 71
   },
-  "Shot-By-The-Bullet-2139": {
-    "name": "Shot By The Bullet",
-    "author": "Magnetbrainn",
-    "atlas_id": 2139,
-    "fastest_time": 9033,
-    "ss_count": 71
-  },
   "what-a-are-knowledge-6360": {
     "name": "what a are knowledge",
     "author": "ciwb",
@@ -13836,13 +13822,6 @@
     "author": "Maddy_",
     "atlas_id": 9514,
     "fastest_time": 7766,
-    "ss_count": 66
-  },
-  "Superbear-2616": {
-    "name": "Superbear",
-    "author": "Tropicallo",
-    "atlas_id": 2616,
-    "fastest_time": 8649,
     "ss_count": 66
   },
   "Snowfall-9579": {
@@ -17212,13 +17191,6 @@
     "fastest_time": 12716,
     "ss_count": 56
   },
-  "Downtrill-8472": {
-    "name": "Downtrill",
-    "author": "jdude0822",
-    "atlas_id": 8472,
-    "fastest_time": 13600,
-    "ss_count": 56
-  },
   "4Boots-3453": {
     "name": "4Boots",
     "author": "lawatson",
@@ -18948,13 +18920,6 @@
     "fastest_time": 48584,
     "ss_count": 52
   },
-  "Ec-1660": {
-    "name": "Ec",
-    "author": "Tropicallo",
-    "atlas_id": 1660,
-    "fastest_time": 56084,
-    "ss_count": 52
-  },
   "Midwinter-4700": {
     "name": "Midwinter",
     "author": "Blueeyedrat",
@@ -20087,13 +20052,6 @@
     "author": "cmr_maps",
     "atlas_id": 7556,
     "fastest_time": 10750,
-    "ss_count": 48
-  },
-  "Amathophobia-3407": {
-    "name": "Amathophobia",
-    "author": "Tropicallo",
-    "atlas_id": 3407,
-    "fastest_time": 11066,
     "ss_count": 48
   },
   "How-Do-Spike-2505": {
@@ -22033,13 +21991,6 @@
     "author": "C",
     "atlas_id": 7394,
     "fastest_time": 41100,
-    "ss_count": 42
-  },
-  "Streets-of-Rage-2065": {
-    "name": "Streets of Rage",
-    "author": "Meark",
-    "atlas_id": 2065,
-    "fastest_time": 47617,
     "ss_count": 42
   },
   "The-Reservoir-461": {
@@ -24980,13 +24931,6 @@
     "author": "indapop",
     "atlas_id": 7720,
     "fastest_time": 11600,
-    "ss_count": 34
-  },
-  "San-Andreas-Fault-9984": {
-    "name": "San Andreas Fault",
-    "author": "Xiamul",
-    "atlas_id": 9984,
-    "fastest_time": 11900,
     "ss_count": 34
   },
   "Tachi-11679": {
@@ -28384,13 +28328,6 @@
     "fastest_time": 4550,
     "ss_count": 28
   },
-  "Your-Present-10997": {
-    "name": "Your Present",
-    "author": "mister__simon",
-    "atlas_id": 10997,
-    "fastest_time": 4783,
-    "ss_count": 28
-  },
   "Upright-9255": {
     "name": "Upright",
     "author": "Maddy_",
@@ -30846,13 +30783,6 @@
     "author": "hgt",
     "atlas_id": 10489,
     "fastest_time": 300,
-    "ss_count": 25
-  },
-  "Baby-Patience-10501": {
-    "name": "Baby Patience",
-    "author": "MNTempest",
-    "atlas_id": 10501,
-    "fastest_time": 716,
     "ss_count": 25
   },
   "Just-the-gate-7315": {
@@ -34304,13 +34234,6 @@
     "author": "YAYtears",
     "atlas_id": 11025,
     "fastest_time": 5183,
-    "ss_count": 21
-  },
-  "Killamari-11058": {
-    "name": "Killamari",
-    "author": "MNTempest",
-    "atlas_id": 11058,
-    "fastest_time": 5366,
     "ss_count": 21
   },
   "Bad-King-Kong-12122": {
@@ -38240,13 +38163,6 @@
     "fastest_time": 6316,
     "ss_count": 16
   },
-  "Drunk-8722": {
-    "name": "Drunk",
-    "author": "Probably not Towelie",
-    "atlas_id": 8722,
-    "fastest_time": 6499,
-    "ss_count": 16
-  },
   "Inflammation-10630": {
     "name": "Inflammation",
     "author": "HolyKau",
@@ -38945,13 +38861,6 @@
     "author": "msg555",
     "atlas_id": 6802,
     "fastest_time": 300,
-    "ss_count": 15
-  },
-  "exec-func-ruin-game-4384": {
-    "name": "exec func ruin game",
-    "author": "7itay",
-    "atlas_id": 4384,
-    "fastest_time": 533,
     "ss_count": 15
   },
   "SOCD-check-3-11059": {
@@ -40842,13 +40751,6 @@
     "author": "TwinkieSWF",
     "atlas_id": 10112,
     "fastest_time": 3483,
-    "ss_count": 12
-  },
-  "Bogo-Force-Difficult-11718": {
-    "name": "Bogo Force Difficult",
-    "author": "ibums",
-    "atlas_id": 11718,
-    "fastest_time": 3533,
     "ss_count": 12
   },
   "slurmboost-8846": {
@@ -45632,13 +45534,6 @@
     "fastest_time": 474549,
     "ss_count": 4
   },
-  "Downtrill-x100-9788": {
-    "name": "Downtrill x100",
-    "author": "jdude0822",
-    "atlas_id": 9788,
-    "fastest_time": 1636749,
-    "ss_count": 4
-  },
   "The-Scrubforce-DX-6018": {
     "name": "The Scrubforce DX",
     "author": "msg555",
@@ -46603,13 +46498,6 @@
     "author": "deathbound",
     "atlas_id": 9244,
     "fastest_time": 32732,
-    "ss_count": 1
-  },
-  "Concussion-7141": {
-    "name": "Concussion",
-    "author": "C",
-    "atlas_id": 7141,
-    "fastest_time": 34649,
     "ss_count": 1
   },
   "Moss-9215": {
@@ -47592,13 +47480,6 @@
     "fastest_time": null,
     "ss_count": 0
   },
-  "One-In-a-Million-11808": {
-    "name": "One In a Million",
-    "author": "YAYtears",
-    "atlas_id": 11808,
-    "fastest_time": null,
-    "ss_count": 0
-  },
   "Optional-Combo-4156": {
     "name": "Optional Combo",
     "author": "Nonaness",
@@ -47883,13 +47764,6 @@
     "name": "Training",
     "author": "chaotichawk",
     "atlas_id": 5124,
-    "fastest_time": null,
-    "ss_count": 0
-  },
-  "trash-11523": {
-    "name": "trash",
-    "author": "hgt",
-    "atlas_id": 11523,
     "fastest_time": null,
     "ss_count": 0
   },

@@ -71,6 +71,36 @@ button:focus {
   -webkit-app-region: drag;
 }
 
+#rma-header:after {
+  content: "random map app";
+  animation: switchToVersionText 30s infinite;
+}
+
+@keyframes switchToVersionText {
+  0%,74% {
+    opacity: 1;
+    content: "random map app";
+  }
+
+  75% {
+    opacity: 0;
+  }
+
+  76%,98% {
+    opacity: 1;
+    content: "RMA v1.0.1";
+  }
+
+  99% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+    content: "random map app";
+  }
+}
+
 #obscuring-overlay {
   display: none;
   position: fixed;

@@ -85,16 +85,14 @@
 }
 
 #score-screen-remaining-skips {
-  font-size: max(9vw, 7vh);
+  font-size: max(8vw, 7vh);
   margin-top: 0.75rem;
 }
 
 #score-screen-seed {
-  font-size: max(9vw, 7vh);
+  font-size: max(8vw, 7vh);
   color: #95c4ec;
-  margin-top: 1rem;
-  position: absolute;
-  bottom: 3.5rem;
+  margin-top: 0.75rem;
 }
 #score-screen-stats-container {
   display: none;
