@@ -32,6 +32,7 @@ runs. Notable features include:
 - Download one of the releases for your Operating System, and run the executable within the downloaded folder.
 
 *MacOS*
+
 If you are on MacOS, put the app (`random-map-app`) in your Applications folder.
 
 ## <a id="faq-heading"></a> FAQ
