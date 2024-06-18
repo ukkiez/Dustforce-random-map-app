@@ -9,7 +9,7 @@ ___
 - Improve initial app setup, double-checking `split.txt` can be found
 - Add level ban list, see: [exclusions](https://github.com/ukkiez/Dustforce-random-map-app/blob/master/level-filtering/exclusions.js)
 #### Minor
-- Show versio number
+- Show version number
 - Add the last level that a run ended on to the run review
 - Fix average score time calculation on resetting
 - Adjust score screen element positioning
