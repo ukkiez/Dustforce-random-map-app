@@ -55,7 +55,6 @@ const finish = () => {
     setTimeout( () => {
       switchPage( "setup.html", "index.html" );
     }, 750 );
-
   }, 750 * 3 );
 }
 

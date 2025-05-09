@@ -1,5 +1,3 @@
-// use nw.require() instead of require() or import to make it actually available
-// in the browser context
 import { getData } from "./util/data.js";
 import { formatTime, formatMSToHumanReadable } from "./util/format.js";
 import { addClass, removeClass } from "./util/dom.js";
@@ -207,11 +205,9 @@ init = () => {
     return;
   }
   else if ( !config.initialSetupDone ) {
-    if ( page !== "setup.html" ) {
-      // go to the initial setup page, where we'll confirm the dustforce
-      // directory; this will only happen the first time someone opens the app
-      switchPage( "", "./setup.html" );
-    }
+    // go to the initial setup page, where we'll confirm the dustforce
+    // directory; this will only happen the first time someone opens the app
+    switchPage( "", "./setup.html" );
     return;
   }
 
