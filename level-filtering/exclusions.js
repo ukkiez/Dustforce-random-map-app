@@ -28,7 +28,20 @@ const excludedLevelIds = [
   9788,   // Downtrill-x100-9788                  motion sickness
   9984,   // San-Andreas-Fault-9984               motion sickness
   8722,   // Drunk-8722                           motion sickness
+  6285,   // Raining-Blood-6285                   motion sickness, lag
   10501,  // Baby-Patience-10501                  crashes
 ];
+
+/*
+https://atlas.dustforce.com/6016
+https://atlas.dustforce.com/8173
+http://atlas.dustforce.com/8286/control-visual-redux
+https://dustkid.com/level/Finalisation-596
+http://atlas.dustforce.com/10975/Two-Bushes
+https://dustkid.com/level/Laghill-10924
+https://atlas.dustforce.com/3945
+https://dustkid.com/level/Amathophobia-3407
+Do-you-like-to-go-fast-12785 // wr vs. play time is skewed
+*/
 
 module.exports = { excludedLevelIds };
