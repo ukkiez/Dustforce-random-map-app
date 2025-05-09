@@ -69,6 +69,9 @@ button:focus {
   opacity: 0.4;
   left: 3vw;
   -webkit-app-region: drag;
+  /* place in front of everything always, even when class:obscuring-layer is
+  active */
+  z-index: 100;
 }
 
 #rma-header:after {
@@ -88,7 +91,7 @@ button:focus {
 
   76%,98% {
     opacity: 1;
-    content: "RMA v1.0.1";
+    content: "RMA v1.0.2";
   }
 
   99% {
@@ -126,4 +129,11 @@ button:focus {
 .clickable:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+.vhidden {
+  visibility: hidden !important;
 }

@@ -154,9 +154,6 @@ button {
   z-index: 1;
   border-radius: 0.15rem;
 }
-.hidden {
-  visibility: hidden;
-}
 
 /* Links inside the dropdown */
 .dropdown-content button {
@@ -366,10 +363,6 @@ input[type="checkbox"] {
 }
 #seed-copy-btn-filled {
   fill: #03a87c;
-}
-
-.hidden {
-  display: none !important;
 }
 
 #saved-message {

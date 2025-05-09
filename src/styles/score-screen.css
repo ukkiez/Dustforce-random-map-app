@@ -257,10 +257,6 @@
   color: #b82020;
 }
 
-.hidden {
-  display: none !important;
-}
-
 #run-review-header {
   position: absolute;
   bottom: 1rem;

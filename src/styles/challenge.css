@@ -2,6 +2,65 @@ body.challenge {
   gap: max( 2vw, 2vh);
 }
 
+#obscuring-overlay.challenge {
+  opacity: 0.8;
+}
+
+#loading-container {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  left: 0;
+  /* move down */
+  transform: translate(0, 10vw);
+
+  /* set in front of class:obscuring-overlay */
+  z-index: 6;
+}
+
+#loading-text {
+  font-size: 9vw;
+  font-size: 9vw;
+  color: #6c8ca8;
+}
+#loading-text:after {
+  content: ".";
+  animation: elipsis 1.5s linear infinite;
+}
+@keyframes elipsis {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
+}
+
+#loading-ready-text {
+  color: #efefef;
+  margin-top: 5vw;
+  font-size: 17vw;
+}
+
+#downloading-icon {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 7vw;
+  width: 43vw;
+  height: 43vw;
+
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate( 360deg );
+  }
+}
+
 #points-icon-container.challenge {
   -webkit-app-region: none !important;
   position: relative;

@@ -64,13 +64,23 @@
   </template>
 
   <template id="challenge-run-template">
+    <!-- use this overlay to obscure the app during pre-installing the first map
+    -->
+    <div id="obscuring-overlay"></div>
+
     <span id="rma-header">
       <!-- random map app -->
     </span>
 
+    <div id="loading-container">
+      <div id="loading-text">Installing maps</div>
+      <div id="loading-ready-text">Get Ready</div>
+      <img id="downloading-icon" alt="S-Complete Icon" src="../assets/loading0001.png" />
+    </div>
+
     <div class="timers-container" id="timers-container">
-      <div class="timer" id="main-time"></div>
-      <div class="timer" id="map-timer"></div>
+      <div id="main-time" class="timer"></div>
+      <div id="map-timer" class="timer"></div>
     </div>
 
     <div id="points-icon-container">
@@ -78,7 +88,7 @@
       <span id="points-icon-text">0</span>
     </div>
 
-    <div id="map-info">
+    <div id="map-info" class="vhidden">
       <div class="map-info-text-wrapper">
         <span id="map-info-name" class="clickable">
           map

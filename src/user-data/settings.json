@@ -1,13 +1,13 @@
 {
   "seed": "",
-  "startTime": 3600000,
+  "startTime": 900000,
   "minSSCount": 10,
   "maxSSCount": 500,
-  "fastestSSTime": 60000,
+  "fastestSSTime": 20000,
   "skips": true,
   "freeSkips": 1,
-  "freeSkipAfterXSolvedLevels": 10,
+  "freeSkipAfterXSolvedLevels": 0,
   "infiniteSkips": false,
   "CMPLevels": false,
-  "settingsName": "classic"
+  "settingsName": "blitz"
 }
