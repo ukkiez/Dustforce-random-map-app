@@ -30,10 +30,23 @@ for ( const [ filename, solvers ] of Object.entries( solversData ) ) {
   ssCountByFilename.set( filename, solvers.length );
 }
 
+/*
+  - `levels.json` includes hidden and unpublished maps as of 10/05/2025
+    - Keep in mind we prefer not to have hidden maps as they won't be visible to
+      the user when following the Atlas link, and we don't know whether it's
+      hidden upfront from the dfrandomizer dataset, and it skews run RNG towards
+      maps with multiple copies, and potentially means you encounter the "same"
+      map more than once a run
+  - Unpublished maps can be filtered out by checking for an author
+  - One problem with unpublished maps is that they are indistinct from
+    "unreadable" maps, which often cannot even be opened in-game
+*/
+
 // const solversMap = new Map( Object.entries( solversData ) );
 
 // const userId = 64233;
 const filteredData = {};
+let counter = 0;
 for ( const [ filename, metadata ] of Object.entries( levelMetadata ) ) {
   const { level_type, level_end, name, author, atlas_id, fastest_time } = metadata;
 
@@ -43,7 +56,7 @@ for ( const [ filename, metadata ] of Object.entries( levelMetadata ) ) {
   // }
 
   if ( excludedLevelIds.includes( atlas_id ) ) {
-    console.log( "Excluded level ID: ", atlas_id );
+    console.log( `Excluded level: ${ name }-${atlas_id}` );
     continue;
   }
 
@@ -61,6 +74,11 @@ for ( const [ filename, metadata ] of Object.entries( levelMetadata ) ) {
   if ( level_end <= 0 ) {
     // filter out levels that do not have an end trigger
     ssCountByFilename.delete( filename );
+    continue;
+  }
+
+  if ( !author ) {
+    // filter out broken/unpublished maps
     continue;
   }
 
