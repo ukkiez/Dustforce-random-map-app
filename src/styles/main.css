@@ -1,5 +1,3 @@
-@font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
-
 #close-app-btn {
   position: absolute;
   right: 1vw;
@@ -10,6 +8,7 @@
   outline: none;
   cursor: pointer;
   transition: background-color 0.4s, color 0.4s;
+  z-index: 6;
 }
 #close-app-btn:hover {
   color: #ff3939;
@@ -79,6 +78,35 @@
   position: absolute;
 
   animation: animate 1.25s;
+}
+
+@keyframes slap-on-any-percent {
+  0%, 70% {
+    opacity: 0;
+    /* font-size: 30vw; */
+    transform:scale(4);
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+#mode-any-percent-tag {
+  color: #f1f1f1;
+  background-color: #2e5c8a;
+  border: #375b80 0.1rem solid;
+  border-radius: 0.25rem;
+  z-index: 2;
+  position: absolute;
+  right: 1vw;
+  transform: rotate(15deg);
+  bottom: 7vh;
+  font-size: 8vw;
+  min-width: 25vw;
+  text-align: center;
+
+  animation: slap-on-any-percent 0.75s linear;
 }
 
 #points-icon {
@@ -195,7 +223,6 @@
   margin-bottom: 3.5vh;
 }
 .hub-btn {
-  font-family: inherit;
   border-radius: 0.25rem;
   outline: none;
   transition: background-color 0.4s, color 0.4s;

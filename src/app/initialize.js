@@ -1,5 +1,5 @@
 import { getData } from "./util/data.js";
-import { formatTime, formatMSToHumanReadable } from "./util/format.js";
+import { formatTime, formatMSToHumanReadable } from "./util/time/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 
 let settings;
@@ -96,6 +96,10 @@ const initMainBody = () => {
     document.getElementById( "mode2" ).innerText = `${ settings.settingsName } Mode`;
   }
 
+  if ( settings.scoreCategory === "any" ) {
+    removeClass( document.getElementById( "mode-any-percent-tag" ), "hidden" );
+  }
+
   // set the proper skips starting count
   const skipsElement = document.getElementById( "skips" );
   if ( !settings.skips || ( !settings.infiniteSkips && settings.freeSkips <= 0 ) ) {
@@ -142,7 +146,8 @@ const initMainBody = () => {
 const initSettingsBody = () => {
   document.getElementById( "download-settings-link" ).href = "../user-data/settings.json";
 
-  document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, true );
+  const withMs = true;
+  document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, withMs );
 
   const currentWindow = nw.Window.get();
   currentWindow.on( "loaded", function() {
@@ -150,9 +155,18 @@ const initSettingsBody = () => {
     // with it (with some extra height to make sure nothing is cut off at the
     // bottom)
     const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
-    currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 35 );
-    currentWindow.setMinimumSize( parseInt( clientRectangle.width - 50, 10 ), parseInt( clientRectangle.height - 50, 10 ) );
-    currentWindow.setMaximumSize( parseInt( clientRectangle.width + 100, 10 ), parseInt( clientRectangle.height + 135, 10 ) );
+    currentWindow.resizeTo(
+      parseInt( clientRectangle.width, 10 ),
+      parseInt( clientRectangle.height, 10 ) + 35
+    );
+    currentWindow.setMinimumSize(
+      parseInt( clientRectangle.width - 50, 10 ),
+      parseInt( clientRectangle.height - 50, 10 )
+    );
+    currentWindow.setMaximumSize(
+      parseInt( clientRectangle.width + 100, 10 ),
+      parseInt( clientRectangle.height + 135, 10 )
+    );
   } );
 
   document.getElementById( "back-button" ).addEventListener( "click", () => {

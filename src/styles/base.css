@@ -1,4 +1,21 @@
-@font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
+@font-face {
+  font-family: Caracteres;
+  src: url( "../assets/fonts/Caracteres-L1.ttf" );
+  unicode-range: U+0030-007A, U+0021, U+002F, U+0027, U+002C, U+002D, U+002E;
+  /*
+  Unicode symbols defined: ! / ' , - .
+  */
+}
+
+/* use Open Sans Regular for some symbols that Caracteres does not support */
+@font-face {
+  font-family: Symbols;
+  src: url( "../assets/fonts/OpenSans-Regular.ttf" );
+  unicode-range: U+0022, U+0025, U+0026, U+003F, U+0040;
+  /*
+  Unicode symbols defined: " % & ? @
+  */
+}
 
 html {
   -webkit-font-smoothing: antialiased;
@@ -35,7 +52,8 @@ body {
   height: 100%;
   width: -webkit-fill-available;
 
-  font-family: "Caracteres", sans-serif;
+  /* see: @font-face at the top of this file */
+  font-family: Symbols, Caracteres, sans-serif;
   color: #dadada;
   font-size: 1rem;
   overflow: hidden;
@@ -54,6 +72,13 @@ body {
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
+}
+
+button {
+  font-family: Symbols, Caracteres, sans-serif;
+}
+input {
+  font-family: Symbols, Caracteres, sans-serif;
 }
 
 /* remove the annoying "selection outline" when clicking on buttons */

@@ -10,7 +10,8 @@
     "freeSkipAfterXSolvedLevels": 10,
     "infiniteSkips": false,
     "CMPLevels": false,
-    "settingsName": "classic"
+    "settingsName": "classic",
+    "scoreCategory": "ss"
   },
 
   "rapid": {
@@ -24,7 +25,8 @@
     "freeSkipAfterXSolvedLevels": 10,
     "infiniteSkips": false,
     "CMPLevels": false,
-    "settingsName": "rapid"
+    "settingsName": "rapid",
+    "scoreCategory": "ss"
   },
 
   "blitz": {
@@ -38,7 +40,8 @@
     "freeSkipAfterXSolvedLevels": 0,
     "infiniteSkips": false,
     "CMPLevels": false,
-    "settingsName": "blitz"
+    "settingsName": "blitz",
+    "scoreCategory": "ss"
   },
 
   "casual": {
@@ -52,7 +55,8 @@
     "freeSkipAfterXSolvedLevels": 0,
     "infiniteSkips": true,
     "CMPLevels": true,
-    "settingsName": "casual"
+    "settingsName": "casual",
+    "scoreCategory": "ss"
   },
 
   "hard": {
@@ -66,6 +70,7 @@
     "freeSkipAfterXSolvedLevels": 0,
     "infiniteSkips": false,
     "CMPLevels": false,
-    "settingsName": "hard"
+    "settingsName": "hard",
+    "scoreCategory": "ss"
   }
 }

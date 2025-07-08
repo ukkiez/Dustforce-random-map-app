@@ -4,7 +4,7 @@ import { Timer } from "../classes/timer.js";
 import { getData, writeHexData } from "../util/data.js";
 import { addClass, removeClass } from "../util/dom.js";
 import { downloadMap } from "../util/download.js";
-import { formatTime } from "../util/format.js";
+import { formatTime } from "../util/time/format.js";
 import { seededRandom } from "../util/random.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
@@ -41,7 +41,24 @@ const timerAction = ( action, bool = false ) => {
   }
 }
 
-const increment = ( _decrement = false ) => {
+let pauseTimerBetweenLevelsTimeout = null;
+const pauseTimersBetweenLevels = () => {
+  timerAction( "stop" );
+
+  if ( pauseTimerBetweenLevelsTimeout ) {
+    clearTimeout( pauseTimerBetweenLevelsTimeout );
+  }
+
+  pauseTimerBetweenLevelsTimeout = setTimeout( () => {
+    timers[ 0 ].resume();
+
+    if ( timers[ 1 ] ) {
+      timers[ 1 ].reset( true );
+    }
+  }, 3000 );
+}
+
+const incrementScore = ( _decrement = false ) => {
   if ( !timers[ 0 ].hasStarted ) {
     return;
   }
@@ -95,7 +112,7 @@ const installAndMaybePlay = ( level, play = false ) => {
 
 let blocked = false;
 let timeout = null;
-const block = ( ms = 1500 ) => {
+const temporarilyBlockSkipButton = ( ms = 1500 ) => {
   if ( timeout ) {
     // clear any previously active timeouts that would unblock before the
     // current function call
@@ -113,7 +130,7 @@ const adjustOnScreenMapInfo = ( levelId, name, author ) => {
   const nameEl = document.getElementById( "map-info-name" );
   const authorEl = document.getElementById( "map-info-author" );
   nameEl.innerText = name;
-  authorEl.innerText = author;
+  authorEl.innerText = author || "???";
 
   // allow users to go to the Atlas page by clicking on the map name
   nameEl.onclick = () => {
@@ -196,18 +213,9 @@ const fetchPoolLevel = ( ahead = 0 ) => {
   };
 }
 
-const preInstallMap = async ( name, id ) => {
-  // await (async () => {
-  //   return new Promise(r => {
-  //     setTimeout(() => {
-  //       r()
-  //     }, 200000000);
-  //   })
-  // })();
-
-  const filename = `${ name }-${ id }`;
-  // const success = await downloadMap( id, path.join( global.__dirname, `app/runs/temp-levels-folder/` ) );
-  const success = await downloadMap( id, levelDir, filename );
+const preInstallMap = async ( name, levelId ) => {
+  const filename = `${ name }-${ levelId }`;
+  const success = await downloadMap( levelId, levelDir, filename );
 
   if ( success !== 1 ) {
     // we could not pre-install the map, but there's not much we can fall back
@@ -341,11 +349,9 @@ const start = async () => {
 
     installAndMaybePlay( currentLevel, true );
 
-    // actual start all timers
     timerAction( "start" );
 
-    // see above
-    block();
+    temporarilyBlockSkipButton();
 
     // initiate the observer for split.txt; TODO: maybe debounce the callback in
     // case fs.watch() fires multiple times, which seems to happen occassionally,
@@ -380,14 +386,22 @@ const start = async () => {
           }
 
           const ss = ( completion === "100" ) && ( finesse === "0" );
-          if ( ss ) {
-            if ( runData.completedLevelIds.has( id ) ) {
-              // remove a skip if this map was already any%'d, as that would've
-              // incremented the skip counter
-              handleSkipsCount( -1 );
+          if ( ss || settings.scoreCategory === "any" ) {
+            if ( settings.scoreCategory === "ss" ) {
+              if ( runData.completedLevelIds.has( id ) ) {
+                // remove a skip if this map was already any%'d, as that
+                // would've incremented the skip counter
+                handleSkipsCount( -1 );
+              }
+              else {
+                runData.completedLevelIds.add( id );
+              }
             }
             else {
-              runData.completedLevelIds.add( id );
+              // any% logic
+              if ( ss ) {
+                handleSkipsCount( 1 );
+              }
             }
 
             runData.solvedLevelIds.add( id );
@@ -400,7 +414,7 @@ const start = async () => {
               skipped: false,
             } );
 
-            increment();
+            incrementScore();
 
             currentLevel = fetchPoolLevel();
             if ( !currentLevel ) {
@@ -412,8 +426,7 @@ const start = async () => {
             // keep the next two levels installed ahead of time
             installAhead( 2 );
 
-            // see above
-            block();
+            temporarilyBlockSkipButton();
 
             if ( settings.freeSkipAfterXSolvedLevels > 0 ) {
               if ( runData.solvedLevelIds.size > 0 && ( runData.solvedLevelIds.size % settings.freeSkipAfterXSolvedLevels ) === 0 ) {
@@ -423,11 +436,7 @@ const start = async () => {
               }
             }
 
-            // restart the map timer that's keeping track of how long the player
-            // is taking for the current map
-            if ( timers[ 1 ] ) {
-              timers[ 1 ].reset( true );
-            }
+            pauseTimersBetweenLevels();
 
             // trigger the S-icon animation
             const el = document.getElementById( "points-icon" );
@@ -442,8 +451,9 @@ const start = async () => {
           if ( !runData.completedLevelIds.has( id ) ) {
             runData.completedLevelIds.add( id );
 
-            if ( !ss ) {
+            if ( !ss && settings.scoreCategory === "ss" ) {
               // add a skip as this level was any%'d and not already completed
+              // (only counts for SS runs)
               handleSkipsCount( 1 );
               return;
             }
@@ -473,6 +483,8 @@ const skip = () => {
       return;
     }
 
+    pauseTimersBetweenLevels();
+
     runData.review.push( {
       levelname: currentLevel.name,
       filename: `${ currentLevel.name }-${ currentLevel.id }`,
@@ -492,16 +504,7 @@ const skip = () => {
     // keep the next two levels installed ahead of time
     installAhead( 2 );
 
-    // block the skip button for a bit, to make sure the player isn't skipping
-    // while they can't actually load a new map in-game, as this is not possible
-    // in loading screens, for example
-    block();
-
-    // restart the map timer that's keeping track of how long the player is
-    // taking for the current map
-    if ( timers[ 1 ] ) {
-      timers[ 1 ].reset( true );
-    }
+    temporarilyBlockSkipButton();
     return;
   }
 };

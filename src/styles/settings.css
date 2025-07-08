@@ -10,7 +10,6 @@ body {
 }
 
 button {
-  font-family: "Caracteres", sans-serif;
   margin-right: 0.25rem;
 }
 
@@ -19,10 +18,11 @@ button {
 }
 
 .settings-header {
-  -webkit-app-region: drag;
+  color: #dadada;
   font-size: 2rem;
-  color: #ededed;
+  width: 50%;
   margin-top: 0.5rem;
+  -webkit-app-region: drag;
 }
 
 .grid {
@@ -182,6 +182,52 @@ button {
   background-color: #adc5d4;
 }
 
+.checkbox-btn {
+  color: #4f4f4f;
+  background-color: #353535;
+  border: #353535 0.1rem solid;
+  font-size: 1rem;
+  border-radius: 0.15rem;
+  margin-bottom: 0.5rem;
+  min-width: 3.5rem;
+  max-width: 3.5rem;
+  max-height: 1.5rem;
+  min-height: 1.5rem;
+  line-height: 1.25rem;
+  text-align: center;
+  transition: 0s;
+}
+
+.checkbox-btn:hover {
+  transition: 0s;
+  cursor: pointer;
+  color: #f1f1f1;
+  background-color: #5c5c5c;
+  border: #5c5c5c 0.1rem solid;
+}
+.checkbox-btn:active {
+  transition: 0s;
+  color: #a7a7a7;
+  background-color: #4d4d4d;
+  border: #4d4d4d 0.1rem solid;
+}
+
+.any-percent {
+  color: #f1f1f1;
+  background-color: #2e5c8a;
+  border: #2e5c8a 0.1rem solid;
+}
+.checkbox-btn.any-percent:hover {
+  color: #fafafa;
+  background-color: #376ea5;
+  border: #34699e 0.1rem solid;
+}
+.checkbox-btn.any-percent:active {
+  color: #a7a7a7;
+  background-color: #23486c;
+  border: transparent 0.1rem solid;
+}
+
 label {
   color: aliceblue;
   font-size: 0.9rem;
@@ -189,8 +235,6 @@ label {
 }
 
 input {
-  font-family: "Caracteres", sans-serif;
-
   width: 7.5rem;
   margin-bottom: 1rem;
   margin-top: 0.3rem;
@@ -222,7 +266,6 @@ input[type="checkbox"] {
 
 .generic-btn {
   font-size: 1rem;
-  font-family: inherit;
   border-radius: 0.25rem;
   outline: none;
   transition: background-color 0.4s, color 0.4s;
@@ -253,13 +296,13 @@ input[type="checkbox"] {
   right: 1.5rem;
   color: #ededed;
   font-style: italic;
-  white-space: pre-wrap;
+  white-space: pre-line;
   text-align: center;
 }
 
 #map-search-btn {
   position: absolute;
-  top: 8rem;
+  top: 1.75rem;
   right: 0.5rem;
   align-items: center;
   padding-top: 0.1rem;
@@ -295,9 +338,6 @@ input[type="checkbox"] {
 
   border-radius: 0.1rem;
   border-style: none;
-
-  color: #4f4f4f;
-  background-color: #353535;
 
   color: #03694d;
   background-color: #06d6a0;

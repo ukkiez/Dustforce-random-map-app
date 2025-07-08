@@ -2,7 +2,7 @@
 // in the browser context
 const fs = nw.require( "fs" );
 
-import { formatMSToHumanReadable } from "./util/format.js";
+import { formatMSToHumanReadable } from "./util/time/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 import { getData, getMapPoolSize, writeData, writeHexData } from "./util/data.js";
 
@@ -17,6 +17,8 @@ const { levelData, modes, settings, userConfiguration } = getData( {
 
 const settingsNameEl = document.getElementById( "settings-name" );
 const settingsListEl = document.getElementById( "settings-list" );
+
+const scoreCategoryBtn = document.getElementById( "score-category-btn" );
 
 const seedEl = document.getElementById( "seed-input" );
 const timeEl = document.getElementById( "time-input" );
@@ -85,7 +87,8 @@ const setInputValues = ( _settings ) => {
 
   fastestSSTimeEl.value = fastestSSTime;
   const milliseconds = Math.floor( fastestSSTime );
-  formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, true );
+  const withMs = true;
+  formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, withMs );
 
   CMPLevelsEl.checked = CMPLevels;
 
@@ -102,6 +105,13 @@ const setInputValues = ( _settings ) => {
   else {
     freeSkipsContainer.classList.remove( "disabled" );
   }
+
+  if ( data.scoreCategory === "any" ) {
+    addClass( scoreCategoryBtn, "any-percent" );
+  }
+  else {
+    removeClass( scoreCategoryBtn, "any-percent" );
+  }
 }
 
 const { styling } = userConfiguration;
@@ -115,6 +125,10 @@ setInputValues( settings );
 setMapPoolSize();
 
 const objectDiff = ( object1, object2, ignoredKeys = [] ) => {
+  if ( Object.keys( object1 ).length !== Object.keys( object2 ).length ) {
+    return true;
+  }
+
   for ( const [ key, field ] of Object.entries( object1 ) ) {
     if ( ignoredKeys.includes( key ) ) {
       continue;
@@ -137,9 +151,11 @@ const handleSettingsName = () => {
   // check whether the current settings are the same as for one of the
   // predefined modes
   for ( const mode of Object.values( modes ) ) {
-    if ( !objectDiff( mode, data, [ "settingsName" ] ) ) {
-      settingsNameEl.innerText = `${ mode.settingsName } mode`;
-      data.settingsName = mode.settingsName;
+    if ( !objectDiff( mode, data, [ "settingsName", "scoreCategory", "seed" ] ) ) {
+      if ( data.settingsName !== mode.settingsName ) {
+        settingsNameEl.innerText = `${ mode.settingsName } mode`;
+        data.settingsName = mode.settingsName;
+      }
       return;
     }
   }
@@ -306,6 +322,26 @@ for ( const button of settingsListEl.children ) {
   } );
 }
 
+scoreCategoryBtn.addEventListener( "click", ( event ) => {
+  switch ( data.scoreCategory ) {
+    case "ss":
+      data.scoreCategory = "any";
+      addClass( event.target, "any-percent" );
+      break;
+
+    case "any":
+      data.scoreCategory = "ss";
+      removeClass( event.target, "any-percent" );
+      break;
+
+    default:
+      event.preventDefault();
+      break;
+  }
+
+  handleStateChange();
+} );
+
 addInputListener( seedEl, "seed", {
   transform: ( value ) => value.toLowerCase(),
   constraint: ( event ) => event.target.value.replace( /[^a-zA-Z0-9 ]+/g, "" ),
@@ -329,7 +365,8 @@ addInputListener( fastestSSTimeEl, "fastestSSTime", {
   max: true,
   callback: function( event ) {
     const milliseconds = Math.floor( event.target.value );
-    formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, true );
+    const withMs = true;
+    formattedFastestTimeEl.innerText = formatMSToHumanReadable( milliseconds, withMs );
   }
 } );
 addFocusOutListener( fastestSSTimeEl, "fastestSSTime" );
@@ -580,15 +617,16 @@ document.getElementById( "map-search-input" ).addEventListener( "input", ( event
   let startMatches = [];
   let partialMatches = [];
 
+  const sanitizedInput = value.replace(/[#-.]|[[-^]|[?|{}]/g, '\\$&');
   for ( const [ filename, { name, author, atlas_id } ] of Object.entries( levelData ) ) {
-    const filenameNoHyphen = filename.replaceAll( "-", " " );
-    if ( filename.match( new RegExp( `^${ value }`, "ig" ) ) || filenameNoHyphen.match( new RegExp( `^${ value }`, "ig" ) ) ) {
+    const filenameWithoutHyphen = filename.replaceAll( "-", " " );
+    if ( filename.match( new RegExp( `^${ sanitizedInput }`, "ig" ) ) || filenameWithoutHyphen.match( new RegExp( `^${ sanitizedInput }`, "ig" ) ) ) {
       startMatches.push( { name, author, atlas_id } );
     }
-    else if ( filename.match( new RegExp( `${ value }`, "ig" ) ) || filenameNoHyphen.match( new RegExp( `${ value }`, "ig" ) ) ) {
+    else if ( filename.match( new RegExp( `${ sanitizedInput }`, "ig" ) ) || filenameWithoutHyphen.match( new RegExp( `${ sanitizedInput }`, "ig" ) ) ) {
       partialMatches.push( { name, author, atlas_id } );
     }
-    else if ( author.toLowerCase() === value.toLowerCase() ) {
+    else if ( author.toLowerCase() === sanitizedInput.toLowerCase() ) {
       startMatches.push( { name, author, atlas_id } );
     }
   }
