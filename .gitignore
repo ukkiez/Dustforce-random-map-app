@@ -5,6 +5,9 @@ src/app/bundle
 src/user-data/settings.json
 TODOs.md
 
+src/dustkid-data_backup
+
+# MacOS-specific
 .DS_Store
 
 # nwjc log
