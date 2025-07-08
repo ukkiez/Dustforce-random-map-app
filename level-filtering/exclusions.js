@@ -28,20 +28,23 @@ const excludedLevelIds = [
   9788,   // Downtrill-x100-9788                  motion sickness
   9984,   // San-Andreas-Fault-9984               motion sickness
   8722,   // Drunk-8722                           motion sickness
+  9402,   // ChitShip-9402                        motion sickness
   6285,   // Raining-Blood-6285                   motion sickness, lag
+  6016,   // 44445-3-final-6016                   flashing lights
   10501,  // Baby-Patience-10501                  crashes
+  10941,  // one-shot-10941                       crashes
+  9425,   // Girl-Parapets-9425                   dustmod version-specific
+  10924,  // laghill-10924                        lag
+  3945,   // dont-throw-up-3945                   lag
+  11468,  // pillar-of-patience-11468             skewed wr time
+  12785,  // Do-you-like-to-go-fast-12785         wr vs. play time is skewed
+  13469,  // some-3d-ramen-13469                  semi-functional script
+  13258,  // protodimensionetics-13258            semi-functional script
 ];
 
 /*
-https://atlas.dustforce.com/6016
-https://atlas.dustforce.com/8173
-http://atlas.dustforce.com/8286/control-visual-redux
-https://dustkid.com/level/Finalisation-596
-http://atlas.dustforce.com/10975/Two-Bushes
-https://dustkid.com/level/Laghill-10924
-https://atlas.dustforce.com/3945
-https://dustkid.com/level/Amathophobia-3407
-Do-you-like-to-go-fast-12785 // wr vs. play time is skewed
+ Chessforce maps
+ Naegleria AI script maps
 */
 
 module.exports = { excludedLevelIds };
