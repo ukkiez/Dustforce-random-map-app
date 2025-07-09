@@ -9,5 +9,6 @@
   "freeSkipAfterXSolvedLevels": 0,
   "infiniteSkips": false,
   "CMPLevels": false,
-  "settingsName": "blitz"
+  "settingsName": "blitz",
+  "scoreCategory": "any"
 }

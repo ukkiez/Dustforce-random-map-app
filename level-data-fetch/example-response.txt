@@ -1,0 +1,46 @@
+{
+  date: 'Thu, 29 May 2025 16:21:00 GMT',
+  'content-type': 'application/vnd.github.raw+json; charset=utf-8',
+  'content-length': '823',
+  'cache-control': 'public, max-age=60, s-maxage=60',
+  vary: 'Accept,Accept-Encoding, Accept, X-Requested-With',
+  etag: '"df1d69b802c134e13710d654c2f321d3c1f5696b"',
+  'last-modified': 'Tue, 18 Jun 2024 13:13:46 GMT',
+  'x-github-media-type': 'github.v3; param=raw; format=json',
+  'x-github-api-version-selected': '2022-11-28',
+  'access-control-expose-headers': 'ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset',
+  'access-control-allow-origin': '*',
+  'strict-transport-security': 'max-age=31536000; includeSubdomains; preload',
+  'x-frame-options': 'deny',
+  'x-content-type-options': 'nosniff',
+  'x-xss-protection': '0',
+  'referrer-policy': 'origin-when-cross-origin, strict-origin-when-cross-origin',
+  'content-security-policy': "default-src 'none'",
+  server: 'github.com',
+  'accept-ranges': 'bytes',
+  'x-ratelimit-limit': '60',
+  'x-ratelimit-remaining': '59',
+  'x-ratelimit-reset': '1748539260',
+  'x-ratelimit-resource': 'core',
+  'x-ratelimit-used': '1',
+  'x-github-request-id': 'C4E1:2D3293:1475E39:14F74A6:6838896C',
+  connection: 'close'
+}
+{
+  name: 'Random Map App',
+  version: '1.0.0',
+  main: 'src/app/bundle/index.js',
+  scripts: {
+    build: 'cd src/ && npm run build',
+    dev: 'cd src/ && npm run build && cd .. && nw src/ --user-data-dir=../random-map-app-user-data/',
+    'dev-no-build': 'nw src/ --user-data-dir=../random-map-app-user-data/',
+    'prod-with-build': 'cd src/ && npm run build && cd .. && nwbuild --platforms osx64 --srcDir src/* --buildDir dist/* src/* --flavor normal --cacheDir cache/ --version 0.52.2',
+    prod: 'nwbuild --platforms osx64 --srcDir src/ --buildDir dist/ src/ --flavor normal --cacheDir cache/ --version 0.52.2'
+  },
+  keywords: [],
+  author: 'Ukkiez',
+  license: 'ISC',
+  description: '',
+  devDependencies: { nw: '^0.52.2-sdk', 'nw-builder': '^3.5.7' },
+  dependencies: {}
+}
