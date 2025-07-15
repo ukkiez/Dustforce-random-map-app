@@ -14,7 +14,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "nw": "^0.52.2",
+    "nw": "0.52.2-sdk",
     "nw-builder": "3.5.7"
   },
   "dependencies": {}
