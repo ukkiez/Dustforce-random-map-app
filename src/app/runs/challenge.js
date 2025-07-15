@@ -554,19 +554,19 @@ const initTimers = () => {
 
   const mainTimer = new Timer( {
     timerElementId: "main-time",
-    tenths: true,
-    hundreths: true,
+    withTenths: true,
+    withHundreths: true,
     startTime,
+    countingDown: true
   } );
 
   timers = [ mainTimer ];
 
   const mapTimer = new Timer( {
     timerElementId: "map-timer",
-    tenths: true,
-    hundreths: true,
-    // time is forwards for this timer
-    _countdown: false,
+    withTenths: true,
+    withHundreths: true,
+    countingDown: false,
   } );
 
   timers.push( mapTimer );

@@ -1,27 +1,27 @@
 import { isNum } from "../index.js";
 
-export const MsToHours = ( ms ) => {
+export const msToHours = ( ms ) => {
   return Math.floor( ms / 3600000 );
 };
 
-export const MsToMinutes = ( ms ) => {
+export const msToMinutes = ( ms ) => {
   return Math.floor( ( ms / 60000 ) % 60 );
 };
 
-export const MsToSeconds = ( ms ) => {
+export const msToSeconds = ( ms ) => {
   return Math.floor( ( ms / 1000 ) % 60 );
 };
 
-export const MsToTenths = ( ms ) => {
+export const msToTenths = ( ms ) => {
   return Math.floor( ( ms / 100 ) % 10 );
 };
 
-export const MsToHundreths = ( ms ) => {
+export const msToHundreths = ( ms ) => {
   return Math.floor( ( ms / 10 ) % 10 );
 };
 
 const formatHours = ( ms ) => {
-  let hours = MsToHours( ms );
+  let hours = msToHours( ms );
 
   if ( hours === 0 ) {
     return;
@@ -31,8 +31,8 @@ const formatHours = ( ms ) => {
 };
 
 const formatMinutes = ( ms ) => {
-  let hours = MsToHours( ms );
-  let minutes = MsToMinutes( ms );
+  let hours = msToHours( ms );
+  let minutes = msToMinutes( ms );
 
   if ( minutes === 0 ) {
     if ( hours ) {
@@ -49,7 +49,7 @@ const formatMinutes = ( ms ) => {
 };
 
 const formatSeconds = ( ms ) => {
-  let seconds = MsToSeconds( ms );
+  let seconds = msToSeconds( ms );
   let overAMinute = ( ms >= 60000 );
 
   if ( seconds === 0 ) {
@@ -68,7 +68,7 @@ const formatSeconds = ( ms ) => {
 };
 
 const formatTenths = ( ms ) => {
-  let tenths = MsToTenths( ms );
+  let tenths = msToTenths( ms );
 
   if ( tenths === 0 ) {
     return "0";
@@ -78,7 +78,7 @@ const formatTenths = ( ms ) => {
 };
 
 const formatHundreths = ( ms ) => {
-  let hundreths = MsToHundreths( ms );
+  let hundreths = msToHundreths( ms );
 
   if ( hundreths === 0 ) {
     return "0";
