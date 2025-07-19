@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "src/app/bundle/index.js",
   "scripts": {
-    "build": "cd src/ && npm run build",
-    "dev": "cd src/ && npm run build && cd .. && nw src/ --user-data-dir=../random-map-app-user-data/",
+    "build": "(cd src/ && npm run build)",
+    "dev": "(cd src/ && npm run build-dev) && (nw src/ --user-data-dir=../random-map-app-user-data/)",
     "dev-no-build": "nw src/ --user-data-dir=../random-map-app-user-data/",
-    "prod-with-build": "cd src/ && npm run build && cd .. && nwbuild --platforms osx64 --srcDir src/* --buildDir dist/* src/* --flavor normal --cacheDir cache/ --version 0.52.2",
+    "prod-with-build": "(cd src/ && npm run build) && (nwbuild --platforms osx64 --srcDir src/* --buildDir dist/* src/* --flavor normal --cacheDir cache/ --version 0.52.2)",
     "prod": "nwbuild --platforms osx64 --srcDir src/ --buildDir dist/ src/ --flavor normal --cacheDir cache/ --version 0.52.2"
   },
   "keywords": [],

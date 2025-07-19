@@ -4,7 +4,8 @@
   "description": "",
   "main": "views/index.html",
   "scripts": {
-    "build": "browserify app/index.js -o app/bundle/index.js -t [ babelify --presets [ @babel/preset-env ] --plugins [ @babel/plugin-proposal-class-properties ] ]"
+    "build": "browserify app/index.js -o app/bundle/index.js -t [ babelify --presets [ @babel/preset-env ] --plugins [ @babel/plugin-proposal-class-properties ] ]",
+    "build-dev": "browserify app/index.js -o app/bundle/index.js -t [ babelify --presets [ @babel/preset-env ] --plugins [ @babel/plugin-proposal-class-properties ] ] --debug"
   },
   "window": {
     "title": "Random-Map-App",
