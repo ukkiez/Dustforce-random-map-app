@@ -855,8 +855,12 @@ export const initialize = () => {
     timerAction( "finish", true );
 
     processScoreScreen();
-    // reset();
   } );
+
+  // swap out the points icon if necessary
+  if ( settings.scoreCategory === "any" ) {
+    document.getElementById( "points-icon" ).src = "../assets/a-complete-icon.png";
+  }
 
   // start the actual run
   start();

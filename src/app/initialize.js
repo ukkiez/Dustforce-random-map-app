@@ -97,6 +97,7 @@ const initMainBody = () => {
   }
 
   if ( settings.scoreCategory === "any" ) {
+    document.getElementById( "points-icon" ).src = "../assets/a-complete-icon.png";
     removeClass( document.getElementById( "mode-any-percent-tag" ), "hidden" );
   }
 
