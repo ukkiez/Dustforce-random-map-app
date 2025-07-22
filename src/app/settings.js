@@ -125,10 +125,6 @@ setInputValues( settings );
 setMapPoolSize();
 
 const objectDiff = ( object1, object2, ignoredKeys = [] ) => {
-  if ( Object.keys( object1 ).length !== Object.keys( object2 ).length ) {
-    return true;
-  }
-
   for ( const [ key, field ] of Object.entries( object1 ) ) {
     if ( ignoredKeys.includes( key ) ) {
       continue;
