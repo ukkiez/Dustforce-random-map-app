@@ -183,7 +183,7 @@ button {
 }
 
 .checkbox-btn {
-  color: #4f4f4f;
+  color: #686868;
   background-color: #353535;
   border: #353535 0.1rem solid;
   font-size: 1rem;
@@ -223,8 +223,8 @@ button {
   border: #34699e 0.1rem solid;
 }
 .checkbox-btn.any-percent:active {
-  color: #a7a7a7;
-  background-color: #23486c;
+  color: #bfbfbf;
+  background-color: #325e8b;
   border: transparent 0.1rem solid;
 }
 
