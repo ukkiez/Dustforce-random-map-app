@@ -1,11 +1,16 @@
 node_modules
-dist
-cache
-src/app/bundle
-src/user-data/settings.json
-TODOs.md
 
+build/dist
+build/cache
+
+src/app/bundle
 src/dustkid-data_backup
+src/dustkid-data/filtered-metadata.bin
+src/dustkid-data/filtered-metadata.json
+src/user-data/personal-bests.bin
+src/user-data/settings.bin
+
+TODOs.md
 
 # MacOS-specific
 .DS_Store
