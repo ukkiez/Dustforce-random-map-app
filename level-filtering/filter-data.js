@@ -13,17 +13,18 @@
  */
 
 const fs = require( "fs" );
+const path = require( "path" );
 
 // "solvers" refers to players that SS'd levels; object keys are level file
 // names (e.g. "Tower-Construction-1026"), values are arrays of player IDs that
 // have SS'd the levels
-const solversData = require( "../src/dustkid-data/solvers.json" );
-const levelMetadata = require( "../src/dustkid-data/levels.json" );
+const solversData = require( "./solvers.json" );
+const levelMetadata = require( "./levels.json" );
 
 const { excludedLevelIds } = require( "./exclusions.js" );
 
-const destination = `${ __dirname }/../src/dustkid-data/filtered-metadata.json`;
-const destinationBin = `${ __dirname }/../src/dustkid-data/filtered-metadata.bin`;
+const destination = path.join( __dirname, "../src/dustkid-data/filtered-metadata.json" );
+const destinationBin = path.join( __dirname, "../src/dustkid-data/filtered-metadata.bin" );
 
 const ssCountByFilename = new Map();
 for ( const [ filename, solvers ] of Object.entries( solversData ) ) {
@@ -117,6 +118,7 @@ const sortedData = Object.fromEntries(
   } )
 );
 
+fs.writeFileSync( path.join( __dirname, "filtered-metadata.json" ), JSON.stringify( sortedData, null, 2 ) );
 fs.writeFileSync( destination, JSON.stringify( sortedData, null, 2 ) );
 
 const sortedDataB = Buffer.from( JSON.stringify( sortedData ) ).toString( "hex" );
