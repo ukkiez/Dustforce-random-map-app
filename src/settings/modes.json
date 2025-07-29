@@ -4,7 +4,7 @@
     "startTime": 3600000,
     "minSSCount": 10,
     "maxSSCount": 500,
-    "fastestSSTime": 60000,
+    "fastestSSTime": 90000,
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 10,
