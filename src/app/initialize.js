@@ -1,12 +1,11 @@
 import { getData } from "./util/data.js";
 import { formatTime, formatMSToHumanReadable } from "./util/time/format.js";
 import { addClass, removeClass } from "./util/dom.js";
+import { obscureMainWindow } from "./util/ui.js";
 
 let settings;
 let config;
 let personalBests;
-
-export let init;
 
 export const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
@@ -18,10 +17,8 @@ export const switchPage = ( currentPage, destination ) => {
   }
 
   if ( destination === "settings.html" ) {
-    // add an opaque black overlay to the main window and disable pointer events
-    // while the user is altering the settings
-    document.getElementById( "obscuring-overlay" ).style.display = "block";
-    document.body.style[ "pointer-events" ] = "none";
+    let disablePointerEvents = true;
+    const revertObscuration = obscureMainWindow( disablePointerEvents );
 
     // open a new window with the settings configuration
     nw.Window.open( "views/settings.html", {
@@ -41,9 +38,7 @@ export const switchPage = ( currentPage, destination ) => {
         win.on( "closed", function() {
           init();
 
-          // ensure pointer events are enabled in case we disabled them while e.g. the
-          // Settings are open
-          document.body.style[ "pointer-events" ] = "auto";
+          revertObscuration();
         } );
         win.on( "loaded", function() {
           // // move the settings window to the position of the main window
@@ -209,7 +204,7 @@ if ( template?.content?.children ) {
   }
 }
 
-init = () => {
+export let init = () => {
   ( { settings, personalBests, userConfiguration: config } = getData( { settings: true, personalBests: true, userConfiguration: true } ) );
 
   // set the user configured opacity

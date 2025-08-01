@@ -6,6 +6,7 @@ import { addClass, removeClass } from "../util/dom.js";
 import { downloadMap } from "../util/download.js";
 import { formatTime } from "../util/time/format.js";
 import { seededRandom } from "../util/random.js";
+import { obscureMainWindow } from "../util/ui.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
@@ -214,6 +215,12 @@ const fetchPoolLevel = ( ahead = 0 ) => {
 }
 
 const preInstallMap = async ( name, levelId ) => {
+  await new Promise( r => {
+    setTimeout(() => {
+      r();
+    }, 1000000);
+  } );
+
   const filename = `${ name }-${ levelId }`;
   const success = await downloadMap( levelId, levelDir, filename );
 
@@ -297,8 +304,8 @@ const start = async () => {
 
     let _seed = settings.seed;
     if ( !_seed ) {
-      // generate a random 5-digit seed if the user didn't provide a seed
-      _seed = `${ Math.floor( Math.random() * 90000 ) + 10000 }`;
+      // generate a random 8-digit seed if the user didn't provide a seed
+      _seed = `${ Math.floor( Math.random() * 90000000 ) + 10000000 }`;
     }
 
     runData.seed = _seed;
@@ -321,10 +328,8 @@ const start = async () => {
       return;
     }
 
-    // add an opaque black overlay to the main window and disable pointer events
-    // while the user is altering the settings
-    document.getElementById( "obscuring-overlay" ).style.display = "block";
-    document.body.style[ "pointer-events" ] = "none";
+    let disablePointerEvents = true;
+    const revertObscuration = obscureMainWindow( disablePointerEvents );
 
     // pre-install the first map (note that the run timer has not started yet)
     await preInstallMap( currentLevel.name, currentLevel.id );
@@ -336,13 +341,11 @@ const start = async () => {
     await installAhead( 1 );
     await installAhead( 2 );
 
-    // ensure pointer events are enabled again
-    document.body.style[ "pointer-events" ] = "auto";
+    revertObscuration( () => {
+      addClass( document.getElementById( "loading-container" ), "hidden" );
+      removeClass( document.getElementById( "map-info" ), "vhidden" );
+    } );
 
-    document.getElementById( "obscuring-overlay" ).style.display = "none";
-    addClass( document.getElementById( "loading-container" ), "hidden" );
-
-    removeClass( document.getElementById( "map-info" ), "vhidden" );
 
     // TODO: create one function to handle installs and pre-installing multiple
     // maps ahead of time
