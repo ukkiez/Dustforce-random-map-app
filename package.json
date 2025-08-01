@@ -15,7 +15,8 @@
   "description": "",
   "devDependencies": {
     "nw": "0.52.2-sdk",
-    "nw-builder": "3.5.7"
+    "nw-builder": "3.5.7",
+    "yaml": "^2.8.0"
   },
   "dependencies": {}
 }

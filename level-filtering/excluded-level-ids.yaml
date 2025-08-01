@@ -1,0 +1,45 @@
+version: v1.0
+excluded-filenames:
+- Your-Present-10997                   # requires specific real time
+- Killamari-11058                      # requires specific real time
+- Bogo-Force-Difficult-11718           # RNG
+- One-In-a-Million-11808               # RNG
+- Shot-By-The-Bullet-2138              # pre-dx
+- Shot-By-The-Bullet-2139              # pre-dx
+- exec-func-ruin-game-4384             # pre-dx
+- Ec-1660                              # pre-dx
+- Open-Fire-1950                       # pre-dx
+- Open-Fire-1952                       # pre-dx
+- Streets-of-Rage-2064                 # pre-dx
+- Streets-of-Rage-2065                 # pre-dx
+- Superbear-2616                       # pre-dx
+- Amathophobia-3407                    # pre-dx
+- Traksu-Lita-0061-3665                # pre-dx
+- Take-Out-the-Trash-3891              # pre-dx
+- Take-Out-the-Trash-3892              # pre-dx
+- Take-Out-the-Trash-3893              # pre-dx
+- Spellbook-Sanctuary-4390             # pre-dx
+- Fightforce-II-6454                   # pre-dx
+- Concussion-7138                      # pre-dx
+- Concussion-7139                      # pre-dx
+- Concussion-7141                      # pre-dx
+- bash-9329                            # pre-dx
+- trash-11523                          # pre-dx
+- Downtrill-8472                       # motion sickness
+- Downtrill-x100-9788                  # motion sickness
+- San-Andreas-Fault-9984               # motion sickness
+- Drunk-8722                           # motion sickness
+- ChitShip-9402                        # motion sickness
+- Raining-Blood-6285                   # motion sickness, lag
+- 44445-3-final-6016                   # flashing lights
+- Baby-Patience-10501                  # crashes
+- one-shot-10941                       # crashes
+- Girl-Parapets-9425                   # dustmod version-specific
+- laghill-10924                        # lag
+- dont-throw-up-3945                   # lag
+- pillar-of-patience-11468             # skewed wr time
+- Do-you-like-to-go-fast-12785         # wr vs. play time is skewed
+- some-3d-ramen-13469                  # semi-functional script
+- protodimensionetics-13258            # semi-functional script
+- protodimensionetics-13258            # semi-functional script
+- the-great-maze-6146                  # deathzones everywhere - terrible map
