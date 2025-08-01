@@ -1,9 +1,11 @@
+const fs = require( "fs" );
+const path = require( "path" );
 const https = require( "https" );
 
 const options = {
   method: "GET",
   hostname: "api.github.com",
-  path: "/repos/ukkiez/Dustforce-random-map-app/contents/package.json",
+  path: "/repos/ukkiez/Dustforce-random-map-app/contents/level-filtering/filtered-metadata.json",
   headers: {
     "Accept": "application/vnd.github.raw+json",
     "User-Agent": "random-map-app",
@@ -12,15 +14,21 @@ const options = {
 };
 
 const getLevelData = async () => {
-  let result;
-  let rateLimitRemaining = 0;
-  let rateLimitUsed = 0;
-  await new Promise( resolve => {
+  const result = {
+    data: null,
+    statusCode: null,
+    rateLimitRemaining: 0,
+    rateLimitUsed: 0,
+    error: null,
+  };
+
+  return result;
+
+  await new Promise( ( resolve, reject ) => {
     const req = https.request( options, ( response ) => {
-      console.log( response.statusCode );
-      console.log( response.headers );
-      rateLimitUsed = parseInt( response.headers[ "x-ratelimit-used" ], 10 );
-      rateLimitRemaining = parseInt( response.headers[ "x-ratelimit-remaining" ], 10 );
+      result.statusCode = response.statusCode;
+      result.rateLimitUsed = parseInt( response.headers[ "x-ratelimit-used" ], 10 );
+      result.rateLimitRemaining = parseInt( response.headers[ "x-ratelimit-remaining" ], 10 );
       response.setEncoding( "utf8" );
 
       let data = "";
@@ -29,25 +37,54 @@ const getLevelData = async () => {
       } );
 
       response.on( "end", () => {
-        setTimeout( () => {
-          result = JSON.parse( data );
-          resolve();
-        }, 2000 );
+        if ( response.statusCode !== 200 ) {
+          result.error = JSON.parse( data );
+        }
+        else {
+          result.data = JSON.parse( data );
+        }
+        resolve();
       } );
-
-    } ).on( "error", e => {
-      console.error( e );
+    } ).on( "error", error => {
+      result.error = error;
+      reject();
     } );
 
     req.end();
   } );
 
-  console.log( { rateLimitRemaining } );
-  console.log( { rateLimitUsed } );
   return result;
 };
 
 ( async () => {
-  const result = await getLevelData();
-  console.log( { result } );
+  let result
+  try {
+    result = await getLevelData();
+  }
+  catch ( error ) {
+    console.log( "CATCH" );
+    console.log( error );
+  }
+
+  ( { data, statusCode, error, message, rateLimitRemaining, rateLimitUsed } = result );
+
+  if ( !result.data ) {
+    // handle missing data
+    console.log( "MISSING DATA" );
+    return;
+  }
+
+  console.log( { error, statusCode, message, rateLimitRemaining, rateLimitUsed } );
+
+  const version = data.version;
+  const levelLength = Object.values( data.data ).length;
+  console.log( { version, levelLength } );
+
+  const dataBin = Buffer.from( JSON.stringify( data ) ).toString( "hex" );
+
+  // save the settings file as a binary
+  fs.writeFileSync(
+    path.join( __dirname, "../src/dustkid-data/filtered-metadata.bin" ),
+    dataBin,
+  );
 } )();
