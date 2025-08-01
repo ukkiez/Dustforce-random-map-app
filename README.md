@@ -29,7 +29,7 @@ runs. Notable features include:
 - Have Dustforce with [Dustmod](http://dustmod.com/) installed.
 
 *Steps*
-- Download one of the releases for your Operating System, and run the executable within the downloaded folder.
+- Download one of the [releases](https://github.com/ukkiez/Dustforce-random-map-app/releases) for your Operating System, and run the executable within the downloaded folder.
 
 *MacOS*
 
