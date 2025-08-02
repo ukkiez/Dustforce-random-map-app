@@ -38,9 +38,9 @@ If you are on MacOS, put the app (`random-map-app`) in your Applications folder.
 ## <a id="faq-heading"></a> FAQ
 > *Can I update my level set?*
 
-Not at the moment - level sets are static in RMA versions. This is in part because different level sets completely change seeds, which would make set-seed races between people more of a hassle to set up. This also keeps runs on the leaderboards more consistent, and prevents [Dustkid.com](https://dustkid.com) from being potentially flooded with requests.
+Not at the moment - level sets cannot be altered by yourself. This is in part because different level sets completely change seeds, which would make set-seed races between people more of a hassle to set up. However, they are fetched externally and can be changed at any point without needing to install a new RMA version.
 
-Maybe this will change in the future.
+If there's a level that you don't think should be in the pool, please send a message in the Dustforce discord server.
 
 ---
 > *Can I block/prevent levels from showing up in runs?*
