@@ -70,7 +70,7 @@
 /* mode2 is what the user eventually sees */
 #mode2 {
   font-size: 13vw;
-  color: #dadada;
+  color: var(--white);
   border-bottom: 0.15rem solid #4c677f;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -182,7 +182,7 @@
   width: 4.5rem;
   height: 1rem;
   background-color: #4177a7c9;
-  color: #dadada;
+  color: var(--white);
   text-align: center;
   border-radius: 6px;
   position: absolute;

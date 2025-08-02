@@ -18,7 +18,7 @@ button {
 }
 
 .settings-header {
-  color: #dadada;
+  color: var(--white);
   font-size: 2rem;
   width: 50%;
   margin-top: 0.5rem;

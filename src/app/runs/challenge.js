@@ -290,6 +290,10 @@ const start = async () => {
     let disablePointerEvents = true;
     const revertObscuration = obscureMainWindow( disablePointerEvents );
 
+    if ( settings.scoreCategory === "any" ) {
+      document.getElementById( "points-icon-text" ).style.color = "var(--bright-white)";
+    }
+
     // populate the map pool
     for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
       if ( !settings.CMPLevels ) {
