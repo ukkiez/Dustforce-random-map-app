@@ -3,17 +3,19 @@
 - [v1.0.2](#v1.0.2-h)
 - [v1.0.1](#v1.0.1-h)
 ___
-### <a id="v1.0.2-h"></a> v1.0.2
+### <a id="v1.1.0-h"></a> v1.1.0
 ### Major
 - Added "Any%" run category. With Any%, rules are now reversed: points are acquired by completing
   levels regardless of score/finesse – SS'ing levels will give a free skip.
 - Maps are now pre-installed before and during runs to mitigate map download times.
+- Maps are now fetched from a remote list on startup, rather than stored
+  locally. (Therefore, the map list can be updated without needing to install a
+  new version of the app.)
 - The run timer now pauses for a fixed number of seconds between levels, to account for in-game loading times.
 ### Minor
-- Remove extra RMA header in setup page.
-- Seeded runs now no longer changes the displayed mode to "Custom Mode" even if
-  the rest of the settings are the same as one of the default modes.
 - Removed Casual and Hard modes from preset list.
+- Remove extra RMA header in setup page.
+- Added error screens/logs ("error.log") in case of fatal errors during runs
 
 ___
 ### <a id="v1.0.1-h"></a> v1.0.1
