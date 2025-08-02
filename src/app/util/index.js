@@ -52,3 +52,12 @@ export const rateLimiter = function( func, ms = 100 ) {
     }, ms );
   };
 }
+
+export const delay = ( ms, func ) => {
+  return new Promise( resolve => {
+    setTimeout( () => {
+      func();
+      resolve();
+    }, ms );
+  } );
+}

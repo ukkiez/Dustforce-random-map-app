@@ -49,7 +49,7 @@ button {
 }
 
 .error {
-  color: #c82424 !important;
+  color: var(--error-text-colour) !important;
 }
 
 .links-container {

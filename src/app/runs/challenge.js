@@ -7,6 +7,8 @@ import { downloadMap } from "../util/download.js";
 import { formatTime } from "../util/time/format.js";
 import { seededRandom } from "../util/random.js";
 import { obscureMainWindow } from "../util/ui.js";
+import { delay } from "../util/index.js";
+import { showError } from "../util/error.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
@@ -215,12 +217,6 @@ const fetchPoolLevel = ( ahead = 0 ) => {
 }
 
 const preInstallMap = async ( name, levelId ) => {
-  await new Promise( r => {
-    setTimeout(() => {
-      r();
-    }, 1000000);
-  } );
-
   const filename = `${ name }-${ levelId }`;
   const success = await downloadMap( levelId, levelDir, filename );
 
@@ -285,6 +281,9 @@ let initialized = false;
 let watcher;
 const start = async () => {
   if ( !initialized ) {
+    let disablePointerEvents = true;
+    const revertObscuration = obscureMainWindow( disablePointerEvents );
+
     // populate the map pool
     for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
       if ( !settings.CMPLevels ) {
@@ -324,12 +323,11 @@ const start = async () => {
 
     currentLevel = fetchPoolLevel();
     if ( !currentLevel ) {
-      console.error( "Start Initialize Error: Failed to pick level." );
-      return;
+      addClass( document.getElementById( "loading-container" ), "hidden" );
+      const error = new Error( "Could not pick starting level." );
+      error.name = "InitializationError";
+      throw error;
     }
-
-    let disablePointerEvents = true;
-    const revertObscuration = obscureMainWindow( disablePointerEvents );
 
     // pre-install the first map (note that the run timer has not started yet)
     await preInstallMap( currentLevel.name, currentLevel.id );
@@ -822,7 +820,7 @@ const processScoreScreen = () => {
   }
 }
 
-export const initialize = () => {
+export const initialize = async () => {
   initialized = false;
 
   initVars();
@@ -866,6 +864,22 @@ export const initialize = () => {
   }
 
   // start the actual run
-  start();
+  try {
+    await start();
+  }
+  catch ( error ) {
+    showError( {
+      error: {
+        name: error.name,
+        message: `${ error.message }\nAborting run`,
+      },
+      fatal: true,
+      obscure: true,
+      delay: 7500,
+      callback: () => {
+        reset();
+      }
+    } )
+  }
   initialized = true;
 };
