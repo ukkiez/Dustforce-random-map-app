@@ -4,7 +4,7 @@ import cmpLevels from "../../dustkid-data/cmp-levels.json";
 // level data is never modified, so read it once on file import and return the
 // same copy whenever asked for
 const levelDataB = fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin`, "utf8" );
-const levelDataJSON = JSON.parse( Buffer.from( levelDataB, "hex" ).toString( "utf8" ) );
+const levelDataJSON = JSON.parse( Buffer.from( levelDataB, "hex" ).toString( "utf8" ) ).data;
 
 export const stringifyJSON = ( json ) => {
   try {
