@@ -1,5 +1,5 @@
 {
-  "version": "v1.0",
+  "version": "v1.1",
   "data": {
     "Equidream-2082": {
       "name": "Equidream",
@@ -22455,13 +22455,6 @@
       "author": "Rosy Tickles",
       "atlas_id": 4661,
       "fastest_time": 76833,
-      "ss_count": 56
-    },
-    "Expert-Minesweeper-10875": {
-      "name": "Expert Minesweeper",
-      "author": "msg555",
-      "atlas_id": 10875,
-      "fastest_time": 78083,
       "ss_count": 56
     },
     "safe-shaft-420-7641": {
@@ -53283,13 +53276,6 @@
       "author": "Heavydamage",
       "atlas_id": 3856,
       "fastest_time": 35449,
-      "ss_count": 11
-    },
-    "skipping-supper-9544": {
-      "name": "skipping supper",
-      "author": "MNTempest",
-      "atlas_id": 9544,
-      "fastest_time": 36216,
       "ss_count": 11
     },
     "Big-Chest-9290": {
