@@ -100,8 +100,8 @@ const modulesPath = join( PATHS.SRC, "node_modules" );
   // remove node modules since we only use dev modules anyway
   await removeIfExists( modulesPath, recursive = true );
 
-  // clear out the dist folder
-  await removeIfExists( PATHS.DIST, recursive = true );
+  // // clear out the dist folder
+  // await removeIfExists( PATHS.DIST, recursive = true );
 
   // overwrite the user settings and configuration with the defaults
   await removeIfExists( join( PATHS.USER_DATA, "settings.json" ) );
@@ -111,13 +111,17 @@ const modulesPath = join( PATHS.SRC, "node_modules" );
   await fsPromises.copyFile( join( PATHS.DEFAULTS, "configuration.json" ), join( PATHS.USER_DATA, "configuration.json" ) );
   await fsPromises.copyFile( join( PATHS.DEFAULTS, "personal-bests.bin" ), join( PATHS.USER_DATA, "personal-bests.bin" ) );
 
+  if ( !process.argv.includes( "unix" ) ) {
+    return;
+  }
+
   await nw.build();
   console.log( "> Built Mac&Linux" );
 
   // rename directories to a clearer name for the user
-  await fsPromises.rename( join( PATHS.DIST, "random-map-app/osx64" ), join( PATHS.DIST, "RMA_osx64" ) );
-  await fsPromises.rename( join( PATHS.DIST, "random-map-app/linux32" ), join( PATHS.DIST, "RMA_linux32" ) );
-  await fsPromises.rename( join( PATHS.DIST, "random-map-app/linux64" ), join( PATHS.DIST, "RMA_linux64" ) );
+  await fsPromises.rename( join( PATHS.DIST, "random-map-app/osx64" ), join( PATHS.DIST, "random-map-app_osx64" ) );
+  await fsPromises.rename( join( PATHS.DIST, "random-map-app/linux32" ), join( PATHS.DIST, "random-map-app_linux32" ) );
+  await fsPromises.rename( join( PATHS.DIST, "random-map-app/linux64" ), join( PATHS.DIST, "random-map-app_linux64" ) );
 
   // remove the leftover directory
   await removeIfExists( join( PATHS.DIST, "random-map-app" ), recursive = true );
@@ -127,12 +131,13 @@ const modulesPath = join( PATHS.SRC, "node_modules" );
     await removeIfExists( join( dir, "credits.html" ) );
   }
 
-  // // create a zip file for distribution; note that we CD into the "dist"
-  // // directory first so the zip archive doesn't include the folder
-  // await execAsync( "cd dist && zip -ry RMA-osx64.zip random-map-app_osx64/random-map-app.app", true );
-  // await execAsync( "cd dist && zip -ry RMA-linux32.zip random-map-app_linux32", true );
-  // await execAsync( "cd dist && zip -ry RMA-linux64.zip random-map-app_linux64", true );
-  // console.log( "> Compressed Mac&Linux" );
+  // create a zip file for distribution; note that we CD into the "dist"
+  // directory first so the zip archive doesn't include the folder
+
+  await execAsync( `cd dist && zip -ry ${ join( PATHS.DIST, "RMA-osx64.zip" ) } random-map-app_osx64/random-map-app.app`, true );
+  await execAsync( `cd dist && zip -ry ${ join( PATHS.DIST, "RMA-linux32.zip" ) } random-map-app_linux32`, true );
+  await execAsync( `cd dist && zip -ry ${ join( PATHS.DIST, "RMA-linux64.zip" ) } random-map-app_linux64`, true );
+  console.log( "> Compressed Mac&Linux" );
 } )()
 .then( async () => {
   const buildWindows = async () => {
@@ -158,30 +163,30 @@ const modulesPath = join( PATHS.SRC, "node_modules" );
       ".DS_Store",
     ] );
 
-    // // copy the package.json to a temporary folder, build only non-dev modules,
-    // // and copy the folder to the build directory
-    // if ( fs.existsSync( "./temp" ) ) {
-    //   fs.rmSync( "./temp", { recursive: true } );
-    // }
-    // fs.mkdirSync( "./temp" );
-    // fs.copyFileSync( join( PATHS.SRC, "/package.json" ), "./temp/package.json" );
+    // copy the package.json to a temporary folder, build only non-dev modules,
+    // and copy the folder to the build directory
+    if ( fs.existsSync( "./temp" ) ) {
+      fs.rmSync( "./temp", { recursive: true } );
+    }
+    fs.mkdirSync( "./temp" );
+    fs.copyFileSync( join( PATHS.SRC, "/package.json" ), "./temp/package.json" );
 
-    // await execAsync( "npm i --omit=dev --prefix ./temp", true );
+    await execAsync( "npm i --omit=dev --prefix ./temp", true );
 
-    // await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
+    await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
 
     // rename nw.exe
     await fsPromises.rename( join( buildPath, "nw.exe" ), join( buildPath, "random-map-app.exe" ) );
 
-    // // clean up
-    // fs.rmSync( "./temp", { recursive: true } );
+    // clean up
+    fs.rmSync( "./temp", { recursive: true } );
 
     // rename directories to a clearer name for the user
-    await fsPromises.rename( buildPath, join( PATHS.DIST, "RMA_win32" ) );
+    await fsPromises.rename( buildPath, join( PATHS.DIST, "random-map-app_win32" ) );
 
-    // // create a zip file for distribution; note that we CD into the "dist"
-    // // directory first so the zip archive doesn't include the folder
-    // await execAsync( "cd dist && zip -ry RMA-win32.zip random-map-app_win32", true );
+    // create a zip file for distribution; note that we CD into the "dist"
+    // directory first so the zip archive doesn't include the folder
+    await execAsync( "cd dist && zip -ry RMA-win32.zip random-map-app_win32", true );
     console.log( "> Built Windows" );
   }
 
