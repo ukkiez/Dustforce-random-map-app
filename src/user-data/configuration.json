@@ -2,6 +2,11 @@
   "initialSetupDone": true,
   "dustforceDirectory": "/Users/yannickk/Library/Application Support/Steam/steamapps/common/Dustforce/Dustforce.app/Contents/Resources/",
   "styling": {
-    "opacity": 100
+    "opacity": 46
+  },
+  "levelMetadata": {
+    "lastSync": 1754163571566,
+    "version": "v1.0",
+    "rateLimitRemaining": 51
   }
 }

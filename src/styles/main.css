@@ -110,6 +110,25 @@
   animation: slap-on-any-percent 0.75s linear;
 }
 
+#start-btn.fetching-maps {
+  font-style: italic;
+}
+#start-btn.fetching-maps:after {
+  content: ".";
+  animation: elipsis 1.5s linear infinite;
+}
+@keyframes elipsis {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
+}
+
 #points-icon {
   position: absolute;
   height: 38vw;
@@ -266,4 +285,40 @@
 .animation-slow-fade-repeat:hover .btn-icon {
   animation: slow-fade-repeat 3s infinite;
   animation-delay: 1s;
+}
+
+#level-fetch-container {
+  position: absolute;
+  text-align: center;
+  /* move down */
+  transform: translate(0, 12vw);
+
+  /* set in front of class:obscuring-overlay */
+  z-index: 6;
+}
+
+#level-fetch-text {
+  font-size: 11vw;
+  color: #6c8ca8;
+}
+#level-fetch-text:after {
+  content: ".";
+  animation: elipsis 1.5s linear infinite;
+}
+@keyframes elipsis {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
+}
+
+#level-fetch-sub-text {
+  color: var(--error-text-colour);
+  margin-top: 5vw;
+  font-size: 8vw;
 }

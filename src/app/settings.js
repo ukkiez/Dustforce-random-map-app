@@ -614,7 +614,7 @@ document.getElementById( "map-search-input" ).addEventListener( "input", ( event
   let partialMatches = [];
 
   const sanitizedInput = value.replace(/[#-.]|[[-^]|[?|{}]/g, '\\$&');
-  for ( const [ filename, { name, author, atlas_id } ] of Object.entries( levelData ) ) {
+  for ( const [ filename, { name, author, atlas_id } ] of Object.entries( levelData.data ) ) {
     const filenameWithoutHyphen = filename.replaceAll( "-", " " );
     if ( filename.match( new RegExp( `^${ sanitizedInput }`, "ig" ) ) || filenameWithoutHyphen.match( new RegExp( `^${ sanitizedInput }`, "ig" ) ) ) {
       startMatches.push( { name, author, atlas_id } );

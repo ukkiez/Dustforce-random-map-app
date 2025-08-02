@@ -8,7 +8,6 @@ import { formatTime } from "../util/time/format.js";
 import { seededRandom } from "../util/random.js";
 import { obscureMainWindow } from "../util/ui.js";
 import { showError, log } from "../util/error.js";
-import { delay } from "../util/index.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
@@ -19,11 +18,11 @@ const fs = nw.require( "fs" );
 const path = nw.require( "path" );
 const { exec } = nw.require( "child_process" );
 
-const { levelData, userConfiguration } = getData( {
-  levelData: true,
+let levelData = null;
+
+const { userConfiguration } = getData( {
   userConfiguration: true,
 } );
-
 const { dustforceDirectory } = userConfiguration;
 
 const splitFile = path.join( dustforceDirectory, "split.txt" );
@@ -521,7 +520,7 @@ const skip = () => {
 };
 
 const initVars = () => {
-  ( { settings } = getData( { settings: true } ) );
+  ( { settings, levelData: { data: levelData } } = getData( { levelData: true, settings: true } ) );
 
   currentLevel = {
     name: "",

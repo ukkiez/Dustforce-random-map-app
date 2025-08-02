@@ -4,7 +4,7 @@
   "main": "src/app/bundle/index.js",
   "scripts": {
     "build": "(cd src/ && npm run build)",
-    "dev": "(cd src/ && npm run build-dev) && (nw src/ --user-data-dir=../random-map-app-user-data/)",
+    "dev": "(cd src/ && npm run build-dev) && (DEBUG=1 nw src/ --user-data-dir=../random-map-app-user-data/)",
     "dev-no-build": "nw src/ --user-data-dir=../random-map-app-user-data/",
     "prod-with-build": "(cd src/ && npm run build) && (nwbuild --platforms osx64 --srcDir src/* --buildDir dist/* src/* --flavor normal --cacheDir cache/ --version 0.52.2)",
     "prod": "nwbuild --platforms osx64 --srcDir src/ --buildDir dist/ src/ --flavor normal --cacheDir cache/ --version 0.52.2"

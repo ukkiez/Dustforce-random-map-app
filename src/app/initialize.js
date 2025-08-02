@@ -2,10 +2,18 @@ import { getData } from "./util/data.js";
 import { formatTime, formatMSToHumanReadable } from "./util/time/format.js";
 import { addClass, removeClass } from "./util/dom.js";
 import { obscureMainWindow } from "./util/ui.js";
+import { syncLevelData } from "./util/sync.js";
+import { log } from "./util/error.js";
+
+const fs = nw.require( "fs" );
+const path = nw.require( "path" );
 
 let settings;
 let config;
 let personalBests;
+
+let initialLoad = true;
+let syncing = false;
 
 export const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
@@ -17,7 +25,7 @@ export const switchPage = ( currentPage, destination ) => {
   }
 
   if ( destination === "settings.html" ) {
-    let disablePointerEvents = true;
+    const disablePointerEvents = true;
     const revertObscuration = obscureMainWindow( disablePointerEvents );
 
     // open a new window with the settings configuration
@@ -65,7 +73,7 @@ export const switchPage = ( currentPage, destination ) => {
 }
 
 let iconAnimationTimeout;
-const initMainBody = () => {
+const initMainBody = async ( userConfiguration ) => {
   const template = document.getElementById( "main-hub-template" );
   const clone = template.content.cloneNode( true );
   document.body.replaceChildren( clone );
@@ -137,6 +145,53 @@ const initMainBody = () => {
   document.getElementById( "settings-icon" )?.addEventListener( "click", () => {
     switchPage( "index.html", "./settings.html" );
   } );
+
+  if ( syncing ) {
+    // we were previously syncing, so continue to disable the start button
+    const startBtnEl = document.getElementById( "start-btn" );
+    addClass( startBtnEl, "disabled-btn" );
+    addClass( startBtnEl, "fetching-maps" );
+    document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+  }
+
+  // re-sync the remote level list if the last sync date was at least 1 minute
+  // ago; only on app-start
+  const now = ( new Date() ).getTime();
+  const { levelMetadata } = userConfiguration;
+
+  const { levelData } = getData( { levelData: true } );
+  if ( !Object.keys( levelData.data ).length || ( initialLoad && now > ( levelMetadata?.lastSync + ( 1000 * 60 * 1 ) ) && ( levelMetadata?.rateLimitRemaining > 0 ) ) ) {
+    initialLoad = false;
+
+    const startBtnEl = document.getElementById( "start-btn" );
+    addClass( startBtnEl, "disabled-btn" );
+    addClass( startBtnEl, "fetching-maps" );
+    document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+
+    try {
+      syncing = true;
+      syncLevelData( levelData.version, ( wasNewData, result ) => {
+        const newConfig = { ...userConfiguration };
+        newConfig.levelMetadata.lastSync = now;
+        newConfig.levelMetadata.rateLimitRemaining = result.rateLimitRemaining;
+
+        if ( wasNewData ) {
+          newConfig.levelMetadata.version = result.data.version;
+        }
+
+        fs.writeFileSync( path.join( global.__dirname, "user-data/configuration.json" ), JSON.stringify( newConfig, null, 2 ) );
+
+        removeClass( document.getElementById( "start-btn" ), "disabled-btn" );
+        removeClass( document.getElementById( "start-btn" ), "fetching-maps" );
+        document.getElementById( "start-btn-text" ).innerText = "Start Challenge";
+
+        syncing = false;
+      } );
+    }
+    catch ( error ) {
+      log.error( error );
+    }
+  }
 }
 
 const initSettingsBody = () => {
@@ -204,8 +259,8 @@ if ( template?.content?.children ) {
   }
 }
 
-export let init = () => {
-  ( { settings, personalBests, userConfiguration: config } = getData( { settings: true, personalBests: true, userConfiguration: true } ) );
+export let init = async () => {
+  ( { settings, personalBests, userConfiguration: config } = await getData( { settings: true, personalBests: true, userConfiguration: true } ) );
 
   // set the user configured opacity
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;
@@ -222,7 +277,7 @@ export let init = () => {
   }
 
   if ( page === "index.html" ) {
-    initMainBody();
+    initMainBody( config );
   }
   else if ( page === "settings.html" ) {
     initSettingsBody();

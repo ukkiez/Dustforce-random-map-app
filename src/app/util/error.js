@@ -32,7 +32,7 @@ const errorLogFilepath = path.join( global.__dirname, "error.log" );
 export const log = {
   error: ( error, fatal = false ) => {
     const appendLog = () => {
-      fs.appendFile( errorLogFilepath, `\n${ fatal && "FATAL: " }[${ error.name || "GenericError" }] - ${ error.message }${ error.stack ? `\n${ error.stack }` : "" }`, function() {} );
+      fs.appendFile( errorLogFilepath, `\n${ fatal ? "FATAL: " : "" }[${ error.name || "GenericError" }] - ${ error.message }${ error.stack ? `\n${ error.stack }` : "" }`, function() {} );
     };
 
     if ( !fs.existsSync( errorLogFilepath ) ) {

@@ -3,8 +3,8 @@ const fs = nw.require( "fs" );
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 // level data is never modified, so read it once on file import and return the
 // same copy whenever asked for
-const levelDataB = fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin`, "utf8" );
-const levelDataJSON = JSON.parse( Buffer.from( levelDataB, "hex" ).toString( "utf8" ) ).data;
+
+let levelDataJSON = null;
 
 export const stringifyJSON = ( json ) => {
   try {
@@ -78,7 +78,21 @@ export const getData = ( { ...options } ) => {
   }
 
   if ( levelData ) {
-    data.levelData = levelDataJSON;
+    if ( levelDataJSON ) {
+      // only fetch this data once
+      data.levelData = levelDataJSON;
+    }
+    else if ( fs.existsSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin` ) ) {
+      const levelDataB = fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin`, "utf8" );
+      levelDataJSON = JSON.parse( Buffer.from( levelDataB, "hex" ).toString( "utf8" ) );
+      data.levelData = levelDataJSON;
+    }
+    else {
+      data.levelData = {
+        version: "v0.0",
+        data: {},
+      };
+    }
   }
 
   return data;
@@ -90,7 +104,7 @@ export const getMapPoolSize = ( settings ) => {
   const { levelData } = getData( { levelData: true } );
 
   const mapPool = new Set();
-  for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
+  for ( const [ levelFilename, metadata ] of Object.entries( levelData.data ) ) {
     if ( !CMPLevels ) {
       if ( cmpLevels.includes( levelFilename ) ) {
         // don't include cmp levels, as the user set them to be off

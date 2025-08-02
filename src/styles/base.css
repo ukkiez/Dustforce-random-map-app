@@ -151,6 +151,9 @@ button:focus {
   opacity: 0.5;
   pointer-events: none;
 }
+#obscuring-overlay.darkened {
+  opacity: 0.8;
+}
 
 .image {
   -webkit-user-drag: none;
