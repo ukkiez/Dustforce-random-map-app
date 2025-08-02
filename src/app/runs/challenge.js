@@ -3,24 +3,31 @@ import { reset } from "../reset.js";
 import { Timer } from "../classes/timer.js";
 import { getData, writeHexData } from "../util/data.js";
 import { addClass, removeClass } from "../util/dom.js";
-import { formatTime } from "../util/format.js";
+import { downloadMap } from "../util/download.js";
+import { formatTime } from "../util/time/format.js";
 import { seededRandom } from "../util/random.js";
+import { obscureMainWindow } from "../util/ui.js";
+import { showError, log } from "../util/error.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
+
+const IS_DEBUG = !!nw.process.env.DEBUG;
 
 // use nw.require() instead of require() or import to make it actually available
 const fs = nw.require( "fs" );
 const path = nw.require( "path" );
 const { exec } = nw.require( "child_process" );
 
-const { levelData, userConfiguration } = getData( {
-  levelData: true,
+let levelData = null;
+
+const { userConfiguration } = getData( {
   userConfiguration: true,
 } );
-
 const { dustforceDirectory } = userConfiguration;
 
 const splitFile = path.join( dustforceDirectory, "split.txt" );
+
+const levelDir = path.join( userConfiguration.dustforceDirectory, "/user/levels" );
 
 let settings = {};
 
@@ -38,7 +45,24 @@ const timerAction = ( action, bool = false ) => {
   }
 }
 
-const increment = ( _decrement = false ) => {
+let pauseTimerBetweenLevelsTimeout = null;
+const pauseTimersBetweenLevels = () => {
+  timerAction( "stop" );
+
+  if ( pauseTimerBetweenLevelsTimeout ) {
+    clearTimeout( pauseTimerBetweenLevelsTimeout );
+  }
+
+  pauseTimerBetweenLevelsTimeout = setTimeout( () => {
+    timers[ 0 ].resume();
+
+    if ( timers[ 1 ] ) {
+      timers[ 1 ].reset( true );
+    }
+  }, 3000 );
+}
+
+const incrementScore = ( _decrement = false ) => {
   if ( !timers[ 0 ].hasStarted ) {
     return;
   }
@@ -92,8 +116,7 @@ const installAndMaybePlay = ( level, play = false ) => {
 
 let blocked = false;
 let timeout = null;
-// const block = ( ms = 1500 ) => {
-const block = ( ms = 10 ) => {
+const temporarilyBlockSkipButton = ( ms = 1500 ) => {
   if ( timeout ) {
     // clear any previously active timeouts that would unblock before the
     // current function call
@@ -111,7 +134,7 @@ const adjustOnScreenMapInfo = ( levelId, name, author ) => {
   const nameEl = document.getElementById( "map-info-name" );
   const authorEl = document.getElementById( "map-info-author" );
   nameEl.innerText = name;
-  authorEl.innerText = author;
+  authorEl.innerText = author || "???";
 
   // allow users to go to the Atlas page by clicking on the map name
   nameEl.onclick = () => {
@@ -143,38 +166,78 @@ let runData = {
   // used to display a review at the end of a run
   review: [],
   seed: null,
+
+  mapPool: [],
+  choiceIndex: -1,
 };
 
-let mapPool = [];
-let choiceIndex = 0;
-const pickLevel = () => {
+const fetchPoolLevel = ( ahead = 0 ) => {
   // the map pool was already shuffled at the start of the run, so simply pick
   // maps start to end
-  const choice = mapPool[ choiceIndex ];
+  let choice;
+  if ( ahead === 0 ) {
+    runData.choiceIndex++;
+    choice = runData.mapPool[ runData.choiceIndex ];
+
+    if ( !choice ) {
+      // no maps remain, end the run
+      runData._ranOutOfMaps = true;
+      timerAction( "finish" );
+    }
+  }
+  else {
+    // find a level ahead of the one the run is currently on
+    choice = runData.mapPool[ runData.choiceIndex + ahead ];
+  }
 
   if ( !choice ) {
-    // no maps remain, end the run
-    runData._ranOutOfMaps = true;
-    timerAction( "finish" );
     return false;
   }
 
-  choiceIndex++;
+  const hyphenIndex = choice.lastIndexOf( "-" );
 
-  runData.chosenLevelCache.add( choice );
+  const name = choice.substring( 0, hyphenIndex );
+  const id = choice.substring( hyphenIndex + 1 );
 
-  const index = choice.lastIndexOf( "-" );
-
-  const name = choice.substring( 0, index );
-  const id = choice.substring( index + 1 );
+  if ( ahead !== 0 ) {
+    return {
+      name,
+      id,
+    };
+  }
 
   const author = authorsById.get( parseInt( id, 10 ) );
   adjustOnScreenMapInfo( id, name, author );
+
+  runData.chosenLevelCache.add( choice );
 
   return {
     name,
     id,
   };
+}
+
+const preInstallMap = async ( name, levelId ) => {
+  const filename = `${ name }-${ levelId }`;
+  const success = await downloadMap( levelId, levelDir, filename );
+
+  if ( IS_DEBUG ) {
+    console.log( { success } );
+  }
+
+  if ( success !== 1 ) {
+    // we could not pre-install the map, but there's not much we can fall back
+    // on for the moment; the game will try to install the map when it comes to
+    // it via the install&play link anyway
+    return 0;
+  }
+
+  return success;
+}
+
+const installAhead = async ( ahead ) => {
+  const level = fetchPoolLevel( ahead );
+  return preInstallMap( level.name, level.id );
 }
 
 let currentLevel = {
@@ -221,8 +284,15 @@ const handleSkipsCount = ( change ) => {
 
 let initialized = false;
 let watcher;
-const start = () => {
+const start = async () => {
   if ( !initialized ) {
+    let disablePointerEvents = true;
+    const revertObscuration = obscureMainWindow( disablePointerEvents );
+
+    if ( settings.scoreCategory === "any" ) {
+      document.getElementById( "points-icon-text" ).style.color = "var(--bright-white)";
+    }
+
     // populate the map pool
     for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
       if ( !settings.CMPLevels ) {
@@ -234,7 +304,7 @@ const start = () => {
 
       const { ss_count, fastest_time, author, atlas_id } = metadata;
       if ( ss_count >= settings.minSSCount && ss_count <= settings.maxSSCount && fastest_time <= settings.fastestSSTime ) {
-        mapPool.push( levelFilename );
+        runData.mapPool.push( levelFilename );
       }
 
       authorsById.set( atlas_id, author );
@@ -242,8 +312,8 @@ const start = () => {
 
     let _seed = settings.seed;
     if ( !_seed ) {
-      // generate a random 5-digit seed if the user didn't provide a seed
-      _seed = `${ Math.floor( Math.random() * 90000 ) + 10000 }`;
+      // generate a random 8-digit seed if the user didn't provide a seed
+      _seed = `${ Math.floor( Math.random() * 90000000 ) + 10000000 }`;
     }
 
     runData.seed = _seed;
@@ -252,25 +322,46 @@ const start = () => {
     const { shuffle } = seededRandom( { seed: _seed } );
 
     // shuffle the map pool, by the given seed, which consequently means that
-    // when we pick a level below, we'll simply do it in order, start to end
-    shuffle( mapPool );
+    // when we pick a level below we'll simply do it in order, start to end
+    shuffle( runData.mapPool );
 
     // ensure split.txt exists, otherwise create an empty one
     if ( !fs.existsSync( splitFile ) ) {
       fs.writeFileSync( splitFile, "" );
     }
 
-    timerAction( "start" );
-
-    // see above
-    block();
-
-    currentLevel = pickLevel();
+    currentLevel = fetchPoolLevel();
     if ( !currentLevel ) {
-      return;
+      addClass( document.getElementById( "loading-container" ), "hidden" );
+      const error = new Error( "Could not pick starting level." );
+      error.name = "InitializationError";
+      throw error;
     }
 
+    // pre-install the first map (note that the run timer has not started yet)
+    await preInstallMap( currentLevel.name, currentLevel.id );
+
+    // also the two maps coming after; throughout the run we'll always try to
+    // have two maps ahead of the current one downloaded, though that will
+    // happen silently in the background to hopefully never have to wait for
+    // installing a map during the run
+    await installAhead( 1 );
+    await installAhead( 2 );
+
+    revertObscuration( () => {
+      addClass( document.getElementById( "loading-container" ), "hidden" );
+      removeClass( document.getElementById( "map-info" ), "vhidden" );
+    } );
+
+
+    // TODO: create one function to handle installs and pre-installing multiple
+    // maps ahead of time
+
     installAndMaybePlay( currentLevel, true );
+
+    timerAction( "start" );
+
+    temporarilyBlockSkipButton();
 
     // initiate the observer for split.txt; TODO: maybe debounce the callback in
     // case fs.watch() fires multiple times, which seems to happen occassionally,
@@ -305,14 +396,22 @@ const start = () => {
           }
 
           const ss = ( completion === "100" ) && ( finesse === "0" );
-          if ( ss ) {
-            if ( runData.completedLevelIds.has( id ) ) {
-              // remove a skip if this map was already any%'d, as that would've
-              // incremented the skip counter
-              handleSkipsCount( -1 );
+          if ( ss || settings.scoreCategory === "any" ) {
+            if ( settings.scoreCategory === "ss" ) {
+              if ( runData.completedLevelIds.has( id ) ) {
+                // remove a skip if this map was already any%'d, as that
+                // would've incremented the skip counter
+                handleSkipsCount( -1 );
+              }
+              else {
+                runData.completedLevelIds.add( id );
+              }
             }
             else {
-              runData.completedLevelIds.add( id );
+              // any% logic
+              if ( ss ) {
+                handleSkipsCount( 1 );
+              }
             }
 
             runData.solvedLevelIds.add( id );
@@ -325,16 +424,19 @@ const start = () => {
               skipped: false,
             } );
 
-            increment();
+            incrementScore();
 
-            currentLevel = pickLevel();
+            currentLevel = fetchPoolLevel();
             if ( !currentLevel ) {
               return;
             }
 
             installAndMaybePlay( currentLevel, true );
-            // see above
-            block();
+
+            // keep the next two levels installed ahead of time
+            installAhead( 2 );
+
+            temporarilyBlockSkipButton();
 
             if ( settings.freeSkipAfterXSolvedLevels > 0 ) {
               if ( runData.solvedLevelIds.size > 0 && ( runData.solvedLevelIds.size % settings.freeSkipAfterXSolvedLevels ) === 0 ) {
@@ -344,11 +446,7 @@ const start = () => {
               }
             }
 
-            // restart the map timer that's keeping track of how long the player
-            // is taking for the current map
-            if ( timers[ 1 ] ) {
-              timers[ 1 ].reset( true );
-            }
+            pauseTimersBetweenLevels();
 
             // trigger the S-icon animation
             const el = document.getElementById( "points-icon" );
@@ -363,8 +461,9 @@ const start = () => {
           if ( !runData.completedLevelIds.has( id ) ) {
             runData.completedLevelIds.add( id );
 
-            if ( !ss ) {
+            if ( !ss && settings.scoreCategory === "ss" ) {
               // add a skip as this level was any%'d and not already completed
+              // (only counts for SS runs)
               handleSkipsCount( 1 );
               return;
             }
@@ -394,6 +493,8 @@ const skip = () => {
       return;
     }
 
+    pauseTimersBetweenLevels();
+
     runData.review.push( {
       levelname: currentLevel.name,
       filename: `${ currentLevel.name }-${ currentLevel.id }`,
@@ -403,29 +504,23 @@ const skip = () => {
     } );
 
     // skip to the next map, if user has a skip left
-    currentLevel = pickLevel();
+    currentLevel = fetchPoolLevel();
     if ( !currentLevel ) {
       return;
     }
     installAndMaybePlay( currentLevel, true );
     handleSkipsCount( -1 );
 
-    // block the skip button for a bit, to make sure the player isn't skipping
-    // while they can't actually load a new map in-game, as this is not possible
-    // in loading screens, for example
-    block();
+    // keep the next two levels installed ahead of time
+    installAhead( 2 );
 
-    // restart the map timer that's keeping track of how long the player is
-    // taking for the current map
-    if ( timers[ 1 ] ) {
-      timers[ 1 ].reset( true );
-    }
+    temporarilyBlockSkipButton();
     return;
   }
 };
 
 const initVars = () => {
-  ( { settings } = getData( { settings: true } ) );
+  ( { settings, levelData: { data: levelData } } = getData( { levelData: true, settings: true } ) );
 
   currentLevel = {
     name: "",
@@ -440,10 +535,10 @@ const initVars = () => {
 
     review: [],
     seed: null,
-  };
 
-  mapPool = [];
-  choiceIndex = 0;
+    mapPool: [],
+    choiceIndex: -1,
+  };
 }
 
 const initRunData = () => {
@@ -469,23 +564,23 @@ const initTimers = () => {
 
   const mainTimer = new Timer( {
     timerElementId: "main-time",
-    tenths: true,
-    hundreths: true,
+    withTenths: true,
+    withHundreths: true,
     startTime,
+    countingDown: true
   } );
 
   timers = [ mainTimer ];
 
   const mapTimer = new Timer( {
     timerElementId: "map-timer",
-    tenths: true,
-    hundreths: true,
-    // time is forwards for this timer
-    _countdown: false,
+    withTenths: true,
+    withHundreths: true,
+    countingDown: false,
   } );
 
   timers.push( mapTimer );
-  mapTimer.timerElement.innerHTML = formatTime( 0 );
+  mapTimer.timerElement.innerHTML = formatTime( 0, true );
 
   mainTimer.timerElement.innerHTML = formatTime( startTime );
 }
@@ -635,7 +730,6 @@ const processScoreScreen = () => {
     containerEl.appendChild( timeEl );
 
     if ( previousBest ) {
-      console.log( previousBest.review?.[ i ] );
       const previousRunElement = previousBest.review?.[ i ];
 
       // add a hidden (display: none;) span that the user can view via a
@@ -735,7 +829,7 @@ const processScoreScreen = () => {
   }
 }
 
-export const initialize = () => {
+export const initialize = async () => {
   initialized = false;
 
   initVars();
@@ -771,10 +865,34 @@ export const initialize = () => {
     timerAction( "finish", true );
 
     processScoreScreen();
-    // reset();
   } );
 
+  // swap out the points icon if necessary
+  if ( settings.scoreCategory === "any" ) {
+    document.getElementById( "points-icon" ).src = "../assets/a-complete-icon.png";
+  }
+
   // start the actual run
-  start();
+  try {
+    await start();
+  }
+  catch ( error ) {
+    // make sure the loading container is hidden always
+    addClass( document.getElementById( "loading-container" ), "hidden" );
+
+    const fatal = true;
+    log.error( error, fatal );
+
+    showError( {
+      error,
+      endMessage: "\n\n Aborting run",
+      fatal,
+      obscure: true,
+      delay: 7500,
+      callback: () => {
+        reset();
+      }
+    } )
+  }
   initialized = true;
 };

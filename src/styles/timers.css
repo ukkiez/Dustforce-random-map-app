@@ -11,14 +11,18 @@
   font-size: 16vw;
   letter-spacing: 0.1rem;
 }
-#main-time.running {
+#main-time.challenge {
   margin-top: 2vw;
   font-size: 16vw !important;
   letter-spacing: 0.2rem;
 }
 
-#map-timer.running {
+#map-timer.challenge {
   font-size: 10vw;
   letter-spacing: 0.1rem;
   margin-left: 0.2rem;
+}
+
+.stopped {
+  color: #7b7b7b;
 }

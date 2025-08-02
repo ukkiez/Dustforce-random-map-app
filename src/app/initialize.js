@@ -1,14 +1,19 @@
-// use nw.require() instead of require() or import to make it actually available
-// in the browser context
 import { getData } from "./util/data.js";
-import { formatTime, formatMSToHumanReadable } from "./util/format.js";
+import { formatTime, formatMSToHumanReadable } from "./util/time/format.js";
 import { addClass, removeClass } from "./util/dom.js";
+import { obscureMainWindow } from "./util/ui.js";
+import { syncLevelData } from "./util/sync.js";
+import { log } from "./util/error.js";
+
+const fs = nw.require( "fs" );
+const path = nw.require( "path" );
 
 let settings;
 let config;
 let personalBests;
 
-export let init;
+let initialLoad = true;
+let syncing = false;
 
 export const switchPage = ( currentPage, destination ) => {
   const split = destination.split( "/" );
@@ -20,10 +25,8 @@ export const switchPage = ( currentPage, destination ) => {
   }
 
   if ( destination === "settings.html" ) {
-    // add an opaque black overlay to the main window and disable pointer events
-    // while the user is altering the settings
-    document.getElementById( "obscuring-overlay" ).style.display = "block";
-    document.body.style[ "pointer-events" ] = "none";
+    const disablePointerEvents = true;
+    const revertObscuration = obscureMainWindow( disablePointerEvents );
 
     // open a new window with the settings configuration
     nw.Window.open( "views/settings.html", {
@@ -43,9 +46,7 @@ export const switchPage = ( currentPage, destination ) => {
         win.on( "closed", function() {
           init();
 
-          // ensure pointer events are enabled in case we disabled them while e.g. the
-          // Settings are open
-          document.body.style[ "pointer-events" ] = "auto";
+          revertObscuration();
         } );
         win.on( "loaded", function() {
           // // move the settings window to the position of the main window
@@ -72,7 +73,7 @@ export const switchPage = ( currentPage, destination ) => {
 }
 
 let iconAnimationTimeout;
-const initMainBody = () => {
+const initMainBody = async ( userConfiguration ) => {
   const template = document.getElementById( "main-hub-template" );
   const clone = template.content.cloneNode( true );
   document.body.replaceChildren( clone );
@@ -96,6 +97,11 @@ const initMainBody = () => {
   if ( settings.settingsName ) {
     document.getElementById( "mode" ).innerText = `${ settings.settingsName } Mode`;
     document.getElementById( "mode2" ).innerText = `${ settings.settingsName } Mode`;
+  }
+
+  if ( settings.scoreCategory === "any" ) {
+    document.getElementById( "points-icon" ).src = "../assets/a-complete-icon.png";
+    removeClass( document.getElementById( "mode-any-percent-tag" ), "hidden" );
   }
 
   // set the proper skips starting count
@@ -139,12 +145,60 @@ const initMainBody = () => {
   document.getElementById( "settings-icon" )?.addEventListener( "click", () => {
     switchPage( "index.html", "./settings.html" );
   } );
+
+  if ( syncing ) {
+    // we were previously syncing, so continue to disable the start button
+    const startBtnEl = document.getElementById( "start-btn" );
+    addClass( startBtnEl, "disabled-btn" );
+    addClass( startBtnEl, "fetching-maps" );
+    document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+  }
+
+  // re-sync the remote level list if the last sync date was at least 1 minute
+  // ago; only on app-start
+  const now = ( new Date() ).getTime();
+  const { levelMetadata } = userConfiguration;
+
+  const { levelData } = getData( { levelData: true } );
+  if ( !Object.keys( levelData.data ).length || ( initialLoad && now > ( levelMetadata?.lastSync + ( 1000 * 60 * 1 ) ) && ( levelMetadata?.rateLimitRemaining > 0 ) ) ) {
+    initialLoad = false;
+
+    const startBtnEl = document.getElementById( "start-btn" );
+    addClass( startBtnEl, "disabled-btn" );
+    addClass( startBtnEl, "fetching-maps" );
+    document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+
+    try {
+      syncing = true;
+      syncLevelData( levelData.version, ( wasNewData, result ) => {
+        const newConfig = { ...userConfiguration };
+        newConfig.levelMetadata.lastSync = now;
+        newConfig.levelMetadata.rateLimitRemaining = result.rateLimitRemaining;
+
+        if ( wasNewData ) {
+          newConfig.levelMetadata.version = result.data.version;
+        }
+
+        fs.writeFileSync( path.join( global.__dirname, "user-data/configuration.json" ), JSON.stringify( newConfig, null, 2 ) );
+
+        removeClass( document.getElementById( "start-btn" ), "disabled-btn" );
+        removeClass( document.getElementById( "start-btn" ), "fetching-maps" );
+        document.getElementById( "start-btn-text" ).innerText = "Start Challenge";
+
+        syncing = false;
+      } );
+    }
+    catch ( error ) {
+      log.error( error );
+    }
+  }
 }
 
 const initSettingsBody = () => {
   document.getElementById( "download-settings-link" ).href = "../user-data/settings.json";
 
-  document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, true );
+  const withMs = true;
+  document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, withMs );
 
   const currentWindow = nw.Window.get();
   currentWindow.on( "loaded", function() {
@@ -152,9 +206,18 @@ const initSettingsBody = () => {
     // with it (with some extra height to make sure nothing is cut off at the
     // bottom)
     const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
-    currentWindow.resizeTo( parseInt( clientRectangle.width, 10 ), parseInt( clientRectangle.height, 10 ) + 35 );
-    currentWindow.setMinimumSize( parseInt( clientRectangle.width - 50, 10 ), parseInt( clientRectangle.height - 50, 10 ) );
-    currentWindow.setMaximumSize( parseInt( clientRectangle.width + 100, 10 ), parseInt( clientRectangle.height + 135, 10 ) );
+    currentWindow.resizeTo(
+      parseInt( clientRectangle.width, 10 ),
+      parseInt( clientRectangle.height, 10 ) + 35
+    );
+    currentWindow.setMinimumSize(
+      parseInt( clientRectangle.width - 50, 10 ),
+      parseInt( clientRectangle.height - 50, 10 )
+    );
+    currentWindow.setMaximumSize(
+      parseInt( clientRectangle.width + 100, 10 ),
+      parseInt( clientRectangle.height + 135, 10 )
+    );
   } );
 
   document.getElementById( "back-button" ).addEventListener( "click", () => {
@@ -196,8 +259,8 @@ if ( template?.content?.children ) {
   }
 }
 
-init = () => {
-  ( { settings, personalBests, userConfiguration: config } = getData( { settings: true, personalBests: true, userConfiguration: true } ) );
+export let init = async () => {
+  ( { settings, personalBests, userConfiguration: config } = await getData( { settings: true, personalBests: true, userConfiguration: true } ) );
 
   // set the user configured opacity
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;
@@ -207,16 +270,14 @@ init = () => {
     return;
   }
   else if ( !config.initialSetupDone ) {
-    if ( page !== "setup.html" ) {
-      // go to the initial setup page, where we'll confirm the dustforce
-      // directory; this will only happen the first time someone opens the app
-      switchPage( "", "./setup.html" );
-    }
+    // go to the initial setup page, where we'll confirm the dustforce
+    // directory; this will only happen the first time someone opens the app
+    switchPage( "", "./setup.html" );
     return;
   }
 
   if ( page === "index.html" ) {
-    initMainBody();
+    initMainBody( config );
   }
   else if ( page === "settings.html" ) {
     initSettingsBody();

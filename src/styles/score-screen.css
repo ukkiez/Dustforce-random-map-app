@@ -90,7 +90,7 @@
 }
 
 #score-screen-seed {
-  font-size: max(8vw, 7vh);
+  font-size: max(8vw, 6vh);
   color: #95c4ec;
   margin-top: 0.75rem;
 }
@@ -255,10 +255,6 @@
 }
 .time-behind-lost {
   color: #b82020;
-}
-
-.hidden {
-  display: none !important;
 }
 
 #run-review-header {

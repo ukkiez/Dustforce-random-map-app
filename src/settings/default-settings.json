@@ -9,5 +9,6 @@
   "freeSkipAfterXSolvedLevels": 10,
   "infiniteSkips": false,
   "CMPLevels": false,
-  "settingsName": "classic"
+  "settingsName": "classic",
+  "scoreCategory": "ss"
 }

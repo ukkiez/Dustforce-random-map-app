@@ -1,4 +1,21 @@
-@font-face { font-family: Caracteres; src: url( "../assets/fonts/Caracteres-L1.ttf" );}
+@font-face {
+  font-family: Caracteres;
+  src: url( "../assets/fonts/Caracteres-L1.ttf" );
+  unicode-range: U+0030-007A, U+0021, U+002F, U+0027, U+002C, U+002D, U+002E;
+  /*
+  Unicode symbols defined: ! / ' , - .
+  */
+}
+
+/* use Open Sans Regular for some symbols that Caracteres does not support */
+@font-face {
+  font-family: Symbols;
+  src: url( "../assets/fonts/OpenSans-Regular.ttf" );
+  unicode-range: U+0022, U+0025, U+0026, U+003F, U+0040;
+  /*
+  Unicode symbols defined: " % & ? @
+  */
+}
 
 html {
   -webkit-font-smoothing: antialiased;
@@ -23,6 +40,13 @@ html {
   }
 }
 
+:root {
+  --error-text-colour: #c82424;
+  --white: #dadada;
+  --bright-white: #efefef;
+  --any-percent-yellow: #ffcf86;
+}
+
 body {
   display: flex;
   flex-flow: column nowrap;
@@ -35,8 +59,9 @@ body {
   height: 100%;
   width: -webkit-fill-available;
 
-  font-family: "Caracteres", sans-serif;
-  color: #dadada;
+  /* see: @font-face at the top of this file */
+  font-family: Symbols, Caracteres, sans-serif;
+  color: var(--white);
   font-size: 1rem;
   overflow: hidden;
 
@@ -56,6 +81,13 @@ body {
   background: transparent;
 }
 
+button {
+  font-family: Symbols, Caracteres, sans-serif;
+}
+input {
+  font-family: Symbols, Caracteres, sans-serif;
+}
+
 /* remove the annoying "selection outline" when clicking on buttons */
 button:focus {
   outline: none;
@@ -69,6 +101,9 @@ button:focus {
   opacity: 0.4;
   left: 3vw;
   -webkit-app-region: drag;
+  /* place in front of everything always, even when class:obscuring-layer is
+  active */
+  z-index: 100;
 }
 
 #rma-header:after {
@@ -88,7 +123,7 @@ button:focus {
 
   76%,98% {
     opacity: 1;
-    content: "RMA v1.0.1";
+    content: "RMA v1.1.0";
   }
 
   99% {
@@ -116,6 +151,9 @@ button:focus {
   opacity: 0.5;
   pointer-events: none;
 }
+#obscuring-overlay.darkened {
+  opacity: 0.8;
+}
 
 .image {
   -webkit-user-drag: none;
@@ -126,4 +164,68 @@ button:focus {
 .clickable:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+.vhidden {
+  visibility: hidden !important;
+}
+
+.loading-icon {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 7vw;
+  width: 43vw;
+  height: 43vw;
+
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+  100% {
+    transform: rotate( 360deg );
+  }
+}
+
+.error-container {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  left: 0;
+  /* move down */
+  transform: translate(0, 10vw);
+
+  /* set in front of class:obscuring-overlay */
+  z-index: 6;
+}
+.error-container > :first-child {
+  font-size: 8vw;
+  font-size: 8vw;
+  color: var(--error-text-colour);
+}
+.error-container > :nth-child(2) {
+  color: #efefef;
+  margin-top: 5vw;
+  font-size: 7vw;
+}
+.error-container > :nth-child(2):after {
+  content: ".";
+  animation: elipsis 1.5s linear infinite;
+}
+@keyframes elipsis {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
+}
+.error-container .loading-icon {
+  margin-top: 18vh;
+  width: 30vw;
+  height: 30vw;
 }

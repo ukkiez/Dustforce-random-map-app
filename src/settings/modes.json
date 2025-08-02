@@ -4,7 +4,7 @@
     "startTime": 3600000,
     "minSSCount": 10,
     "maxSSCount": 500,
-    "fastestSSTime": 60000,
+    "fastestSSTime": 90000,
     "skips": true,
     "freeSkips": 1,
     "freeSkipAfterXSolvedLevels": 10,
@@ -39,33 +39,5 @@
     "infiniteSkips": false,
     "CMPLevels": false,
     "settingsName": "blitz"
-  },
-
-  "casual": {
-    "seed": "",
-    "startTime": 3600000,
-    "minSSCount": 40,
-    "maxSSCount": 500,
-    "fastestSSTime": 120000,
-    "skips": true,
-    "freeSkips": 0,
-    "freeSkipAfterXSolvedLevels": 0,
-    "infiniteSkips": true,
-    "CMPLevels": true,
-    "settingsName": "casual"
-  },
-
-  "hard": {
-    "seed": "",
-    "startTime": 3600000,
-    "minSSCount": 3,
-    "maxSSCount": 10,
-    "fastestSSTime": 180000,
-    "skips": false,
-    "freeSkips": 0,
-    "freeSkipAfterXSolvedLevels": 0,
-    "infiniteSkips": false,
-    "CMPLevels": false,
-    "settingsName": "hard"
   }
 }

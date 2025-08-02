@@ -36,7 +36,7 @@
   text-align: center;
 }
 #title-text {
-  color: aliceblue;
+  color: var(--white);
   font-size: 2.5rem;
   border-bottom: 0.15rem solid #4c677f;
   border-radius: 0.1rem;
@@ -80,7 +80,7 @@
   justify-content: center;
 
   margin-top: 10vh;
-  color: aliceblue;
+  color: var(--white);
   font-size: 15vw;
 
   animation: opac2 0.5s;

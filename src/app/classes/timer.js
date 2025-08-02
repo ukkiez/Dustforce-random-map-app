@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 
 import { addClass, removeClass } from "../util/dom.js";
-import { formatTime } from "../util/format.js";
+import { formatTime } from "../util/time/format.js";
 
 export class Timer extends EventEmitter {
   timerElement;
@@ -11,11 +11,10 @@ export class Timer extends EventEmitter {
   interval = 33;
   expected;
 
-  tenths = false;
-  hundreths = false;
+  withTenths = false;
+  withHundreths = false;
 
-  // establishes whether this is a timer counting down, or up like a stopwatch
-  _countdown = true;
+  countingDown = true;
   elapsedTime = 0;
 
   hasStarted = false;
@@ -28,15 +27,15 @@ export class Timer extends EventEmitter {
   constructor( { ...options } ) {
     super();
 
-    const { timerElementId, tenths, hundreths, startTime, interval, _countdown = true } = options;
+    const { timerElementId, withTenths, withHundreths, startTime, interval, countingDown = true } = options;
 
     this.timerElement = document.getElementById( timerElementId );
 
-    this.tenths = tenths;
-    this.hundreths = hundreths;
+    this.withTenths = withTenths;
+    this.withHundreths = withHundreths;
     this.time = ( startTime || this.time );
     this.interval = ( interval || this.interval );
-    this._countdown = _countdown;
+    this.countingDown = countingDown;
   }
 
   start() {
@@ -55,13 +54,13 @@ export class Timer extends EventEmitter {
   }
 
   update() {
-    if ( !this.hasStarted ) {
+    if ( !this.hasStarted || this.stopped ) {
       return;
     }
 
     const drift = Date.now() - this.expected;
 
-    if ( this._countdown ) {
+    if ( this.countingDown ) {
       this.time -= this.interval;
     }
     else {
@@ -72,17 +71,17 @@ export class Timer extends EventEmitter {
 
     this.expected += this.interval;
 
-    let hundredths = this.hundreths;
+    let hundredths = this.withHundreths;
     if ( this.time >= ( 1000 * 60 * 60 * 10 ) ) {
       // reduce the amount of space the timer needs so it fits easier on the
       // screen
       hundredths = false;
     }
 
-    this.timerElement.innerHTML = formatTime( this.time, this.tenths, hundredths );
+    this.timerElement.innerHTML = formatTime( this.time, this.withTenths, hundredths );
 
     if ( this.hasStarted ) {
-      if ( this._countdown && this.time <= 0 ) {
+      if ( this.countingDown && this.time <= 0 ) {
         this.finish();
         return;
       }
@@ -94,26 +93,35 @@ export class Timer extends EventEmitter {
     }
   }
 
-  // stop() {
-  //   if ( !this.hasStarted ) {
-  //     return;
-  //   }
+  stop() {
+    if ( !this.hasStarted || this.finished ) {
+      return;
+    }
 
-  //   this.stopped = true;
-  // }
+    addClass( this.timerElement, "stopped" );
 
-  // resume() {
-  //   if ( !this.stopped ) {
-  //     return;
-  //   }
+    this.stopped = true;
+  }
 
-  //   // reset the expected date
-  //   this.expected = Date.now() + this.interval;
+  resume() {
+    if ( this.finished ) {
+      return;
+    }
 
-  //   this.stopped = false;
+    removeClass( this.timerElement, "stopped" );
 
-  //   this.update();
-  // }
+    if ( !this.stopped ) {
+      this.start();
+      return;
+    }
+
+    // reset the expected date
+    this.expected = Date.now() + this.interval;
+
+    this.stopped = false;
+
+    this.update();
+  }
 
   reset( restart ) {
     if ( !this.finished && !this.hasStarted ) {
@@ -126,16 +134,19 @@ export class Timer extends EventEmitter {
     this.time = 0;
 
     let text = "0";
-    if ( this.tenths ) {
+    if ( this.withTenths ) {
       text += ":0";
 
-      if ( this.hundreths ) {
+      if ( this.withHundreths ) {
         text += "0";
       }
     }
     this.timerElement.innerHTML = text;
 
     this.finished = false;
+    this.stopped = false;
+
+    removeClass( this.timerElement, "stopped" );
 
     if ( restart ) {
       this.start();
@@ -151,7 +162,7 @@ export class Timer extends EventEmitter {
 
     this.finished = true;
 
-    this.timerElement.innerHTML = formatTime( 0, this.tenths, this.hundreths );
+    this.timerElement.innerHTML = formatTime( 0, this.withTenths, this.withHundreths );
 
     if ( !_preventEmit ) {
       this.emit( "finished" );
