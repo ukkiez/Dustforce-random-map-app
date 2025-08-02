@@ -51,12 +51,6 @@ body.challenge {
 #downloading-icon {
 }
 
-@keyframes spin {
-  100% {
-    transform: rotate( 360deg );
-  }
-}
-
 #points-icon-container.challenge {
   -webkit-app-region: none !important;
   position: relative;

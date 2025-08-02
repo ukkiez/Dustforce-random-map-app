@@ -3,6 +3,7 @@ node_modules
 build/dist
 build/cache
 
+src/error.log
 src/app/bundle
 src/dustkid-data_backup
 src/dustkid-data/filtered-metadata.bin

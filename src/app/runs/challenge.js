@@ -7,10 +7,12 @@ import { downloadMap } from "../util/download.js";
 import { formatTime } from "../util/time/format.js";
 import { seededRandom } from "../util/random.js";
 import { obscureMainWindow } from "../util/ui.js";
+import { showError, log } from "../util/error.js";
 import { delay } from "../util/index.js";
-import { showError } from "../util/error.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
+
+const IS_DEBUG = !!nw.process.env.DEBUG;
 
 // use nw.require() instead of require() or import to make it actually available
 const fs = nw.require( "fs" );
@@ -219,6 +221,10 @@ const fetchPoolLevel = ( ahead = 0 ) => {
 const preInstallMap = async ( name, levelId ) => {
   const filename = `${ name }-${ levelId }`;
   const success = await downloadMap( levelId, levelDir, filename );
+
+  if ( IS_DEBUG ) {
+    console.log( { success } );
+  }
 
   if ( success !== 1 ) {
     // we could not pre-install the map, but there's not much we can fall back
@@ -868,12 +874,16 @@ export const initialize = async () => {
     await start();
   }
   catch ( error ) {
+    // make sure the loading container is hidden always
+    addClass( document.getElementById( "loading-container" ), "hidden" );
+
+    const fatal = true;
+    log.error( error, fatal );
+
     showError( {
-      error: {
-        name: error.name,
-        message: `${ error.message }\nAborting run`,
-      },
-      fatal: true,
+      error,
+      endMessage: "\n\n Aborting run",
+      fatal,
       obscure: true,
       delay: 7500,
       callback: () => {
