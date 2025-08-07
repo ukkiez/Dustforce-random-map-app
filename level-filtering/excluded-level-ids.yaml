@@ -1,4 +1,4 @@
-version: v1.0
+version: v1.1
 excluded-filenames:
 - Your-Present-10997                   # requires specific real time
 - Killamari-11058                      # requires specific real time
@@ -34,9 +34,12 @@ excluded-filenames:
 - 44445-3-final-6016                   # flashing lights
 - Baby-Patience-10501                  # crashes
 - one-shot-10941                       # crashes
+- blinding-eclipse-13470               # crashes
+- Netherworld-696                      # crashes
 - Girl-Parapets-9425                   # dustmod version-specific
 - laghill-10924                        # lag
 - dont-throw-up-3945                   # lag
+- Fimbz-Nightmare-6389                 # lag
 - pillar-of-patience-11468             # skewed wr time
 - Do-you-like-to-go-fast-12785         # wr vs. play time is skewed
 - some-3d-ramen-13469                  # semi-functional script
@@ -45,3 +48,13 @@ excluded-filenames:
 - the-great-maze-6146                  # deathzones everywhere - terrible map
 - expert-minesweeper-10875             # script
 - skipping-supper-9544                 # unpublished
+- Gate-Drop-7314                       # gated tera drop
+- Just-the-gate-7315                   # gated tera drop
+- Sivade3-6374                         # loud noise
+- Sivade3-6373                         # loud noise
+- baby-clocktower-13491                # loud noise
+- spikey-baby-clocktower-13492         # loud noise
+- The-Dead-Jorf-6204                   # null jorf
+- The-Dead-Jorf-6205                   # null jorf
+- The-Dead-Jorf-6206                   # null jorf
+- The-Dead-Jorf-7932                   # null jorf
