@@ -1,4 +1,4 @@
-version: v1.1
+version: v1.2
 excluded-filenames:
 - Your-Present-10997                   # requires specific real time
 - Killamari-11058                      # requires specific real time
@@ -58,3 +58,4 @@ excluded-filenames:
 - The-Dead-Jorf-6205                   # null jorf
 - The-Dead-Jorf-6206                   # null jorf
 - The-Dead-Jorf-7932                   # null jorf
+- Captain-5024                         # blind fog trigger (on many monitors)

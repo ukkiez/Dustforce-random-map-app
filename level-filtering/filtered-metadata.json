@@ -1,5 +1,5 @@
 {
-  "version": "v1.2",
+  "version": "v1.3",
   "data": {
     "Equidream-2082": {
       "name": "Equidream",
@@ -51386,13 +51386,6 @@
       "author": "Calistus",
       "atlas_id": 3718,
       "fastest_time": 12266,
-      "ss_count": 12
-    },
-    "Captain-5024": {
-      "name": "Captain",
-      "author": "ShinigamiMachine",
-      "atlas_id": 5024,
-      "fastest_time": 12600,
       "ss_count": 12
     },
     "concreteramen-8506": {
