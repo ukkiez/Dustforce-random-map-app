@@ -1,5 +1,5 @@
 {
-  "version": "v1.1",
+  "version": "v1.2",
   "data": {
     "Equidream-2082": {
       "name": "Equidream",
@@ -31858,13 +31858,6 @@
       "fastest_time": 7666,
       "ss_count": 34
     },
-    "Sivade3-6374": {
-      "name": "Sivade3",
-      "author": "CRINGE",
-      "atlas_id": 6374,
-      "fastest_time": 7833,
-      "ss_count": 34
-    },
     "Jvcmap-10027": {
       "name": "Jvcmap",
       "author": "Jvcpro",
@@ -37182,13 +37175,6 @@
       "name": "Bug Test",
       "author": "Dawn to Dusk",
       "atlas_id": 11120,
-      "fastest_time": 1766,
-      "ss_count": 27
-    },
-    "Just-the-gate-7315": {
-      "name": "Just the gate",
-      "author": "Quantum Coral",
-      "atlas_id": 7315,
       "fastest_time": 1766,
       "ss_count": 27
     },
@@ -44283,13 +44269,6 @@
       "fastest_time": 2166,
       "ss_count": 19
     },
-    "The-Dead-Jorf-6204": {
-      "name": "The Dead Jorf",
-      "author": "msg555",
-      "atlas_id": 6204,
-      "fastest_time": 2349,
-      "ss_count": 19
-    },
     "Hopefully-worth-proof-4917": {
       "name": "Hopefully worth-proof",
       "author": "ZappBrannigan",
@@ -51031,13 +51010,6 @@
       "fastest_time": 62251,
       "ss_count": 13
     },
-    "Baby-Clocktower-13491": {
-      "name": "Baby Clocktower",
-      "author": "jdude0822",
-      "atlas_id": 13491,
-      "fastest_time": 65218,
-      "ss_count": 13
-    },
     "rtrt-mili-is-good-song-9737": {
       "name": "rtrt mili is good song",
       "author": "ShurykaN",
@@ -52200,13 +52172,6 @@
       "fastest_time": 44517,
       "ss_count": 12
     },
-    "Netherworld-696": {
-      "name": "Netherworld",
-      "author": "KrackoCloud",
-      "atlas_id": 696,
-      "fastest_time": 46850,
-      "ss_count": 12
-    },
     "Hydra-3350": {
       "name": "Hydra",
       "author": "Shin Rekkoha",
@@ -52618,13 +52583,6 @@
       "author": "Shin Rekkoha",
       "atlas_id": 3395,
       "fastest_time": 10866,
-      "ss_count": 11
-    },
-    "Fimbz-Nightmare-6389": {
-      "name": "Fimbz Nightmare",
-      "author": "yxcv",
-      "atlas_id": 6389,
-      "fastest_time": 11583,
       "ss_count": 11
     },
     "Grurple-8459": {
@@ -59634,13 +59592,6 @@
       "fastest_time": 6383,
       "ss_count": 5
     },
-    "Gate-Drop-7314": {
-      "name": "Gate Drop",
-      "author": "Quantum Coral",
-      "atlas_id": 7314,
-      "fastest_time": 6699,
-      "ss_count": 5
-    },
     "Shufflelad-8586": {
       "name": "Shufflelad",
       "author": "indapop",
@@ -62364,13 +62315,6 @@
       "fastest_time": 78050,
       "ss_count": 2
     },
-    "Spikey-Baby-Clocktower-13492": {
-      "name": "Spikey Baby Clocktower",
-      "author": "HolyKau",
-      "atlas_id": 13492,
-      "fastest_time": 83049,
-      "ss_count": 2
-    },
     "meow-difficult-mini-5672": {
       "name": "meow difficult mini",
       "author": "FAITH",
@@ -62404,13 +62348,6 @@
       "author": "Skyhawk",
       "atlas_id": 10535,
       "fastest_time": 97980,
-      "ss_count": 2
-    },
-    "Blinding-Eclipse-13470": {
-      "name": "Blinding Eclipse",
-      "author": "dustleveluploader",
-      "atlas_id": 13470,
-      "fastest_time": 98046,
       "ss_count": 2
     },
     "mental-state-12137": {
