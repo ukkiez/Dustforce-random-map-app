@@ -91,8 +91,11 @@ const os = nw.require( "os" );
 let openCommand = "";
 switch ( os.platform() ) {
   case "darwin":
-  case "linux":
     openCommand = "open";
+    break;
+
+  case "linux":
+    openCommand = "xdg-open";
     break;
 
   case "win32":
