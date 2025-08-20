@@ -1,5 +1,5 @@
 {
-  "version": "v1.3",
+  "version": "v1.4",
   "data": {
     "Equidream-2082": {
       "name": "Equidream",
@@ -11761,13 +11761,6 @@
       "fastest_time": 32349,
       "ss_count": 83
     },
-    "Netherworld-2-824": {
-      "name": "Netherworld 2",
-      "author": "KrackoCloud",
-      "atlas_id": 824,
-      "fastest_time": 35083,
-      "ss_count": 83
-    },
     "monolith-10473": {
       "name": "monolith",
       "author": "jdude0822",
@@ -14503,13 +14496,6 @@
       "author": "taiyakian",
       "atlas_id": 3833,
       "fastest_time": 36983,
-      "ss_count": 75
-    },
-    "Tetris-40L-Sprint-10859": {
-      "name": "Tetris 40L Sprint",
-      "author": "Spiraler",
-      "atlas_id": 10859,
-      "fastest_time": 39666,
       "ss_count": 75
     },
     "Surn-1672": {
@@ -23750,13 +23736,6 @@
       "author": "Maddy_",
       "atlas_id": 9906,
       "fastest_time": 9249,
-      "ss_count": 52
-    },
-    "Shikajika-7262": {
-      "name": "Shikajika",
-      "author": "SingleScreen",
-      "atlas_id": 7262,
-      "fastest_time": 9433,
       "ss_count": 52
     },
     "Clowdflyin-10111": {
@@ -46817,13 +46796,6 @@
       "fastest_time": 40100,
       "ss_count": 17
     },
-    "Netherworld-2-823": {
-      "name": "Netherworld 2",
-      "author": "KrackoCloud",
-      "atlas_id": 823,
-      "fastest_time": 40350,
-      "ss_count": 17
-    },
     "MILDUNKY-ADVANCED-12658": {
       "name": "MILDUNKY ADVANCED",
       "author": "dcbc1000",
@@ -52557,20 +52529,6 @@
       "fastest_time": 9900,
       "ss_count": 11
     },
-    "The-Pink-Death-3687": {
-      "name": "The Pink Death",
-      "author": "DoughNation",
-      "atlas_id": 3687,
-      "fastest_time": 10200,
-      "ss_count": 11
-    },
-    "Get-Clocked-13456": {
-      "name": "Get Clocked",
-      "author": "jdude0822",
-      "atlas_id": 13456,
-      "fastest_time": 10566,
-      "ss_count": 11
-    },
     "Flooded-3395": {
       "name": "Flooded",
       "author": "Shin Rekkoha",
@@ -53746,13 +53704,6 @@
       "atlas_id": 11141,
       "fastest_time": 464889,
       "ss_count": 11
-    },
-    "Bogo-Clicker-11725": {
-      "name": "Bogo Clicker",
-      "author": "ibums",
-      "atlas_id": 11725,
-      "fastest_time": 33,
-      "ss_count": 10
     },
     "Left-Friction-9559": {
       "name": "Left Friction",
