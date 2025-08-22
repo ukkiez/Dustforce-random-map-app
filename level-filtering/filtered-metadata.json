@@ -1,5 +1,5 @@
 {
-  "version": "v1.4",
+  "version": "v1.5",
   "data": {
     "Equidream-2082": {
       "name": "Equidream",
@@ -45422,13 +45422,6 @@
       "author": "Quantum Coral",
       "atlas_id": 6776,
       "fastest_time": 13816,
-      "ss_count": 18
-    },
-    "Downhill-8577": {
-      "name": "Downhill",
-      "author": "chipi",
-      "atlas_id": 8577,
-      "fastest_time": 13983,
       "ss_count": 18
     },
     "free-parking-6879": {

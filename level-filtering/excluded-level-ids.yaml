@@ -1,4 +1,4 @@
-version: v1.3
+version: v1.4
 excluded-filenames:
 - Your-Present-10997                    # requires specific real time
 - Killamari-11058                       # requires specific real time
@@ -44,6 +44,7 @@ excluded-filenames:
 - laghill-10924                         # lag
 - dont-throw-up-3945                    # lag
 - Fimbz-Nightmare-6389                  # lag
+- Downhill-8577                         # lag
 - pillar-of-patience-11468              # skewed wr time
 - Do-you-like-to-go-fast-12785          # wr vs. play time is skewed
 - some-3d-ramen-13469                   # semi-functional script
