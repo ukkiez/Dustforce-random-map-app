@@ -21,6 +21,7 @@ const settingsListEl = document.getElementById( "settings-list" );
 const scoreCategoryBtn = document.getElementById( "score-category-btn" );
 
 const seedEl = document.getElementById( "seed-input" );
+const RaceTimingEl = document.getElementById( "RaceTiming-input" );
 const timeEl = document.getElementById( "time-input" );
 const minSSCountEl = document.getElementById( "minSSCount-input" );
 const maxSSCountEl = document.getElementById( "maxSSCount-input" );
@@ -66,6 +67,7 @@ const setInputValues = ( _settings ) => {
   const {
     settingsName,
     seed,
+    raceTiming,
     startTime,
     minSSCount,
     maxSSCount,
@@ -75,12 +77,14 @@ const setInputValues = ( _settings ) => {
     freeSkips,
     freeSkipAfterXSolvedLevels,
     CMPLevels,
+    scoreCategory,
   } = _settings;
 
   settingsNameEl.innerText = `${ settingsName } Mode`;
 
   // set initial values
   seedEl.value = seed;
+  RaceTimingEl.checked = raceTiming;
   timeEl.value = ( startTime / 1000 / 60 );
   minSSCountEl.value = minSSCount;
   maxSSCountEl.value = maxSSCount;
@@ -106,7 +110,7 @@ const setInputValues = ( _settings ) => {
     freeSkipsContainer.classList.remove( "disabled" );
   }
 
-  if ( data.scoreCategory === "any" ) {
+  if ( scoreCategory === "any" ) {
     addClass( scoreCategoryBtn, "any-percent" );
   }
   else {
@@ -366,6 +370,8 @@ addInputListener( fastestSSTimeEl, "fastestSSTime", {
   }
 } );
 addFocusOutListener( fastestSSTimeEl, "fastestSSTime" );
+
+addCheckboxListener( RaceTimingEl, "raceTiming" );
 
 addCheckboxListener( CMPLevelsEl, "CMPLevels" );
 

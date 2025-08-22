@@ -95,8 +95,13 @@ const initMainBody = async ( userConfiguration ) => {
   }
 
   if ( settings.settingsName ) {
-    document.getElementById( "mode" ).innerText = `${ settings.settingsName } Mode`;
-    document.getElementById( "mode2" ).innerText = `${ settings.settingsName } Mode`;
+    let runType = "mode";
+    if ( settings.raceTiming ) {
+      runType = "Race";
+    }
+
+    document.getElementById( "mode" ).innerText = `${ settings.settingsName } ${ runType }`;
+    document.getElementById( "mode2" ).innerText = `${ settings.settingsName } ${ runType }`;
   }
 
   if ( settings.scoreCategory === "any" ) {
@@ -159,8 +164,8 @@ const initMainBody = async ( userConfiguration ) => {
   const now = ( new Date() ).getTime();
   const { levelMetadata } = userConfiguration;
 
-  const { levelData } = getData( { levelData: true } );
-  if ( !Object.keys( levelData.data ).length || ( initialLoad && now > ( levelMetadata?.lastSync + ( 1000 * 60 * 1 ) ) && ( levelMetadata?.rateLimitRemaining > 0 ) ) ) {
+  const { levelData } = getData( { levelData: true, noCache: true } );
+  if ( !Object.keys( levelData.data ).length || ( initialLoad && now > ( levelMetadata?.lastSync + ( 1000 * 60 * 1 ) ) ) ) {
     initialLoad = false;
 
     const startBtnEl = document.getElementById( "start-btn" );

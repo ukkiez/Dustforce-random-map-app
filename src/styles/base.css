@@ -95,7 +95,7 @@ button:focus {
 
 #rma-header {
   position: absolute;
-  font-size: 4vw;
+  font-size: clamp( 0.1rem, 4vw, 0.75rem );
   top: 3.75vw;
   letter-spacing: 0.1rem;
   opacity: 0.4;
@@ -123,7 +123,7 @@ button:focus {
 
   76%,98% {
     opacity: 1;
-    content: "RMA v1.1.0";
+    content: "RMA v1.1.1";
   }
 
   99% {

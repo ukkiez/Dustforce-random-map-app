@@ -1,8 +1,19 @@
 # Changelog
 
+- [v1.1.1](#v1.1.1-h)
 - [v1.1.0](#v1.1.0-h)
 - [v1.0.1](#v1.0.1-h)
 ___
+### <a id="v1.1.1-h"></a> v1.1.1
+### Major
+- Fix opening maps on Linux
+- Take into account install&play lag
+- Added race/tournament timer setting (which does not pause the timer between scoring points)
+
+### Minor
+- Double-click to reset
+- Fix level data caching before syncing
+
 ### <a id="v1.1.0-h"></a> v1.1.0
 ### Major
 - Added "Any%" run category. With Any%, rules are now reversed: points are acquired by completing

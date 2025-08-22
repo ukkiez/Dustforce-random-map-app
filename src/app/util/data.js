@@ -4,7 +4,7 @@ import cmpLevels from "../../dustkid-data/cmp-levels.json";
 // level data is never modified, so read it once on file import and return the
 // same copy whenever asked for
 
-let levelDataJSON = null;
+let cachedLevelDataJSON = null;
 
 export const stringifyJSON = ( json ) => {
   try {
@@ -57,7 +57,7 @@ export const writeHexData = ( path, data, isJSON = true ) => {
 }
 
 export const getData = ( { ...options } ) => {
-  const { levelData, modes, personalBests, userConfiguration, settings } = options;
+  const { levelData, noCache, modes, personalBests, userConfiguration, settings } = options;
 
   const readFileSync = ( path ) => {
     return JSON.parse( HexToUtf8( fs.readFileSync( path, "utf8" ) ) );
@@ -78,14 +78,18 @@ export const getData = ( { ...options } ) => {
   }
 
   if ( levelData ) {
-    if ( levelDataJSON ) {
+    if ( cachedLevelDataJSON ) {
       // only fetch this data once
-      data.levelData = levelDataJSON;
+      data.levelData = cachedLevelDataJSON;
     }
     else if ( fs.existsSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin` ) ) {
       const levelDataB = fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin`, "utf8" );
-      levelDataJSON = JSON.parse( Buffer.from( levelDataB, "hex" ).toString( "utf8" ) );
+      const levelDataJSON = JSON.parse( Buffer.from( levelDataB, "hex" ).toString( "utf8" ) );
       data.levelData = levelDataJSON;
+
+      if ( !noCache ) {
+        cachedLevelDataJSON = { ...levelDataJSON };
+      }
     }
     else {
       data.levelData = {

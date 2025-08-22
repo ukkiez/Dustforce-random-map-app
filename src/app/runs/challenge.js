@@ -33,6 +33,8 @@ let settings = {};
 
 const authorsById = new Map();
 
+const UNPAUSE_DELAY = 3000;
+
 let timers = [];
 const timerAction = ( action, bool = false ) => {
   for ( const timer of timers ) {
@@ -45,21 +47,29 @@ const timerAction = ( action, bool = false ) => {
   }
 }
 
-let pauseTimerBetweenLevelsTimeout = null;
-const pauseTimersBetweenLevels = () => {
-  timerAction( "stop" );
-
-  if ( pauseTimerBetweenLevelsTimeout ) {
-    clearTimeout( pauseTimerBetweenLevelsTimeout );
+let unpauseTimersTimeout = null;
+const unpauseTimers = () => {
+  if ( unpauseTimersTimeout ) {
+    clearTimeout( unpauseTimersTimeout );
   }
 
-  pauseTimerBetweenLevelsTimeout = setTimeout( () => {
+  if ( settings.raceTiming ) {
+    // don't add extra unpause delay with race timing
     timers[ 0 ].resume();
 
     if ( timers[ 1 ] ) {
       timers[ 1 ].reset( true );
     }
-  }, 3000 );
+  }
+  else {
+    unpauseTimersTimeout = setTimeout(() => {
+      timers[ 0 ].resume();
+
+      if ( timers[ 1 ] ) {
+        timers[ 1 ].reset( true );
+      }
+    }, UNPAUSE_DELAY );
+  }
 }
 
 const incrementScore = ( _decrement = false ) => {
@@ -105,7 +115,9 @@ switch ( os.platform() ) {
 }
 
 const openApp = ( url ) => {
-  exec( `${ openCommand } "${ url }"` );
+  exec( `${ openCommand } "${ url }"`, () => {
+    unpauseTimers();
+  } );
 }
 
 const installAndMaybePlay = ( level, play = false ) => {
@@ -360,9 +372,8 @@ const start = async () => {
     // TODO: create one function to handle installs and pre-installing multiple
     // maps ahead of time
 
-    installAndMaybePlay( currentLevel, true );
-
     timerAction( "start" );
+    installAndMaybePlay( currentLevel, true );
 
     temporarilyBlockSkipButton();
 
@@ -434,8 +445,6 @@ const start = async () => {
               return;
             }
 
-            installAndMaybePlay( currentLevel, true );
-
             // keep the next two levels installed ahead of time
             installAhead( 2 );
 
@@ -449,14 +458,17 @@ const start = async () => {
               }
             }
 
-            pauseTimersBetweenLevels();
-
             // trigger the S-icon animation
             const el = document.getElementById( "points-icon" );
             addClass( el, "animated2" );
             setTimeout(() => {
               removeClass( el, "animated2" );
             }, 2000 );
+
+            // unpause will happen after the child process has returned a
+            // response
+            timerAction( "stop" );
+            installAndMaybePlay( currentLevel, true );
 
             return;
           }
@@ -496,8 +508,6 @@ const skip = () => {
       return;
     }
 
-    pauseTimersBetweenLevels();
-
     runData.review.push( {
       levelname: currentLevel.name,
       filename: `${ currentLevel.name }-${ currentLevel.id }`,
@@ -511,7 +521,11 @@ const skip = () => {
     if ( !currentLevel ) {
       return;
     }
+
+    // unpause will happen after the child process has returned a response
+    timerAction( "stop" );
     installAndMaybePlay( currentLevel, true );
+
     handleSkipsCount( -1 );
 
     // keep the next two levels installed ahead of time
@@ -860,14 +874,38 @@ export const initialize = async () => {
     }
   } );
 
+  let clickedOnce = false;
+  let resetConfirmTimeout;
   document.getElementById( "reset-btn" )?.addEventListener( "click", () => {
-    if ( watcher ) {
-      watcher.close();
+    if ( resetConfirmTimeout ) {
+      clearTimeout( resetConfirmTimeout );
     }
 
-    timerAction( "finish", true );
+    if ( unpauseTimersTimeout ) {
+      clearTimeout( unpauseTimersTimeout );
+    }
 
-    processScoreScreen();
+    // make the user double-click the reset button, to avoid accidental resets
+    if ( clickedOnce ) {
+      if ( watcher ) {
+        watcher.close();
+      }
+
+      timerAction( "finish", true );
+
+      processScoreScreen();
+    }
+    else {
+      clickedOnce = true;
+      addClass( document.getElementById( "reset-btn" ), "confirm" );
+      document.getElementById( "reset-btn-text" ).innerText = "confirm";
+
+      resetConfirmTimeout = setTimeout(() => {
+        document.getElementById( "reset-btn-text" ).innerText = "reset";
+        removeClass( document.getElementById( "reset-btn" ), "confirm" );
+        clickedOnce = false;
+      }, 2000);
+    }
   } );
 
   // swap out the points icon if necessary

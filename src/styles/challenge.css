@@ -210,6 +210,9 @@ body.challenge {
   background-color: #821818;
   border: #390a0a 0.1rem solid;
 }
+#reset-btn.confirm {
+  font-size: 6vw;
+}
 
 /* @keyframes opacity-for-splash {
   0%, 80% {
