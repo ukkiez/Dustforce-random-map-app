@@ -8,7 +8,6 @@ const filenameRegex = /filename="(.+)"/;
 
 const IS_DEBUG = !!nw.process.env.DEBUG;
 
-const atlasDownloadUrl = "https://atlas.dustforce.com/gi/downloader.php?id=";
 export const downloadMap = async ( atlasId, dest, _filename = "" ) => {
   if ( _filename ) {
     // check whether the file already exists
@@ -26,19 +25,23 @@ export const downloadMap = async ( atlasId, dest, _filename = "" ) => {
   let filename;
   try {
     await new Promise( ( resolve, reject ) => {
-      const agent = new https.Agent( { timeout: 10000 } );
-      https.get( atlasDownloadUrl + atlasId, { agent }, ( response ) => {
+      const options = {
+        hostname: "atlas.dustforce.com",
+        path: `/gi/downloader.php?id=${ atlasId }`,
+        method: "GET",
+        timeout: 7500,
+      };
+
+      const req = https.get( options, ( response ) => {
         const header = response.headers[ "content-disposition" ];
         if ( !header ) {
-          log.error( `No headers found for map ID: "${ atlasId }"` );
-          reject( -1 );
+          reject( `No headers found for map ID: "${ atlasId }"` );
           return -1;
         }
 
         const match = header.match( filenameRegex );
         if ( !match.length ) {
-          log.error( `No filename found for map ID: "${ atlasId }", with headers: `, response.headers[ "content-disposition" ] );
-          reject( -1 );
+          reject( `No filename found for map ID: "${ atlasId }", with headers: `, response.headers[ "content-disposition" ] );
           return;
         }
 
@@ -61,11 +64,24 @@ export const downloadMap = async ( atlasId, dest, _filename = "" ) => {
             resolve( 1 );
           } );
       } );
+
+      req.on( "timeout", () => {
+        reject( "Request timed out." );
+      } );
     } );
   }
   catch ( error ) {
-    error.message = `Failed download for map ID: "${ atlasId }"; ${ error.message }`;
-    log.error( error );
+    let _error = new Error();
+    if ( typeof error === "object" ) {
+      _error.name = error.name;
+      _error.message = `Failed download for map ID: "${ atlasId }"; ${ error.message }`;
+    }
+    else {
+      _error.name = "MapDownloadError";
+      _error.message = `Failed download for map ID: "${ atlasId }"; ${ error }`;
+    }
+
+    log.error( _error );
     return -1;
   }
 
