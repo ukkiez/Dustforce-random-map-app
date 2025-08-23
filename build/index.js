@@ -107,6 +107,7 @@ const modulesPath = join( PATHS.SRC, "node_modules" );
   await removeIfExists( join( PATHS.USER_DATA, "settings.json" ) );
   await removeIfExists( join( PATHS.USER_DATA, "configuration.json" ) );
   await removeIfExists( join( PATHS.USER_DATA, "personal-bests.bin" ) );
+  await removeIfExists( join( PATHS.SRC, "error.log" ) );
   await fsPromises.copyFile( join( PATHS.DEFAULTS, "settings.bin" ), join( PATHS.USER_DATA, "settings.bin" ) );
   await fsPromises.copyFile( join( PATHS.DEFAULTS, "configuration.json" ), join( PATHS.USER_DATA, "configuration.json" ) );
   await fsPromises.copyFile( join( PATHS.DEFAULTS, "personal-bests.bin" ), join( PATHS.USER_DATA, "personal-bests.bin" ) );
@@ -171,9 +172,9 @@ const modulesPath = join( PATHS.SRC, "node_modules" );
     fs.mkdirSync( "./temp" );
     fs.copyFileSync( join( PATHS.SRC, "/package.json" ), "./temp/package.json" );
 
-    await execAsync( "npm i --omit=dev --prefix ./temp", true );
+    // await execAsync( "npm i --only=prod --prefix ./temp", true );
 
-    await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
+    // await copyDir( "./temp/node_modules", buildPath + "/node_modules" );
 
     // rename nw.exe
     await fsPromises.rename( join( buildPath, "nw.exe" ), join( buildPath, "random-map-app.exe" ) );
