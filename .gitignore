@@ -11,6 +11,8 @@ src/dustkid-data/filtered-metadata.json
 src/user-data/personal-bests.bin
 src/user-data/settings.bin
 
+seedfinding
+
 TODOs.md
 
 # MacOS-specific

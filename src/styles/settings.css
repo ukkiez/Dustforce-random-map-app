@@ -24,6 +24,12 @@ button {
   margin-top: 0.5rem;
   -webkit-app-region: drag;
 }
+.settings-header-version {
+  position: absolute;
+  font-size: 0.75rem;
+  right: 1rem;
+  top: 0.55rem;
+}
 
 .grid {
   display: grid;

@@ -114,34 +114,36 @@ switch ( os.platform() ) {
     break;
 }
 
-const openApp = ( url ) => {
+const openApp = ( url, unpause = true ) => {
   exec( `${ openCommand } "${ url }"`, () => {
-    unpauseTimers();
+    if ( unpause ) {
+      unpauseTimers();
+    }
   } );
 }
 
-const installAndMaybePlay = ( level, play = false ) => {
+const installAndMaybePlay = ( level, play = false, unpauseAfter = false ) => {
   if ( play ) {
-    openApp( `${ installPlayPrefix }/${ level.id }/${ level.name }` );
+    openApp( `${ installPlayPrefix }/${ level.id }/${ level.name }`, unpauseAfter );
   }
   else {
-    openApp( `${ installPrefix }/${ level.id }/${ level.name }` );
+    openApp( `${ installPrefix }/${ level.id }/${ level.name }`, unpauseAfter );
   }
 }
 
 let blocked = false;
-let timeout = null;
+let blockSkipButtonTimeout = null;
 const temporarilyBlockSkipButton = ( ms = 1500 ) => {
-  if ( timeout ) {
+  if ( blockSkipButtonTimeout ) {
     // clear any previously active timeouts that would unblock before the
     // current function call
-    clearTimeout( timeout );
+    clearTimeout( blockSkipButtonTimeout );
   }
 
   blocked = true;
-  timeout = setTimeout(() => {
+  blockSkipButtonTimeout = setTimeout(() => {
     blocked = false;
-    timeout = null;
+    blockSkipButtonTimeout = null;
   }, ms );
 }
 
@@ -373,7 +375,7 @@ const start = async () => {
     // maps ahead of time
 
     timerAction( "start" );
-    installAndMaybePlay( currentLevel, true );
+    installAndMaybePlay( currentLevel, true, false );
 
     temporarilyBlockSkipButton();
 
@@ -468,7 +470,7 @@ const start = async () => {
             // unpause will happen after the child process has returned a
             // response
             timerAction( "stop" );
-            installAndMaybePlay( currentLevel, true );
+            installAndMaybePlay( currentLevel, true, true );
 
             return;
           }
@@ -524,7 +526,7 @@ const skip = () => {
 
     // unpause will happen after the child process has returned a response
     timerAction( "stop" );
-    installAndMaybePlay( currentLevel, true );
+    installAndMaybePlay( currentLevel, true, true );
 
     handleSkipsCount( -1 );
 
@@ -870,7 +872,7 @@ export const initialize = async () => {
 
   document.getElementById( "replay-btn" )?.addEventListener( "click", () => {
     if ( timers[ 0 ].hasStarted ) {
-      installAndMaybePlay( currentLevel, true );
+      installAndMaybePlay( currentLevel, true, false );
     }
   } );
 
@@ -883,6 +885,10 @@ export const initialize = async () => {
 
     if ( unpauseTimersTimeout ) {
       clearTimeout( unpauseTimersTimeout );
+    }
+
+    if ( blockSkipButtonTimeout ) {
+      clearTimeout( blockSkipButtonTimeout );
     }
 
     // make the user double-click the reset button, to avoid accidental resets

@@ -335,7 +335,8 @@ scoreCategoryBtn.addEventListener( "click", ( event ) => {
       break;
 
     default:
-      event.preventDefault();
+      data.scoreCategory = "any";
+      addClass( event.target, "any-percent" );
       break;
   }
 
@@ -510,6 +511,58 @@ const displayImportMessage = ( failed = false ) => {
   }
 }
 
+const handleJSONImport = async ( inputData ) => {
+  let importedSettings;
+  try {
+    importedSettings = JSON.parse( inputData );
+
+    // verify the imported settings against the current file, to make sure all
+    // fields (and only those) are there; technically the user can mess with these
+    // since we don't compress the source code in the production build, but it's
+    // the easiest for development purposes, and it's their own responsibility if
+    // they do so
+
+    const fields = Object.keys( settings );
+    const importFields = Object.keys( importedSettings );
+    if ( importFields.length !== fields.length ) {
+      // the number of fields doesn't match in the first place, don't bother with
+      // field checks
+      displayImportMessage( true );
+      return;
+    }
+
+    if ( !["ss", "any" ].includes( importFields.scoreCategory ) ) {
+      displayImportMessage( true );
+      return;
+    }
+
+    // create a set between both fields, and check if the eventual length is the
+    // same as the current settings fields length, as duplicate fields would be
+    // filtered out
+    const set = new Set( importFields.concat( fields ) );
+    if ( set.size !== fields.length ) {
+      displayImportMessage( true );
+      return;
+    }
+  }
+  catch ( parsingError ) {
+    displayImportMessage( true );
+    return;
+  }
+
+  displayImportMessage();
+
+  // finally, show the imported settings (but don't save, the user should do
+  // that themselves)
+  setInputValues( importedSettings );
+
+  data = {
+    ...importedSettings,
+  };
+
+  handleStateChange();
+}
+
 importSettingsInput.addEventListener( "change", () => {
   const [ file ] = importSettingsInput.files;
   if ( !file ) {
@@ -522,53 +575,11 @@ importSettingsInput.addEventListener( "change", () => {
   }
 
   const reader = new FileReader();
-  let importedSettings;
-  reader.addEventListener( "load", () => {
-    try {
-      importedSettings = JSON.parse( reader.result );
-
-      // verify the imported settings against the current file, to make sure all
-      // fields (and only those) are there; technically the user can mess with
-      // these since we don't compress the source code in the production build,
-      // but it's the easiest for development purposes, and it's their own
-      // responsibility if they do so
-
-      const fields = Object.keys( settings );
-      const importFields = Object.keys( importedSettings );
-      if ( importFields.length !== fields.length ) {
-        // the number of fields doesn't match in the first place, don't bother
-        // with field checks
-        displayImportMessage( true );
-        return;
-      }
-
-      // create a set between both fields, and check if the eventual length is
-      // the same as the current settings fields length, as duplicate fields
-      // would be filtered out
-      const set = new Set( importFields.concat( fields ) );
-      if ( set.size !== fields.length ) {
-        displayImportMessage( true );
-        return;
-      }
-    }
-    catch ( parsingError ) {
-      displayImportMessage( true );
-      return;
-    }
-
-    displayImportMessage();
-
-    // finally, show the imported settings (but don't save, the user should do
-    // that themselves)
-    setInputValues( importedSettings );
-    data = {
-      ...importedSettings,
-    };
+  reader.addEventListener( "load", async () => {
+    await handleJSONImport( reader.result );
 
     // reset the input
     importSettingsInput.value = "";
-
-    handleStateChange();
   } );
 
   reader.readAsBinaryString( file );
@@ -679,3 +690,21 @@ document.getElementById( "map-search-input" ).addEventListener( "input", ( event
     }
   }
 } );
+
+document.body.addEventListener( "drop", async ( event ) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if ( event.dataTransfer.items ) {
+    if ( event.dataTransfer.items.length > 1 ) {
+      return;
+    }
+
+    const [ item ] = [ ...event.dataTransfer.items ];
+    // if dropped items aren't files/JSON, reject them
+    if ( item.kind === "file" && item.type === "application/json" ) {
+      const file = item.getAsFile();
+      await handleJSONImport( fs.readFileSync( file.path ) );
+    }
+  }
+}, false );
