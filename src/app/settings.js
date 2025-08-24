@@ -531,7 +531,7 @@ const handleJSONImport = async ( inputData ) => {
       return;
     }
 
-    if ( !["ss", "any" ].includes( importFields.scoreCategory ) ) {
+    if ( ![ "ss", "any" ].includes( importedSettings.scoreCategory ) ) {
       displayImportMessage( true );
       return;
     }
