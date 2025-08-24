@@ -1,9 +1,17 @@
 # Changelog
 
+- [v1.1.2](#v1.1.2-h)
 - [v1.1.1](#v1.1.1-h)
 - [v1.1.0](#v1.1.0-h)
 - [v1.0.1](#v1.0.1-h)
 ___
+### <a id="v1.1.2-h"></a> v1.1.2
+### Major
+- Fix incorrect map timer handling
+
+### Minor
+- Add drag-and-dropping JSON settings, in the settings window
+
 ### <a id="v1.1.1-h"></a> v1.1.1
 ### Major
 - Fix opening maps on Linux
