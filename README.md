@@ -59,7 +59,7 @@ Most of the time RMA can find the folder location automatically. However, if the
 ---
 > *RMA does not recognize I'm completing levels - what do I do?*
 
-Make sure when you start Dustforce, you do it manually and not have it automatically open via a link (e.g. opening a Dustkid replay, or pressing Install & Play on Atlas). At the time of writing this, there is a bug in Dustmod that doing so will not update `split.txt`.
+Make sure when you start Dustforce that you do it manually and not have it automatically open via a link (e.g. opening a Dustkid replay, or pressing Install & Play on Atlas). At the time of writing this, there is a bug in Dustmod where doing so will not update `split.txt`.
 
 If you did so, and the issue persists, perhaps have a look at `split.txt` in your local Dustforce folder and see if it's accurate.
 
