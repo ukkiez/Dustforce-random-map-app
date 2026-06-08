@@ -54,7 +54,7 @@ ___
 
 In order to be as responsive as possible, RMA does not fetch data from [Dustkid.com](https://dustkid.com), but instead monitors the `split.txt` file locally to determine whether you've completed levels and the completion score you got for them. This file is a feature from Dustmod, which consistently updates after each level completion.
 
-Most of the time RMA can find the folder location automatically. However, if the installation is in an unexpected location then you'll have to follow the instructions in the App. This amounts to just selecting your Dustforce folder, or any folder within it. You'll only need to do this the first time you open RMA.
+Most of the time RMA can find the folder location automatically. However, if the installation is in an unexpected location then you'll have to follow the instructions in the App. This amounts to just selecting your Dustforce folder, or any folder within it. You should only need to do this once, the first time you open RMA.
 
 ---
 > *RMA does not recognize I'm completing levels - what do I do?*
