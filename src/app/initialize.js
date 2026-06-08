@@ -1,12 +1,12 @@
-import { getData } from "./util/data.js";
-import { formatTime, formatMSToHumanReadable } from "./util/time/format.js";
-import { addClass, removeClass } from "./util/dom.js";
-import { obscureMainWindow } from "./util/ui.js";
-import { syncLevelData } from "./util/sync.js";
-import { log } from "./util/error.js";
+import {getData} from "./util/data.js";
+import {formatTime, formatMSToHumanReadable} from "./util/time/format.js";
+import {addClass, removeClass} from "./util/dom.js";
+import {obscureMainWindow} from "./util/ui.js";
+import {syncLevelData} from "./util/sync.js";
+import {log} from "./util/error.js";
 
-const fs = nw.require( "fs" );
-const path = nw.require( "path" );
+const fs = nw.require("fs");
+const path = nw.require("path");
 
 let settings;
 let config;
@@ -15,21 +15,21 @@ let personalBests;
 let initialLoad = true;
 let syncing = false;
 
-export const switchPage = ( currentPage, destination ) => {
-  const split = destination.split( "/" );
-  if ( split.length === 1 ) {
+export const switchPage = (currentPage, destination) => {
+  const split = destination.split("/");
+  if (split.length === 1) {
     destination = split[ 0 ];
   }
   else {
     destination = split[ split.length - 1 ];
   }
 
-  if ( destination === "settings.html" ) {
+  if (destination === "settings.html") {
     const disablePointerEvents = true;
-    const revertObscuration = obscureMainWindow( disablePointerEvents );
+    const revertObscuration = obscureMainWindow(disablePointerEvents);
 
     // open a new window with the settings configuration
-    nw.Window.open( "views/settings.html", {
+    nw.Window.open("views/settings.html", {
       position: "center",
       width: 360,
       height: 470,
@@ -41,268 +41,268 @@ export const switchPage = ( currentPage, destination ) => {
       // this way, we can e.g. resize / move the window without janky initial
       // visuals; this may be causing an issue on Windows
       show: false,
-    }, function( win ) {
-      if ( typeof win !== "undefined" ) {
-        win.on( "closed", function() {
+    }, function(win) {
+      if (typeof win !== "undefined") {
+        win.on("closed", function() {
           init();
 
           revertObscuration();
-        } );
-        win.on( "loaded", function() {
+        });
+        win.on("loaded", function() {
           // // move the settings window to the position of the main window
           // win.moveTo( currentWindow.x, currentWindow.y - 100 );
           win.show();
           win.focus();
-        } );
+        });
       }
-    } );
+    });
 
     return;
   }
 
-  switch ( currentPage ) {
+  switch (currentPage) {
     case "settings.html": {
-        // close the external settings window
-        const settingsWindow = nw.Window.get();
-        settingsWindow.close();
-        break;
-      }
+      // close the external settings window
+      const settingsWindow = nw.Window.get();
+      settingsWindow.close();
+      break;
+    }
   }
 
   window.location.href = destination;
-}
+};
 
 let iconAnimationTimeout;
-const initMainBody = async ( userConfiguration ) => {
-  const template = document.getElementById( "main-hub-template" );
-  const clone = template.content.cloneNode( true );
-  document.body.replaceChildren( clone );
+const initMainBody = async (userConfiguration) => {
+  const template = document.getElementById("main-hub-template");
+  const clone = template.content.cloneNode(true);
+  document.body.replaceChildren(clone);
 
-  document.getElementById( "close-app-btn" ).addEventListener( "click", () => {
+  document.getElementById("close-app-btn").addEventListener("click", () => {
     // close the application
     nw.Window.get().close();
-  } );
+  });
 
-  import( "./runs/challenge.js" ).then( ( { initialize } ) => {
-    document.getElementById( "start-btn" )?.addEventListener( "click", initialize );
-  } );
+  import("./runs/challenge.js").then(({initialize}) => {
+    document.getElementById("start-btn")?.addEventListener("click", initialize);
+  });
 
-  if ( settings.seed ) {
-    document.getElementById( "seed" ).innerText = `Seed: ${ settings.seed }`;
+  if (settings.seed) {
+    document.getElementById("seed").innerText = `Seed: ${ settings.seed }`;
   }
   else {
-    document.getElementById( "seed" ).innerText = "Random Seed";
+    document.getElementById("seed").innerText = "Random Seed";
   }
 
-  if ( settings.settingsName ) {
+  if (settings.settingsName) {
     let runType = "mode";
-    if ( settings.raceTiming ) {
+    if (settings.raceTiming) {
       runType = "Race";
     }
 
-    document.getElementById( "mode" ).innerText = `${ settings.settingsName } ${ runType }`;
-    document.getElementById( "mode2" ).innerText = `${ settings.settingsName } ${ runType }`;
+    document.getElementById("mode").innerText = `${ settings.settingsName } ${ runType }`;
+    document.getElementById("mode2").innerText = `${ settings.settingsName } ${ runType }`;
   }
 
-  if ( settings.scoreCategory === "any" ) {
-    document.getElementById( "points-icon" ).src = "../assets/a-complete-icon.png";
-    removeClass( document.getElementById( "mode-any-percent-tag" ), "hidden" );
+  if (settings.scoreCategory === "any") {
+    document.getElementById("points-icon").src = "../assets/a-complete-icon.png";
+    removeClass(document.getElementById("mode-any-percent-tag"), "hidden");
   }
 
   // set the proper skips starting count
-  const skipsElement = document.getElementById( "skips" );
-  if ( !settings.skips || ( !settings.infiniteSkips && settings.freeSkips <= 0 ) ) {
-    addClass( skipsElement, "none" );
+  const skipsElement = document.getElementById("skips");
+  if (!settings.skips || (!settings.infiniteSkips && settings.freeSkips <= 0)) {
+    addClass(skipsElement, "none");
   }
 
-  if ( !settings.skips ) {
+  if (!settings.skips) {
     skipsElement.innerText = "No Skips";
   }
-  else if ( settings.infiniteSkips ) {
+  else if (settings.infiniteSkips) {
     skipsElement.innerText = "Infinite Skips";
   }
   else {
     skipsElement.innerText = `Free Skips: ${ settings.freeSkips }`;
   }
 
-  document.getElementById( "main-time" ).innerHTML = formatTime( settings.startTime );
+  document.getElementById("main-time").innerHTML = formatTime(settings.startTime);
 
   const pb = personalBests[ settings.settingsName ];
-  if ( settings.settingsName.toLowerCase() === "custom" ) {
-    document.getElementById( "personal-best-score" ).innerText = "N/A";
+  if (settings.settingsName.toLowerCase() === "custom") {
+    document.getElementById("personal-best-score").innerText = "N/A";
   }
-  else if ( pb?.score ) {
-    document.getElementById( "personal-best-score" ).innerText = pb.score;
+  else if (pb?.score) {
+    document.getElementById("personal-best-score").innerText = pb.score;
   }
 
-  if ( iconAnimationTimeout ) {
-    clearTimeout( iconAnimationTimeout );
+  if (iconAnimationTimeout) {
+    clearTimeout(iconAnimationTimeout);
   }
-  iconAnimationTimeout = setTimeout( () => {
+  iconAnimationTimeout = setTimeout(() => {
     // remove the animated class so we can toggle the animation whenever we want
     // (but only after a timeout, since we want the animation to finish playing
     // on pageload first)
-    if ( document.getElementById( "points-icon" ) ) {
-      removeClass( document.getElementById( "points-icon" ), "animated" );
+    if (document.getElementById("points-icon")) {
+      removeClass(document.getElementById("points-icon"), "animated");
     }
-  }, 2000 );
+  }, 2000);
 
-  document.getElementById( "settings-icon" )?.addEventListener( "click", () => {
-    switchPage( "index.html", "./settings.html" );
-  } );
+  document.getElementById("settings-icon")?.addEventListener("click", () => {
+    switchPage("index.html", "./settings.html");
+  });
 
-  if ( syncing ) {
+  if (syncing) {
     // we were previously syncing, so continue to disable the start button
-    const startBtnEl = document.getElementById( "start-btn" );
-    addClass( startBtnEl, "disabled-btn" );
-    addClass( startBtnEl, "fetching-maps" );
-    document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+    const startBtnEl = document.getElementById("start-btn");
+    addClass(startBtnEl, "disabled-btn");
+    addClass(startBtnEl, "fetching-maps");
+    document.getElementById("start-btn-text").innerText = "Fetching maps";
   }
 
   // re-sync the remote level list if the last sync date was at least 1 minute
   // ago; only on app-start
-  const now = ( new Date() ).getTime();
-  const { levelMetadata } = userConfiguration;
+  const now = (new Date()).getTime();
+  const {levelMetadata} = userConfiguration;
 
-  const { levelData } = getData( { levelData: true, noCache: true } );
-  if ( !Object.keys( levelData.data ).length || ( initialLoad && now > ( levelMetadata?.lastSync + ( 1000 * 60 * 1 ) ) ) ) {
+  const {levelData} = getData({levelData: true, noCache: true});
+  if (!Object.keys(levelData.data).length || (initialLoad && now > (levelMetadata?.lastSync + (1000 * 60 * 1)))) {
     initialLoad = false;
 
-    const toggleStartButtonToFetching = ( toggle ) => {
-      if ( toggle ) {
-        const startBtnEl = document.getElementById( "start-btn" );
-        addClass( startBtnEl, "disabled-btn" );
-        addClass( startBtnEl, "fetching-maps" );
-        document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+    const toggleStartButtonToFetching = (toggle) => {
+      if (toggle) {
+        const startBtnEl = document.getElementById("start-btn");
+        addClass(startBtnEl, "disabled-btn");
+        addClass(startBtnEl, "fetching-maps");
+        document.getElementById("start-btn-text").innerText = "Fetching maps";
       }
       else {
-        removeClass( document.getElementById( "start-btn" ), "disabled-btn" );
-        removeClass( document.getElementById( "start-btn" ), "fetching-maps" );
-        document.getElementById( "start-btn-text" ).innerText = "Start Challenge";
+        removeClass(document.getElementById("start-btn"), "disabled-btn");
+        removeClass(document.getElementById("start-btn"), "fetching-maps");
+        document.getElementById("start-btn-text").innerText = "Start Challenge";
       }
-    }
+    };
 
-    toggleStartButtonToFetching( true );
+    toggleStartButtonToFetching(true);
 
     try {
       syncing = true;
-      syncLevelData( levelData.version, ( wasNewData, result ) => {
-        if ( !result ) {
+      syncLevelData(levelData.version, (wasNewData, result) => {
+        if (!result) {
           syncing = false;
-          toggleStartButtonToFetching( false );
+          toggleStartButtonToFetching(false);
           return;
         }
 
-        const newConfig = { ...userConfiguration };
+        const newConfig = {...userConfiguration};
         newConfig.levelMetadata.lastSync = now;
         newConfig.levelMetadata.rateLimitRemaining = result.rateLimitRemaining;
 
-        if ( wasNewData ) {
+        if (wasNewData) {
           newConfig.levelMetadata.version = result.data.version;
         }
 
-        fs.writeFileSync( path.join( global.__dirname, "user-data/configuration.json" ), JSON.stringify( newConfig, null, 2 ) );
+        fs.writeFileSync(path.join(global.__dirname, "user-data/configuration.json"), JSON.stringify(newConfig, null, 2));
 
-        toggleStartButtonToFetching( false );
+        toggleStartButtonToFetching(false);
 
         syncing = false;
-      } );
+      });
     }
-    catch ( error ) {
-      log.error( error );
+    catch (error) {
+      log.error(error);
     }
   }
-}
+};
 
 const initSettingsBody = () => {
-  document.getElementById( "download-settings-link" ).href = "../user-data/settings.json";
+  document.getElementById("download-settings-link").href = "../user-data/settings.json";
 
   const withMs = true;
-  document.getElementById( "fastestSSTime-formatted" ).innerText = formatMSToHumanReadable( settings.fastestSSTime, withMs );
+  document.getElementById("fastestSSTime-formatted").innerText = formatMSToHumanReadable(settings.fastestSSTime, withMs);
 
   const currentWindow = nw.Window.get();
-  currentWindow.on( "loaded", function() {
+  currentWindow.on("loaded", function() {
     // get the height and width of the container div, and match the window size
     // with it (with some extra height to make sure nothing is cut off at the
     // bottom)
-    const clientRectangle = document.getElementsByClassName( "container" )[ 0 ].getBoundingClientRect();
+    const clientRectangle = document.getElementsByClassName("container")[ 0 ].getBoundingClientRect();
     currentWindow.resizeTo(
-      parseInt( clientRectangle.width, 10 ),
-      parseInt( clientRectangle.height, 10 ) + 35
+      parseInt(clientRectangle.width, 10),
+      parseInt(clientRectangle.height, 10) + 35
     );
     currentWindow.setMinimumSize(
-      parseInt( clientRectangle.width - 50, 10 ),
-      parseInt( clientRectangle.height - 50, 10 )
+      parseInt(clientRectangle.width - 50, 10),
+      parseInt(clientRectangle.height - 50, 10)
     );
     currentWindow.setMaximumSize(
-      parseInt( clientRectangle.width + 100, 10 ),
-      parseInt( clientRectangle.height + 135, 10 )
+      parseInt(clientRectangle.width + 100, 10),
+      parseInt(clientRectangle.height + 135, 10)
     );
-  } );
+  });
 
-  document.getElementById( "back-button" ).addEventListener( "click", () => {
+  document.getElementById("back-button").addEventListener("click", () => {
     currentWindow.close();
-  } );
+  });
 
-  document.getElementById( "map-search-btn" ).addEventListener( "click", () => {
-    addClass( document.getElementById( "map-search-container" ), "opened" );
-    addClass( document.getElementById( "map-list-container" ), "opened" );
-    addClass( document.getElementById( "settings-container" ), "hidden" );
-  } );
-  document.getElementById( "map-search-back-btn" ).addEventListener( "click", () => {
-    removeClass( document.getElementById( "map-search-container" ), "opened" );
-    removeClass( document.getElementById( "map-list-container" ), "opened" );
-    removeClass( document.getElementById( "settings-container" ), "hidden" );
-  } );
-}
+  document.getElementById("map-search-btn").addEventListener("click", () => {
+    addClass(document.getElementById("map-search-container"), "opened");
+    addClass(document.getElementById("map-list-container"), "opened");
+    addClass(document.getElementById("settings-container"), "hidden");
+  });
+  document.getElementById("map-search-back-btn").addEventListener("click", () => {
+    removeClass(document.getElementById("map-search-container"), "opened");
+    removeClass(document.getElementById("map-list-container"), "opened");
+    removeClass(document.getElementById("settings-container"), "hidden");
+  });
+};
 
-const { href } = window.location;
-const split = href.split( "/" );
+const {href} = window.location;
+const split = href.split("/");
 const page = split[ split.length - 1 ];
 
-const template = document.getElementById( "challenge-run-template" );
-const giveChildrenClass = ( tag, _class ) => {
-  if ( tag.children?.length ) {
-    for ( const child of tag.children ) {
-      addClass( child, _class );
+const template = document.getElementById("challenge-run-template");
+const giveChildrenClass = (tag, _class) => {
+  if (tag.children?.length) {
+    for (const child of tag.children) {
+      addClass(child, _class);
 
-      if ( child.children?.length ) {
-        giveChildrenClass( child, _class );
+      if (child.children?.length) {
+        giveChildrenClass(child, _class);
       }
     }
   }
-}
-if ( template?.content?.children ) {
-  for ( const child of template.content.children ) {
-    addClass( child, "challenge" );
-    giveChildrenClass( child, "challenge" );
+};
+if (template?.content?.children) {
+  for (const child of template.content.children) {
+    addClass(child, "challenge");
+    giveChildrenClass(child, "challenge");
   }
 }
 
 export const init = async () => {
-  ( { settings, personalBests, userConfiguration: config } = await getData( { settings: true, personalBests: true, userConfiguration: true } ) );
+  ({settings, personalBests, userConfiguration: config} = await getData({settings: true, personalBests: true, userConfiguration: true}));
 
   // set the user configured opacity
   document.body.style[ "background-color" ] = `rgba(0, 0, 0, ${ config.styling.opacity / 100 })`;
 
-  if ( page === "setup.html" ) {
-    import( "./setup.js" );
+  if (page === "setup.html") {
+    import("./setup.js");
     return;
   }
-  else if ( !config.initialSetupDone ) {
+  else if (!config.initialSetupDone) {
     // go to the initial setup page, where we'll confirm the dustforce
     // directory; this will only happen the first time someone opens the app
-    switchPage( "", "./setup.html" );
+    switchPage("", "./setup.html");
     return;
   }
 
-  if ( page === "index.html" ) {
-    initMainBody( config );
+  if (page === "index.html") {
+    initMainBody(config);
   }
-  else if ( page === "settings.html" ) {
+  else if (page === "settings.html") {
     initSettingsBody();
-    import( "./settings.js" );
+    import("./settings.js");
   }
-}
+};
 
 init();

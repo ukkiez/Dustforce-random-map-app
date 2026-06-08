@@ -1,4 +1,4 @@
-const fs = nw.require( "fs" );
+const fs = nw.require("fs");
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 // level data is never modified, so read it once on file import and return the
@@ -6,89 +6,89 @@ import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
 let cachedLevelDataJSON = null;
 
-export const stringifyJSON = ( json ) => {
+export const stringifyJSON = (json) => {
   try {
-    JSON.parse( json );
+    JSON.parse(json);
   }
-  catch ( error ) {
+  catch (error) {
     // data seems to not yet be stringified as JSON, so do so
-    return JSON.stringify( json );
+    return JSON.stringify(json);
   }
 
   return json;
-}
+};
 
-export const HexToUtf8 = ( data ) => {
-  return Buffer.from( data, "hex" ).toString( "utf8" );
-}
+export const HexToUtf8 = (data) => {
+  return Buffer.from(data, "hex").toString("utf8");
+};
 
-export const dataToHex = ( data, isJSON = false ) => {
-  if ( isJSON ) {
-    return Buffer.from( stringifyJSON( data ) ).toString( "hex" );
+export const dataToHex = (data, isJSON = false) => {
+  if (isJSON) {
+    return Buffer.from(stringifyJSON(data)).toString("hex");
   }
 
-  return Buffer.from( data ).toString( "hex" );
-}
+  return Buffer.from(data).toString("hex");
+};
 
-export const writeData = ( path, data ) => {
+export const writeData = (path, data) => {
   try {
-    fs.writeFileSync( path, data );
+    fs.writeFileSync(path, data);
   }
-  catch ( error ) {
-    console.error( error );
+  catch (error) {
+    console.error(error);
     return false;
   }
 
   return true;
-}
+};
 
-export const writeHexData = ( path, data, isJSON = true ) => {
-  const dataHex = dataToHex( data, isJSON );
+export const writeHexData = (path, data, isJSON = true) => {
+  const dataHex = dataToHex(data, isJSON);
 
   try {
-    fs.writeFileSync( path, dataHex );
+    fs.writeFileSync(path, dataHex);
   }
-  catch ( error ) {
-    console.error( error );
+  catch (error) {
+    console.error(error);
     return false;
   }
 
   return true;
-}
+};
 
-export const getData = ( { ...options } ) => {
-  const { levelData, noCache, modes, personalBests, userConfiguration, settings } = options;
+export const getData = ({...options}) => {
+  const {levelData, noCache, modes, personalBests, userConfiguration, settings} = options;
 
-  const readFileSync = ( path ) => {
-    return JSON.parse( HexToUtf8( fs.readFileSync( path, "utf8" ) ) );
-  }
+  const readFileSync = (path) => {
+    return JSON.parse(HexToUtf8(fs.readFileSync(path, "utf8")));
+  };
 
   const data = {};
-  if ( modes ) {
-    data.modes = readFileSync( `${ global.__dirname }/settings/modes.bin` );
+  if (modes) {
+    data.modes = readFileSync(`${ global.__dirname }/settings/modes.bin`);
   }
-  if ( personalBests ) {
-    data.personalBests = readFileSync( `${ global.__dirname }/user-data/personal-bests.bin` );
+  if (personalBests) {
+    data.personalBests = readFileSync(`${ global.__dirname }/user-data/personal-bests.bin`);
   }
-  if ( settings ) {
-    data.settings = readFileSync( `${ global.__dirname }/user-data/settings.bin` );
+  if (settings) {
+    data.settings = readFileSync(`${ global.__dirname }/user-data/settings.bin`);
   }
-  if ( userConfiguration ) {
-    data.userConfiguration = JSON.parse( fs.readFileSync( `${ global.__dirname }/user-data/configuration.json` ) );
+  if (userConfiguration) {
+    data.userConfiguration = JSON.parse(fs.readFileSync(`${ global.__dirname }/user-data/configuration.json`));
   }
 
-  if ( levelData ) {
-    if ( cachedLevelDataJSON ) {
+  if (levelData) {
+    if (cachedLevelDataJSON) {
       // only fetch this data once
       data.levelData = cachedLevelDataJSON;
     }
-    else if ( fs.existsSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin` ) ) {
-      const levelDataB = fs.readFileSync( `${ global.__dirname }/dustkid-data/filtered-metadata.bin`, "utf8" );
-      const levelDataJSON = JSON.parse( Buffer.from( levelDataB, "hex" ).toString( "utf8" ) );
+    else if (fs.existsSync(`${ global.__dirname }/dustkid-data/filtered-metadata.bin`)) {
+      const levelDataB = fs.readFileSync(`${ global.__dirname }/dustkid-data/filtered-metadata.bin`, "utf8");
+      const levelDataJSON = JSON.parse(Buffer.from(levelDataB, "hex").toString("utf8"));
       data.levelData = levelDataJSON;
 
-      if ( !noCache ) {
-        cachedLevelDataJSON = { ...levelDataJSON };
+      if (!noCache) {
+        cachedLevelDataJSON = {...levelDataJSON};
       }
     }
     else {
@@ -100,27 +100,27 @@ export const getData = ( { ...options } ) => {
   }
 
   return data;
-}
+};
 
-export const getMapPoolSize = ( settings ) => {
-  const { minSSCount, maxSSCount, fastestSSTime, CMPLevels } = settings;
+export const getMapPoolSize = (settings) => {
+  const {minSSCount, maxSSCount, fastestSSTime, CMPLevels} = settings;
 
-  const { levelData } = getData( { levelData: true } );
+  const {levelData} = getData({levelData: true});
 
   const mapPool = new Set();
-  for ( const [ levelFilename, metadata ] of Object.entries( levelData.data ) ) {
-    if ( !CMPLevels ) {
-      if ( cmpLevels.includes( levelFilename ) ) {
+  for (const [levelFilename, metadata] of Object.entries(levelData.data)) {
+    if (!CMPLevels) {
+      if (cmpLevels.includes(levelFilename)) {
         // don't include cmp levels, as the user set them to be off
         continue;
       }
     }
 
-    const { ss_count, fastest_time } = metadata;
-    if ( ss_count >= minSSCount && ss_count <= maxSSCount && fastest_time <= fastestSSTime ) {
-      mapPool.add( levelFilename );
+    const {ss_count, fastest_time} = metadata;
+    if (ss_count >= minSSCount && ss_count <= maxSSCount && fastest_time <= fastestSSTime) {
+      mapPool.add(levelFilename);
     }
   }
 
   return mapPool.size;
-}
+};

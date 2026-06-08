@@ -1,33 +1,33 @@
-import { reset } from "../reset.js";
+import {reset} from "../reset.js";
 
-import { Timer } from "../classes/timer.js";
-import { getData, writeHexData } from "../util/data.js";
-import { addClass, removeClass } from "../util/dom.js";
-import { downloadMap } from "../util/download.js";
-import { formatTime } from "../util/time/format.js";
-import { seededRandom } from "../util/random.js";
-import { obscureMainWindow } from "../util/ui.js";
-import { showError, log } from "../util/error.js";
+import {Timer} from "../classes/timer.js";
+import {getData, writeHexData} from "../util/data.js";
+import {addClass, removeClass} from "../util/dom.js";
+import {downloadMap} from "../util/download.js";
+import {formatTime} from "../util/time/format.js";
+import {seededRandom} from "../util/random.js";
+import {obscureMainWindow} from "../util/ui.js";
+import {showError, log} from "../util/error.js";
 
 import cmpLevels from "../../dustkid-data/cmp-levels.json";
 
 const IS_DEBUG = !!nw.process.env.DEBUG;
 
 // use nw.require() instead of require() or import to make it actually available
-const fs = nw.require( "fs" );
-const path = nw.require( "path" );
-const { exec } = nw.require( "child_process" );
+const fs = nw.require("fs");
+const path = nw.require("path");
+const {exec} = nw.require("child_process");
 
 let levelData = null;
 
-const { userConfiguration } = getData( {
+const {userConfiguration} = getData({
   userConfiguration: true,
-} );
-const { dustforceDirectory } = userConfiguration;
+});
+const {dustforceDirectory} = userConfiguration;
 
-const splitFile = path.join( dustforceDirectory, "split.txt" );
+const splitFile = path.join(dustforceDirectory, "split.txt");
 
-const levelDir = path.join( userConfiguration.dustforceDirectory, "/user/levels" );
+const levelDir = path.join(userConfiguration.dustforceDirectory, "/user/levels");
 
 let settings = {};
 
@@ -36,57 +36,57 @@ const authorsById = new Map();
 const UNPAUSE_DELAY = 3000;
 
 let timers = [];
-const timerAction = ( action, bool = false ) => {
-  for ( const timer of timers ) {
-    if ( bool ) {
-      timer[ action ]( bool );
+const timerAction = (action, bool = false) => {
+  for (const timer of timers) {
+    if (bool) {
+      timer[ action ](bool);
     }
     else {
       timer[ action ]();
     }
   }
-}
+};
 
 let unpauseTimersTimeout = null;
 const unpauseTimers = () => {
-  if ( unpauseTimersTimeout ) {
-    clearTimeout( unpauseTimersTimeout );
+  if (unpauseTimersTimeout) {
+    clearTimeout(unpauseTimersTimeout);
   }
 
-  if ( settings.raceTiming ) {
+  if (settings.raceTiming) {
     // don't add extra unpause delay with race timing
     timers[ 0 ].resume();
 
-    if ( timers[ 1 ] ) {
-      timers[ 1 ].reset( true );
+    if (timers[ 1 ]) {
+      timers[ 1 ].reset(true);
     }
   }
   else {
     unpauseTimersTimeout = setTimeout(() => {
       timers[ 0 ].resume();
 
-      if ( timers[ 1 ] ) {
-        timers[ 1 ].reset( true );
+      if (timers[ 1 ]) {
+        timers[ 1 ].reset(true);
       }
-    }, UNPAUSE_DELAY );
+    }, UNPAUSE_DELAY);
   }
-}
+};
 
-const incrementScore = ( _decrement = false ) => {
-  if ( !timers[ 0 ].hasStarted ) {
+const incrementScore = (_decrement = false) => {
+  if (!timers[ 0 ].hasStarted) {
     return;
   }
 
-  const counter = document.getElementById( "points-icon-text" );
-  let number = parseInt( counter.innerText, 10 );
-  if ( _decrement ) {
+  const counter = document.getElementById("points-icon-text");
+  let number = parseInt(counter.innerText, 10);
+  if (_decrement) {
     number--;
   }
   else {
     number++;
   }
 
-  if ( number < 0 ) {
+  if (number < 0) {
     number = 0;
   }
 
@@ -96,10 +96,10 @@ const incrementScore = ( _decrement = false ) => {
 const installPrefix = "dustforce://install";
 const installPlayPrefix = "dustforce://installPlay";
 
-const os = nw.require( "os" );
+const os = nw.require("os");
 
 let openCommand = "";
-switch ( os.platform() ) {
+switch (os.platform()) {
   case "darwin":
     openCommand = "open";
     break;
@@ -114,63 +114,63 @@ switch ( os.platform() ) {
     break;
 }
 
-const openApp = ( url, unpause = true ) => {
-  exec( `${ openCommand } "${ url }"`, () => {
-    if ( unpause ) {
+const openApp = (url, unpause = true) => {
+  exec(`${ openCommand } "${ url }"`, () => {
+    if (unpause) {
       unpauseTimers();
     }
-  } );
-}
+  });
+};
 
-const installAndMaybePlay = ( level, play = false, unpauseAfter = false ) => {
-  if ( play ) {
-    openApp( `${ installPlayPrefix }/${ level.id }/${ level.name }`, unpauseAfter );
+const installAndMaybePlay = (level, play = false, unpauseAfter = false) => {
+  if (play) {
+    openApp(`${ installPlayPrefix }/${ level.id }/${ level.name }`, unpauseAfter);
   }
   else {
-    openApp( `${ installPrefix }/${ level.id }/${ level.name }`, unpauseAfter );
+    openApp(`${ installPrefix }/${ level.id }/${ level.name }`, unpauseAfter);
   }
-}
+};
 
 let blocked = false;
 let blockSkipButtonTimeout = null;
-const temporarilyBlockSkipButton = ( ms = 1500 ) => {
-  if ( blockSkipButtonTimeout ) {
+const temporarilyBlockSkipButton = (ms = 1500) => {
+  if (blockSkipButtonTimeout) {
     // clear any previously active timeouts that would unblock before the
     // current function call
-    clearTimeout( blockSkipButtonTimeout );
+    clearTimeout(blockSkipButtonTimeout);
   }
 
   blocked = true;
   blockSkipButtonTimeout = setTimeout(() => {
     blocked = false;
     blockSkipButtonTimeout = null;
-  }, ms );
-}
+  }, ms);
+};
 
-const adjustOnScreenMapInfo = ( levelId, name, author ) => {
-  const nameEl = document.getElementById( "map-info-name" );
-  const authorEl = document.getElementById( "map-info-author" );
+const adjustOnScreenMapInfo = (levelId, name, author) => {
+  const nameEl = document.getElementById("map-info-name");
+  const authorEl = document.getElementById("map-info-author");
   nameEl.innerText = name;
   authorEl.innerText = author || "???";
 
   // allow users to go to the Atlas page by clicking on the map name
   nameEl.onclick = () => {
-    nw.Shell.openExternal( `https://atlas.dustforce.com/${ levelId }` );
+    nw.Shell.openExternal(`https://atlas.dustforce.com/${ levelId }`);
   };
-}
+};
 
 const initChallengeRunBody = () => {
-  const template = document.getElementById( "challenge-run-template" );
-  const clone = template.content.cloneNode( true );
-  document.body.replaceChildren( clone );
+  const template = document.getElementById("challenge-run-template");
+  const clone = template.content.cloneNode(true);
+  document.body.replaceChildren(clone);
 
-  addClass( document.body, "challenge" );
+  addClass(document.body, "challenge");
 
-  if ( !settings.skips ) {
-    addClass( document.getElementById( "skips" ), "none" );
-    addClass( document.getElementById( "skip-btn" ), "disabled-btn" )
+  if (!settings.skips) {
+    addClass(document.getElementById("skips"), "none");
+    addClass(document.getElementById("skip-btn"), "disabled-btn");
   }
-}
+};
 
 // keep track of skips, which levels have been completed (SS or any%), and which
 // have been solved (SS'd only), and which levels have been picked already
@@ -188,18 +188,18 @@ let runData = {
   choiceIndex: -1,
 };
 
-const fetchPoolLevel = ( ahead = 0 ) => {
+const fetchPoolLevel = (ahead = 0) => {
   // the map pool was already shuffled at the start of the run, so simply pick
   // maps start to end
   let choice;
-  if ( ahead === 0 ) {
+  if (ahead === 0) {
     runData.choiceIndex++;
     choice = runData.mapPool[ runData.choiceIndex ];
 
-    if ( !choice ) {
+    if (!choice) {
       // no maps remain, end the run
       runData._ranOutOfMaps = true;
-      timerAction( "finish" );
+      timerAction("finish");
     }
   }
   else {
@@ -207,42 +207,42 @@ const fetchPoolLevel = ( ahead = 0 ) => {
     choice = runData.mapPool[ runData.choiceIndex + ahead ];
   }
 
-  if ( !choice ) {
+  if (!choice) {
     return false;
   }
 
-  const hyphenIndex = choice.lastIndexOf( "-" );
+  const hyphenIndex = choice.lastIndexOf("-");
 
-  const name = choice.substring( 0, hyphenIndex );
-  const id = choice.substring( hyphenIndex + 1 );
+  const name = choice.substring(0, hyphenIndex);
+  const id = choice.substring(hyphenIndex + 1);
 
-  if ( ahead !== 0 ) {
+  if (ahead !== 0) {
     return {
       name,
       id,
     };
   }
 
-  const author = authorsById.get( parseInt( id, 10 ) );
-  adjustOnScreenMapInfo( id, name, author );
+  const author = authorsById.get(parseInt(id, 10));
+  adjustOnScreenMapInfo(id, name, author);
 
-  runData.chosenLevelCache.add( choice );
+  runData.chosenLevelCache.add(choice);
 
   return {
     name,
     id,
   };
-}
+};
 
-const preInstallMap = async ( name, levelId ) => {
+const preInstallMap = async (name, levelId) => {
   const filename = `${ name }-${ levelId }`;
-  const success = await downloadMap( levelId, levelDir, filename );
+  const success = await downloadMap(levelId, levelDir, filename);
 
-  if ( IS_DEBUG ) {
-    console.log( { success } );
+  if (IS_DEBUG) {
+    console.log({success});
   }
 
-  if ( success !== 1 ) {
+  if (success !== 1) {
     // we could not pre-install the map, but there's not much we can fall back
     // on for the moment; the game will try to install the map when it comes to
     // it via the install&play link anyway
@@ -250,288 +250,288 @@ const preInstallMap = async ( name, levelId ) => {
   }
 
   return success;
-}
+};
 
-const installAhead = async ( ahead ) => {
-  const level = fetchPoolLevel( ahead );
-  return preInstallMap( level.name, level.id );
-}
+const installAhead = async (ahead) => {
+  const level = fetchPoolLevel(ahead);
+  return preInstallMap(level.name, level.id);
+};
 
 let currentLevel = {
   name: "",
   id: -1,
 };
 
-const handleSkipsCount = ( change ) => {
-  if ( !settings.skips ) {
+const handleSkipsCount = (change) => {
+  if (!settings.skips) {
     // skips are not set to be on by the user
     return;
   }
 
-  if ( settings.infiniteSkips ) {
+  if (settings.infiniteSkips) {
     // the user has infinite skips, so nothing needs to be done
     return;
   }
 
-  const skipsElement = document.getElementById( "skips" );
-  const skipButtonElement = document.getElementById( "skip-btn" );
+  const skipsElement = document.getElementById("skips");
+  const skipButtonElement = document.getElementById("skip-btn");
 
-  if ( change > 0 ) {
+  if (change > 0) {
     // increment the skips count
     runData.skips += change;
-    if ( runData.skips > 0 ) {
-      removeClass( skipsElement, "none" );
-      removeClass( skipButtonElement, "disabled-btn" )
+    if (runData.skips > 0) {
+      removeClass(skipsElement, "none");
+      removeClass(skipButtonElement, "disabled-btn");
     }
   }
-  else if ( change < 0 ) {
+  else if (change < 0) {
     // decrement the skips count (but not below 0)
-    if ( runData.skips > 0 ) {
-      runData.skips = Math.max( 0, runData.skips + change );
+    if (runData.skips > 0) {
+      runData.skips = Math.max(0, runData.skips + change);
 
-      if ( runData.skips <= 0 ) {
-        addClass( skipsElement, "none" );
-        addClass( skipButtonElement, "disabled-btn" )
+      if (runData.skips <= 0) {
+        addClass(skipsElement, "none");
+        addClass(skipButtonElement, "disabled-btn");
       }
     }
   }
 
   skipsElement.innerText = `Skips remaining: ${ runData.skips }`;
-}
+};
 
 let initialized = false;
 let watcher;
 const start = async () => {
-  if ( !initialized ) {
+  if (!initialized) {
     let disablePointerEvents = true;
-    const revertObscuration = obscureMainWindow( disablePointerEvents );
+    const revertObscuration = obscureMainWindow(disablePointerEvents);
 
-    if ( settings.scoreCategory === "any" ) {
-      document.getElementById( "points-icon-text" ).style.color = "var(--bright-white)";
+    if (settings.scoreCategory === "any") {
+      document.getElementById("points-icon-text").style.color = "var(--bright-white)";
     }
 
     // populate the map pool
-    for ( const [ levelFilename, metadata ] of Object.entries( levelData ) ) {
-      if ( !settings.CMPLevels ) {
-        if ( cmpLevels.includes( levelFilename ) ) {
+    for (const [levelFilename, metadata] of Object.entries(levelData)) {
+      if (!settings.CMPLevels) {
+        if (cmpLevels.includes(levelFilename)) {
           // don't include cmp levels, as the user set them to be off
           continue;
         }
       }
 
-      const { ss_count, fastest_time, author, atlas_id } = metadata;
-      if ( ss_count >= settings.minSSCount && ss_count <= settings.maxSSCount && fastest_time <= settings.fastestSSTime ) {
-        runData.mapPool.push( levelFilename );
+      const {ss_count, fastest_time, author, atlas_id} = metadata;
+      if (ss_count >= settings.minSSCount && ss_count <= settings.maxSSCount && fastest_time <= settings.fastestSSTime) {
+        runData.mapPool.push(levelFilename);
       }
 
-      authorsById.set( atlas_id, author );
+      authorsById.set(atlas_id, author);
     }
 
     let _seed = settings.seed;
-    if ( !_seed ) {
+    if (!_seed) {
       // generate a random 8-digit seed if the user didn't provide a seed
-      _seed = `${ Math.floor( Math.random() * 90000000 ) + 10000000 }`;
+      _seed = `${ Math.floor(Math.random() * 90000000) + 10000000 }`;
     }
 
     runData.seed = _seed;
 
     // initialize the seeder
-    const { shuffle } = seededRandom( { seed: _seed } );
+    const {shuffle} = seededRandom({seed: _seed});
 
     // shuffle the map pool, by the given seed, which consequently means that
     // when we pick a level below we'll simply do it in order, start to end
-    shuffle( runData.mapPool );
+    shuffle(runData.mapPool);
 
     // ensure split.txt exists, otherwise create an empty one
-    if ( !fs.existsSync( splitFile ) ) {
-      fs.writeFileSync( splitFile, "" );
+    if (!fs.existsSync(splitFile)) {
+      fs.writeFileSync(splitFile, "");
     }
 
     currentLevel = fetchPoolLevel();
-    if ( !currentLevel ) {
-      addClass( document.getElementById( "loading-container" ), "hidden" );
-      const error = new Error( "Could not pick starting level." );
+    if (!currentLevel) {
+      addClass(document.getElementById("loading-container"), "hidden");
+      const error = new Error("Could not pick starting level.");
       error.name = "InitializationError";
       throw error;
     }
 
     // pre-install the first map (note that the run timer has not started yet)
-    await preInstallMap( currentLevel.name, currentLevel.id );
+    await preInstallMap(currentLevel.name, currentLevel.id);
 
     // also the two maps coming after; throughout the run we'll always try to
     // have two maps ahead of the current one downloaded, though that will
     // happen silently in the background to hopefully never have to wait for
     // installing a map during the run
-    await installAhead( 1 );
-    await installAhead( 2 );
+    await installAhead(1);
+    await installAhead(2);
 
-    revertObscuration( () => {
-      addClass( document.getElementById( "loading-container" ), "hidden" );
-      removeClass( document.getElementById( "map-info" ), "vhidden" );
-    } );
+    revertObscuration(() => {
+      addClass(document.getElementById("loading-container"), "hidden");
+      removeClass(document.getElementById("map-info"), "vhidden");
+    });
 
 
     // TODO: create one function to handle installs and pre-installing multiple
     // maps ahead of time
 
-    timerAction( "start" );
-    installAndMaybePlay( currentLevel, true, false );
+    timerAction("start");
+    installAndMaybePlay(currentLevel, true, false);
 
     temporarilyBlockSkipButton();
 
     // initiate the observer for split.txt; TODO: maybe debounce the callback in
     // case fs.watch() fires multiple times, which seems to happen occassionally,
     // though the code takes this into account already
-    watcher = fs.watch( splitFile, ( event ) => {
-      if ( timers[ 0 ].finished ) {
+    watcher = fs.watch(splitFile, (event) => {
+      if (timers[ 0 ].finished) {
         watcher.close();
         return;
       }
 
-      if ( event === "change" ) {
-        const readable = fs.createReadStream( splitFile );
-        readable.setEncoding( "utf8" );
-        readable.on( "data", ( string ) => {
-          const split = string.split( "\n" )[ 1 ].split( /\s/ );
+      if (event === "change") {
+        const readable = fs.createReadStream(splitFile);
+        readable.setEncoding("utf8");
+        readable.on("data", (string) => {
+          const split = string.split("\n")[ 1 ].split(/\s/);
 
           split.pop();
           const completion = split[ split.length - 1 ];
           const finesse = split[ split.length - 2 ];
           const filename = split[ split.length - 3 ];
 
-          if ( isNaN( parseInt( filename[ filename.length - 1 ], 10 ) ) ) {
+          if (isNaN(parseInt(filename[ filename.length - 1 ], 10))) {
             // there is no number at the end of the filename, i.e. no atlas ID
             // (which should mean a stock level), which we should not see in the
             // filtered levels JSON data
             return;
           }
 
-          const id = filename.substring( filename.lastIndexOf( "-" ) + 1 );
-          if ( id !== currentLevel.id ) {
+          const id = filename.substring(filename.lastIndexOf("-") + 1);
+          if (id !== currentLevel.id) {
             return;
           }
 
-          const ss = ( completion === "100" ) && ( finesse === "0" );
-          if ( ss || settings.scoreCategory === "any" ) {
-            if ( settings.scoreCategory === "ss" ) {
-              if ( runData.completedLevelIds.has( id ) ) {
+          const ss = (completion === "100") && (finesse === "0");
+          if (ss || settings.scoreCategory === "any") {
+            if (settings.scoreCategory === "ss") {
+              if (runData.completedLevelIds.has(id)) {
                 // remove a skip if this map was already any%'d, as that
                 // would've incremented the skip counter
-                handleSkipsCount( -1 );
+                handleSkipsCount(-1);
               }
               else {
-                runData.completedLevelIds.add( id );
+                runData.completedLevelIds.add(id);
               }
             }
             else {
               // any% logic
-              if ( ss ) {
-                handleSkipsCount( 1 );
+              if (ss) {
+                handleSkipsCount(1);
               }
             }
 
-            runData.solvedLevelIds.add( id );
+            runData.solvedLevelIds.add(id);
 
-            runData.review.push( {
+            runData.review.push({
               levelname: currentLevel.name,
               filename: `${ currentLevel.name }-${ currentLevel.id }`,
               time: timers[ 0 ].elapsedTime,
               segment: timers[ 1 ].time,
               skipped: false,
-            } );
+            });
 
             incrementScore();
 
             currentLevel = fetchPoolLevel();
-            if ( !currentLevel ) {
+            if (!currentLevel) {
               return;
             }
 
             // keep the next two levels installed ahead of time
-            installAhead( 2 );
+            installAhead(2);
 
             temporarilyBlockSkipButton();
 
-            if ( settings.freeSkipAfterXSolvedLevels > 0 ) {
-              if ( runData.solvedLevelIds.size > 0 && ( runData.solvedLevelIds.size % settings.freeSkipAfterXSolvedLevels ) === 0 ) {
+            if (settings.freeSkipAfterXSolvedLevels > 0) {
+              if (runData.solvedLevelIds.size > 0 && (runData.solvedLevelIds.size % settings.freeSkipAfterXSolvedLevels) === 0) {
                 // give a free skip after N solved levels, depending on the
                 // configuration
-                handleSkipsCount( 1 );
+                handleSkipsCount(1);
               }
             }
 
             // trigger the S-icon animation
-            const el = document.getElementById( "points-icon" );
-            addClass( el, "animated2" );
+            const el = document.getElementById("points-icon");
+            addClass(el, "animated2");
             setTimeout(() => {
-              removeClass( el, "animated2" );
-            }, 2000 );
+              removeClass(el, "animated2");
+            }, 2000);
 
             // unpause will happen after the child process has returned a
             // response
-            timerAction( "stop" );
-            installAndMaybePlay( currentLevel, true, true );
+            timerAction("stop");
+            installAndMaybePlay(currentLevel, true, true);
 
             return;
           }
 
-          if ( !runData.completedLevelIds.has( id ) ) {
-            runData.completedLevelIds.add( id );
+          if (!runData.completedLevelIds.has(id)) {
+            runData.completedLevelIds.add(id);
 
-            if ( !ss && settings.scoreCategory === "ss" ) {
+            if (!ss && settings.scoreCategory === "ss") {
               // add a skip as this level was any%'d and not already completed
               // (only counts for SS runs)
-              handleSkipsCount( 1 );
+              handleSkipsCount(1);
               return;
             }
           }
-        } );
+        });
       }
-    } );
+    });
   }
-}
+};
 
 const skip = () => {
-  if ( timers[ 0 ].finished ) {
+  if (timers[ 0 ].finished) {
     return;
   }
 
-  if ( timers[ 0 ].hasStarted ) {
-    if ( !settings.skips ) {
+  if (timers[ 0 ].hasStarted) {
+    if (!settings.skips) {
       // skips are not set to be on by the user
       return;
     }
 
-    if ( blocked ) {
+    if (blocked) {
       return;
     }
 
-    if ( !settings.infiniteSkips && ( runData.skips <= 0 ) ) {
+    if (!settings.infiniteSkips && (runData.skips <= 0)) {
       return;
     }
 
-    runData.review.push( {
+    runData.review.push({
       levelname: currentLevel.name,
       filename: `${ currentLevel.name }-${ currentLevel.id }`,
       time: timers[ 0 ].elapsedTime,
       segment: timers[ 1 ].time,
       skipped: true,
-    } );
+    });
 
     // skip to the next map, if user has a skip left
     currentLevel = fetchPoolLevel();
-    if ( !currentLevel ) {
+    if (!currentLevel) {
       return;
     }
 
     // unpause will happen after the child process has returned a response
-    timerAction( "stop" );
-    installAndMaybePlay( currentLevel, true, true );
+    timerAction("stop");
+    installAndMaybePlay(currentLevel, true, true);
 
-    handleSkipsCount( -1 );
+    handleSkipsCount(-1);
 
     // keep the next two levels installed ahead of time
-    installAhead( 2 );
+    installAhead(2);
 
     temporarilyBlockSkipButton();
     return;
@@ -539,7 +539,7 @@ const skip = () => {
 };
 
 const initVars = () => {
-  ( { settings, levelData: { data: levelData } } = getData( { levelData: true, settings: true } ) );
+  ({settings, levelData: {data: levelData}} = getData({levelData: true, settings: true}));
 
   currentLevel = {
     name: "",
@@ -558,19 +558,19 @@ const initVars = () => {
     mapPool: [],
     choiceIndex: -1,
   };
-}
+};
 
 const initRunData = () => {
   // set the proper skips starting count
-  const element = document.getElementById( "skips" );
-  if ( !settings.skips || ( settings.freeSkips <= 0 && !settings.infiniteSkips ) ) {
-    addClass( element, "none" );
+  const element = document.getElementById("skips");
+  if (!settings.skips || (settings.freeSkips <= 0 && !settings.infiniteSkips)) {
+    addClass(element, "none");
   }
 
-  if ( !settings.skips ) {
+  if (!settings.skips) {
     element.innerText = "No Skips";
   }
-  else if ( settings.infiniteSkips ) {
+  else if (settings.infiniteSkips) {
     element.innerText = "Infinite Skips";
   }
   else {
@@ -581,129 +581,129 @@ const initRunData = () => {
 const initTimers = () => {
   const startTime = settings.startTime;
 
-  const mainTimer = new Timer( {
+  const mainTimer = new Timer({
     timerElementId: "main-time",
     withTenths: true,
     withHundreths: true,
     startTime,
     countingDown: true
-  } );
+  });
 
-  timers = [ mainTimer ];
+  timers = [mainTimer];
 
-  const mapTimer = new Timer( {
+  const mapTimer = new Timer({
     timerElementId: "map-timer",
     withTenths: true,
     withHundreths: true,
     countingDown: false,
-  } );
+  });
 
-  timers.push( mapTimer );
-  mapTimer.timerElement.innerHTML = formatTime( 0, true );
+  timers.push(mapTimer);
+  mapTimer.timerElement.innerHTML = formatTime(0, true);
 
-  mainTimer.timerElement.innerHTML = formatTime( startTime );
-}
+  mainTimer.timerElement.innerHTML = formatTime(startTime);
+};
 
 const processScoreScreen = () => {
   // add the last level for the review, and consider it as "skipped"
-  runData.review.push( {
+  runData.review.push({
     levelname: currentLevel.name,
     filename: `${ currentLevel.name }-${ currentLevel.id }`,
     time: timers[ 0 ].elapsedTime,
     segment: timers[ 1 ].time,
     skipped: true,
-  } );
+  });
 
-  removeClass( document.body, "challenge" );
+  removeClass(document.body, "challenge");
 
-  const template = document.getElementById( "score-screen-template" );
-  const clone = template.content.cloneNode( true );
-  document.body.replaceChildren( clone );
+  const template = document.getElementById("score-screen-template");
+  const clone = template.content.cloneNode(true);
+  document.body.replaceChildren(clone);
 
-  document.getElementById( "done-btn" ).addEventListener( "click", () => {
+  document.getElementById("done-btn").addEventListener("click", () => {
     // exit the score screen and return to the main menu
     reset();
-  } );
+  });
 
-  const modeEl = document.getElementById( "score-screen-mode" );
+  const modeEl = document.getElementById("score-screen-mode");
   modeEl.innerText = `${ settings.settingsName } Mode`;
 
-  const scoreEl = document.getElementById( "score-screen-points" );
+  const scoreEl = document.getElementById("score-screen-points");
   scoreEl.innerText = runData.solvedLevelIds.size;
 
-  if ( runData.solvedLevelIds.size >= 100 ) {
+  if (runData.solvedLevelIds.size >= 100) {
     // adjust the font size to everything fit on one line
     scoreEl.style.fontSize = "11vw";
   }
 
-  const scoreScreenSkipsEl = document.getElementById( "score-screen-remaining-skips" );
-  if ( !settings.infiniteSkips ) {
+  const scoreScreenSkipsEl = document.getElementById("score-screen-remaining-skips");
+  if (!settings.infiniteSkips) {
     scoreScreenSkipsEl.innerText = `Skips Remaining: ${ runData.skips }`;
   }
   else {
     scoreScreenSkipsEl.innerText = `Infinite Skips`;
   }
 
-  const seedEl = document.getElementById( "score-screen-seed" );
-  if ( settings.seed ) {
+  const seedEl = document.getElementById("score-screen-seed");
+  if (settings.seed) {
     seedEl.innerText = `Seed: ${ runData.seed }`;
   }
   else {
     seedEl.innerText = `Random Seed: ${ runData.seed }`;
   }
 
-  const { personalBests } = getData( { personalBests: true } );
+  const {personalBests} = getData({personalBests: true});
 
   let previousBest;
   let _newPersonalBest = false;
   // PBs for seeded runs and custom settings are not tracked and stored
-  if ( !settings.seed && settings.settingsName.toLowerCase() !== "custom" ) {
-    if ( personalBests[ settings.settingsName ]?.score ) {
+  if (!settings.seed && settings.settingsName.toLowerCase() !== "custom") {
+    if (personalBests[ settings.settingsName ]?.score) {
       previousBest = personalBests[ settings.settingsName ];
     }
 
-    if ( runData.solvedLevelIds.size && ( !previousBest || runData.solvedLevelIds.size > previousBest.score ) ) {
+    if (runData.solvedLevelIds.size && (!previousBest || runData.solvedLevelIds.size > previousBest.score)) {
       _newPersonalBest = true;
     }
   }
 
-  if ( _newPersonalBest ) {
-    addClass( scoreEl, "pb" );
-    addClass( document.getElementById( "new-pb-icon" ), "pb" );
+  if (_newPersonalBest) {
+    addClass(scoreEl, "pb");
+    addClass(document.getElementById("new-pb-icon"), "pb");
   }
 
-  const comparePbToggleEl = document.getElementById( "compare-pb-toggle" );
-  if ( previousBest ) {
+  const comparePbToggleEl = document.getElementById("compare-pb-toggle");
+  if (previousBest) {
     comparePbToggleEl.onclick = () => {
-      const elements = document.getElementsByClassName( "review-element-time" );
-      for ( const e of elements ) {
-        if ( e.classList.contains( "hidden" ) ) {
-          removeClass( e, "hidden" );
+      const elements = document.getElementsByClassName("review-element-time");
+      for (const e of elements) {
+        if (e.classList.contains("hidden")) {
+          removeClass(e, "hidden");
         }
         else {
-          addClass( e, "hidden" );
+          addClass(e, "hidden");
         }
       }
 
-      if ( comparePbToggleEl.innerText.includes( "segments" ) ) {
+      if (comparePbToggleEl.innerText.includes("segments")) {
         comparePbToggleEl.innerText = "splits";
       }
       else {
         comparePbToggleEl.innerText = "segments";
       }
-    }
+    };
   }
   else {
-    addClass( comparePbToggleEl, "hidden" );
+    addClass(comparePbToggleEl, "hidden");
   }
 
-  const runreviewContainerEl = document.getElementById( "run-review-container" );
+  const runreviewContainerEl = document.getElementById("run-review-container");
 
   // process the run data to create a run review in the UI
   let previousCheckedDiff;
   let scoredLevelIndex = 0;
-  for ( let i = 0; i < runData.review.length; i++ ) {
-    const { levelname, filename, time, segment, skipped } = runData.review[ i ];
+  for (let i = 0; i < runData.review.length; i++) {
+    const {levelname, filename, time, segment, skipped} = runData.review[ i ];
     /* HTML layout:
       <!-- <div class="review-element-container">
         <span class="review-element-index"></span>
@@ -712,24 +712,24 @@ const processScoreScreen = () => {
         <span class="review-element-time review-element-time-diff"></span>
       </div> -->
     */
-    const containerEl = document.createElement( "div" );
-    addClass( containerEl, "review-element-container" );
+    const containerEl = document.createElement("div");
+    addClass(containerEl, "review-element-container");
 
-    const levelEl = document.createElement( "span" );
+    const levelEl = document.createElement("span");
     levelEl.innerText = levelname;
-    addClass( levelEl, "review-element-levelname" );
-    addClass( levelEl, "clickable" );
-    const levelId = filename.split( "-" ).pop();
+    addClass(levelEl, "review-element-levelname");
+    addClass(levelEl, "clickable");
+    const levelId = filename.split("-").pop();
     // allow users to go to the Atlas page by clicking on the map name
     levelEl.onclick = () => {
-      nw.Shell.openExternal( `https://atlas.dustforce.com/${ levelId }` );
+      nw.Shell.openExternal(`https://atlas.dustforce.com/${ levelId }`);
     };
 
-    const indexEl = document.createElement( "span" );
-    addClass( indexEl, "review-element-index" );
+    const indexEl = document.createElement("span");
+    addClass(indexEl, "review-element-index");
 
-    if ( skipped ) {
-      addClass( levelEl, "skipped" );
+    if (skipped) {
+      addClass(levelEl, "skipped");
       indexEl.innerText = "-";
     }
     else {
@@ -737,95 +737,95 @@ const processScoreScreen = () => {
       indexEl.innerText = `${ scoredLevelIndex }`;
     }
 
-    const timeEl = document.createElement( "span" );
-    addClass( timeEl, "review-element-time" );
-    addClass( timeEl, "review-element-current-time" );
-    timeEl.innerText = `${ formatTime( segment, true ) }`;
+    const timeEl = document.createElement("span");
+    addClass(timeEl, "review-element-time");
+    addClass(timeEl, "review-element-current-time");
+    timeEl.innerText = `${ formatTime(segment, true) }`;
 
-    runreviewContainerEl.appendChild( containerEl );
+    runreviewContainerEl.appendChild(containerEl);
 
-    containerEl.appendChild( indexEl );
-    containerEl.appendChild( levelEl );
-    containerEl.appendChild( timeEl );
+    containerEl.appendChild(indexEl);
+    containerEl.appendChild(levelEl);
+    containerEl.appendChild(timeEl);
 
-    if ( previousBest ) {
+    if (previousBest) {
       const previousRunElement = previousBest.review?.[ i ];
 
       // add a hidden (display: none;) span that the user can view via a
       // toggle, which hides timeEl
-      const timeDiffEl = document.createElement( "span" );
-      addClass( timeDiffEl, "review-element-time" );
-      addClass( timeDiffEl, "review-element-time-diff" );
-      addClass( timeDiffEl, "hidden" );
-      if ( previousRunElement ) {
+      const timeDiffEl = document.createElement("span");
+      addClass(timeDiffEl, "review-element-time");
+      addClass(timeDiffEl, "review-element-time-diff");
+      addClass(timeDiffEl, "hidden");
+      if (previousRunElement) {
         const timeDiff = previousRunElement.time - time;
-        timeDiffEl.innerText = formatTime( timeDiff, true, false, true );
+        timeDiffEl.innerText = formatTime(timeDiff, true, false, true);
 
         // colour-code the split to indicate time gain/loss
-        if ( !previousCheckedDiff ) {
-          timeDiff >= 0 ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-behind-lost" )
+        if (!previousCheckedDiff) {
+          timeDiff >= 0 ? addClass(timeDiffEl, "time-ahead-gained") : addClass(timeDiffEl, "time-behind-lost");
         }
-        else if ( timeDiff >= 0 ) {
-          previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-ahead-gained" ) : addClass( timeDiffEl, "time-ahead-lost" );
+        else if (timeDiff >= 0) {
+          previousCheckedDiff < timeDiff ? addClass(timeDiffEl, "time-ahead-gained") : addClass(timeDiffEl, "time-ahead-lost");
         }
         else {
-          previousCheckedDiff < timeDiff ? addClass( timeDiffEl, "time-behind-gained" ) : addClass( timeDiffEl, "time-behind-lost" );
+          previousCheckedDiff < timeDiff ? addClass(timeDiffEl, "time-behind-gained") : addClass(timeDiffEl, "time-behind-lost");
         }
 
         previousCheckedDiff = timeDiff;
       }
       else {
-        timeDiffEl.innerText = formatTime( time, true );
+        timeDiffEl.innerText = formatTime(time, true);
       }
 
-      containerEl.appendChild( timeDiffEl );
+      containerEl.appendChild(timeDiffEl);
     }
   }
 
   // const reviewDropdownBtn = document.getElementById( "review-dropdown-btn" );
-  const reviewDropdownBtn = document.getElementById( "review-btn" );
+  const reviewDropdownBtn = document.getElementById("review-btn");
   reviewDropdownBtn.onclick = () => {
-    const container = document.getElementById( "run-review-container" );
-    if ( !container.classList.contains( "toggled" ) ) {
-      addClass( document.getElementById( "score-screen-container" ), "toggled" );
-      addClass( container, "toggled" );
-      addClass( reviewDropdownBtn, "toggled" );
-      addClass( document.getElementById( "run-review-header" ), "toggled" );
-      addClass( document.getElementById( "compare-pb-toggle" ), "toggled" );
-      addClass( document.getElementById( "score-screen-stats-container" ), "toggled" );
+    const container = document.getElementById("run-review-container");
+    if (!container.classList.contains("toggled")) {
+      addClass(document.getElementById("score-screen-container"), "toggled");
+      addClass(container, "toggled");
+      addClass(reviewDropdownBtn, "toggled");
+      addClass(document.getElementById("run-review-header"), "toggled");
+      addClass(document.getElementById("compare-pb-toggle"), "toggled");
+      addClass(document.getElementById("score-screen-stats-container"), "toggled");
     }
     else {
-      removeClass( document.getElementById( "score-screen-container" ), "toggled" );
-      removeClass( container, "toggled" );
-      removeClass( reviewDropdownBtn, "toggled" );
-      removeClass( document.getElementById( "run-review-header" ), "toggled" );
-      removeClass( document.getElementById( "compare-pb-toggle" ), "toggled" );
-      removeClass( document.getElementById( "score-screen-stats-container" ), "toggled" );
+      removeClass(document.getElementById("score-screen-container"), "toggled");
+      removeClass(container, "toggled");
+      removeClass(reviewDropdownBtn, "toggled");
+      removeClass(document.getElementById("run-review-header"), "toggled");
+      removeClass(document.getElementById("compare-pb-toggle"), "toggled");
+      removeClass(document.getElementById("score-screen-stats-container"), "toggled");
     }
   };
 
   // calculate and display some statistics
-  const averageTimeEl = document.getElementById( "score-screen-average-time" );
-  const skippedLevelTimeEl = document.getElementById( "score-screen-skipped-time-loss" );
+  const averageTimeEl = document.getElementById("score-screen-average-time");
+  const skippedLevelTimeEl = document.getElementById("score-screen-skipped-time-loss");
   let scoredSegments = [];
   let skippedSegments = [];
-  for ( const { segment, skipped } of runData.review ) {
-    if ( skipped ) {
-      skippedSegments.push( segment );
+  for (const {segment, skipped} of runData.review) {
+    if (skipped) {
+      skippedSegments.push(segment);
     }
     else {
-      scoredSegments.push( segment );
+      scoredSegments.push(segment);
     }
   }
 
-  if ( scoredSegments.length ) {
-    averageTimeEl.innerText = `Avg. Score Time: ${ formatTime( timers[ 0 ].elapsedTime / scoredSegments.length, true ) }`;
+  if (scoredSegments.length) {
+    averageTimeEl.innerText = `Avg. Score Time: ${ formatTime(timers[ 0 ].elapsedTime / scoredSegments.length, true) }`;
   }
 
-  if ( settings.skips ) {
-    addClass( skippedLevelTimeEl, "applicable" );
-    if ( skippedSegments.length ) {
-      skippedLevelTimeEl.innerText = `Skip Time Loss: ${ formatTime( skippedSegments.reduce( ( a, b ) => a + b, 0 ), true ) }`;
+  if (settings.skips) {
+    addClass(skippedLevelTimeEl, "applicable");
+    if (skippedSegments.length) {
+      skippedLevelTimeEl.innerText = `Skip Time Loss: ${ formatTime(skippedSegments.reduce((a, b) => a + b, 0), true) }`;
     }
     else {
       skippedLevelTimeEl.innerText = "Skip Time Loss: None";
@@ -833,20 +833,20 @@ const processScoreScreen = () => {
   }
 
   // save the new personal best data immediately
-  if ( _newPersonalBest ) {
-    const userReviewData = runData.review.map( ( { filename, time, segment, skipped } ) => {
-      return { filename, time, segment, skipped };
-    } );
+  if (_newPersonalBest) {
+    const userReviewData = runData.review.map(({filename, time, segment, skipped}) => {
+      return {filename, time, segment, skipped};
+    });
 
-    const newPersonalBestData = { ...personalBests };
+    const newPersonalBestData = {...personalBests};
     newPersonalBestData[ settings.settingsName ] = {
       score: runData.solvedLevelIds.size,
-      review: [ ...userReviewData ],
+      review: [...userReviewData],
       seed: runData.seed,
     };
-    writeHexData( `${ global.__dirname }/user-data/personal-bests.bin`, newPersonalBestData );
+    writeHexData(`${ global.__dirname }/user-data/personal-bests.bin`, newPersonalBestData);
   }
-}
+};
 
 export const initialize = async () => {
   initialized = false;
@@ -856,81 +856,81 @@ export const initialize = async () => {
   initTimers();
   initRunData();
 
-  document.getElementById( "skip-btn" ).addEventListener( "click", skip );
+  document.getElementById("skip-btn").addEventListener("click", skip);
 
   // handle the timer's finish event emitter
-  timers[ 0 ].on( "finished", () => {
-    if ( watcher ) {
+  timers[ 0 ].on("finished", () => {
+    if (watcher) {
       // close the watcher when the timer has finished
       watcher.close();
     }
 
-    timers[ 1 ].finish( true );
+    timers[ 1 ].finish(true);
 
     processScoreScreen();
-  } );
+  });
 
-  document.getElementById( "replay-btn" )?.addEventListener( "click", () => {
-    if ( timers[ 0 ].hasStarted ) {
-      installAndMaybePlay( currentLevel, true, false );
+  document.getElementById("replay-btn")?.addEventListener("click", () => {
+    if (timers[ 0 ].hasStarted) {
+      installAndMaybePlay(currentLevel, true, false);
     }
-  } );
+  });
 
   let clickedOnce = false;
   let resetConfirmTimeout;
-  document.getElementById( "reset-btn" )?.addEventListener( "click", () => {
-    if ( resetConfirmTimeout ) {
-      clearTimeout( resetConfirmTimeout );
+  document.getElementById("reset-btn")?.addEventListener("click", () => {
+    if (resetConfirmTimeout) {
+      clearTimeout(resetConfirmTimeout);
     }
 
-    if ( unpauseTimersTimeout ) {
-      clearTimeout( unpauseTimersTimeout );
+    if (unpauseTimersTimeout) {
+      clearTimeout(unpauseTimersTimeout);
     }
 
-    if ( blockSkipButtonTimeout ) {
-      clearTimeout( blockSkipButtonTimeout );
+    if (blockSkipButtonTimeout) {
+      clearTimeout(blockSkipButtonTimeout);
     }
 
     // make the user double-click the reset button, to avoid accidental resets
-    if ( clickedOnce ) {
-      if ( watcher ) {
+    if (clickedOnce) {
+      if (watcher) {
         watcher.close();
       }
 
-      timerAction( "finish", true );
+      timerAction("finish", true);
 
       processScoreScreen();
     }
     else {
       clickedOnce = true;
-      addClass( document.getElementById( "reset-btn" ), "confirm" );
-      document.getElementById( "reset-btn-text" ).innerText = "confirm";
+      addClass(document.getElementById("reset-btn"), "confirm");
+      document.getElementById("reset-btn-text").innerText = "confirm";
 
       resetConfirmTimeout = setTimeout(() => {
-        document.getElementById( "reset-btn-text" ).innerText = "reset";
-        removeClass( document.getElementById( "reset-btn" ), "confirm" );
+        document.getElementById("reset-btn-text").innerText = "reset";
+        removeClass(document.getElementById("reset-btn"), "confirm");
         clickedOnce = false;
       }, 2000);
     }
-  } );
+  });
 
   // swap out the points icon if necessary
-  if ( settings.scoreCategory === "any" ) {
-    document.getElementById( "points-icon" ).src = "../assets/a-complete-icon.png";
+  if (settings.scoreCategory === "any") {
+    document.getElementById("points-icon").src = "../assets/a-complete-icon.png";
   }
 
   // start the actual run
   try {
     await start();
   }
-  catch ( error ) {
+  catch (error) {
     // make sure the loading container is hidden always
-    addClass( document.getElementById( "loading-container" ), "hidden" );
+    addClass(document.getElementById("loading-container"), "hidden");
 
     const fatal = true;
-    log.error( error, fatal );
+    log.error(error, fatal);
 
-    showError( {
+    showError({
       error,
       endMessage: "\n\n Aborting run",
       fatal,
@@ -939,7 +939,7 @@ export const initialize = async () => {
       callback: () => {
         reset();
       }
-    } )
+    });
   }
   initialized = true;
 };
