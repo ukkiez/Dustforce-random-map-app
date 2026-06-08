@@ -168,14 +168,31 @@ const initMainBody = async ( userConfiguration ) => {
   if ( !Object.keys( levelData.data ).length || ( initialLoad && now > ( levelMetadata?.lastSync + ( 1000 * 60 * 1 ) ) ) ) {
     initialLoad = false;
 
-    const startBtnEl = document.getElementById( "start-btn" );
-    addClass( startBtnEl, "disabled-btn" );
-    addClass( startBtnEl, "fetching-maps" );
-    document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+    const toggleStartButtonToFetching = ( toggle ) => {
+      if ( toggle ) {
+        const startBtnEl = document.getElementById( "start-btn" );
+        addClass( startBtnEl, "disabled-btn" );
+        addClass( startBtnEl, "fetching-maps" );
+        document.getElementById( "start-btn-text" ).innerText = "Fetching maps";
+      }
+      else {
+        removeClass( document.getElementById( "start-btn" ), "disabled-btn" );
+        removeClass( document.getElementById( "start-btn" ), "fetching-maps" );
+        document.getElementById( "start-btn-text" ).innerText = "Start Challenge";
+      }
+    }
+
+    toggleStartButtonToFetching( true );
 
     try {
       syncing = true;
       syncLevelData( levelData.version, ( wasNewData, result ) => {
+        if ( !result ) {
+          syncing = false;
+          toggleStartButtonToFetching( false );
+          return;
+        }
+
         const newConfig = { ...userConfiguration };
         newConfig.levelMetadata.lastSync = now;
         newConfig.levelMetadata.rateLimitRemaining = result.rateLimitRemaining;
@@ -186,9 +203,7 @@ const initMainBody = async ( userConfiguration ) => {
 
         fs.writeFileSync( path.join( global.__dirname, "user-data/configuration.json" ), JSON.stringify( newConfig, null, 2 ) );
 
-        removeClass( document.getElementById( "start-btn" ), "disabled-btn" );
-        removeClass( document.getElementById( "start-btn" ), "fetching-maps" );
-        document.getElementById( "start-btn-text" ).innerText = "Start Challenge";
+        toggleStartButtonToFetching( false );
 
         syncing = false;
       } );
@@ -264,7 +279,7 @@ if ( template?.content?.children ) {
   }
 }
 
-export let init = async () => {
+export const init = async () => {
   ( { settings, personalBests, userConfiguration: config } = await getData( { settings: true, personalBests: true, userConfiguration: true } ) );
 
   // set the user configured opacity

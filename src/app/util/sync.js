@@ -57,6 +57,11 @@ const fetchLevelData = async () => {
 };
 
 export const syncLevelData = async ( currentVersion, callback = function(){} ) => {
+  if ( IS_DEBUG && currentVersion !== "v0.0" ) {
+    callback( false, null );
+    return;
+  }
+
   const result = await fetchLevelData();
 
   const { data, statusCode, error, message, rateLimitRemaining, rateLimitUsed } = result;
