@@ -54,6 +54,8 @@
   display: flex;
   position: relative;
   height: 16vh;
+  /* give some space for the close button */
+  margin-right: 1rem;
   margin-left: 0.3rem;
   margin-bottom: 2.5vw;
   align-items: center;
