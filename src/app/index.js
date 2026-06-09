@@ -2,7 +2,7 @@
 // having a strange underlaying shadow effect of the last seen HTML (annoying
 // Chromium bug probably); there's an option for this in the window manifest
 // (package.json) but that doesn't appear to work
-nw.Window.get().setShadow(false);  
+nw.Window.get().setShadow(false);
 
 // prevent drag-and-drop behaviour (e.g. dragging an HTML file into the app,
 // which by default would display that page instead)
