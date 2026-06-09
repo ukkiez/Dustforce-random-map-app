@@ -1,7 +1,7 @@
 const fs = nw.require("fs");
 const path = nw.require("path");
 
-import {switchPage} from "./initialize.js";
+import {switchPage} from "./util/routing.js";
 
 import {getData} from "./util/data.js";
 const {userConfiguration: setupData} = getData({userConfiguration: true});
