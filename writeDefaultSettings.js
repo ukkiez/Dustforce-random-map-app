@@ -6,6 +6,7 @@ const modes = JSON.stringify( require( "./src/settings/modes.json" ) );
 const defaultSettings = JSON.stringify( require( "./src/settings/default-settings.json" ) );
 const defaultPB = JSON.stringify( require( "./src/settings/default-personal-bests.json" ) );
 const filteredMetadata = JSON.stringify( require( "./src/dustkid-data/filtered-metadata.json" ) );
+const defaultUserConfiguration = JSON.stringify( require( "./src/settings/default-configuration.json" ), null, 2 );
 
 const modesB = Buffer.from( modes ).toString( "hex" );
 const settingsB = Buffer.from( defaultSettings ).toString( "hex" );
@@ -17,7 +18,7 @@ fs.writeFileSync( "./src/settings/modes.bin", modesB );
 fs.writeFileSync( "./src/user-data/settings.bin", settingsB );
 fs.writeFileSync( "./src/user-data/personal-bests.bin", pbB );
 fs.writeFileSync( "./src/dustkid-data/filtered-metadata.bin", filteredMetadataB );
-
+fs.writeFileSync( "./src/user-data/configuration.json", defaultUserConfiguration );
 
 // console.log( "\n" );
 // const bin = fs.readFileSync( "./src/settings/modes.bin", "utf8" );
