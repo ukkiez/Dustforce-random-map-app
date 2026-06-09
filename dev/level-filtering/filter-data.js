@@ -19,13 +19,13 @@ const path = require( "path" );
 // names (e.g. "Tower-Construction-1026"), values are arrays of player IDs that
 // have SS'd the levels
 const solversData = require( path.join( __dirname, "solvers.json" ) );
-const levelMetadata = require( path.join( __dirname, "./levels.json" ) );
+const levelMetadata = require( path.join( __dirname, "levels.json" ) );
 
 const { parse: parseYAML } = require( "yaml" );
 
 const currentDataPath = path.join( __dirname, "filtered-metadata.json" );
-const destination = path.join( __dirname, "../src/dustkid-data/filtered-metadata.json" );
-const destinationBin = path.join( __dirname, "../src/dustkid-data/filtered-metadata.bin" );
+const destination = path.join( __dirname, "../../src/dustkid-data/filtered-metadata.json" );
+const destinationBin = path.join( __dirname, "../../src/dustkid-data/filtered-metadata.bin" );
 
 const ssCountByFilename = new Map();
 for ( const [ filename, solvers ] of Object.entries( solversData ) ) {

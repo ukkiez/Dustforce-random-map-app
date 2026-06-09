@@ -10,7 +10,7 @@ src/dustkid-data/filtered-metadata.bin
 src/dustkid-data/filtered-metadata.json
 src/user-data/*
 
-seedfinding
+dev/seedfinding/notes.md
 
 TODOs.md
 
