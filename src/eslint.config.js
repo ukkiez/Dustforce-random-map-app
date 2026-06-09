@@ -13,7 +13,10 @@ export default defineConfig([
     languageOptions: {
       sourceType: "module",
       globals: {
-        ...globals.browser
+        ...globals.browser,
+        nw: "readonly",
+        global: "readonly",
+        Buffer: "readonly",
       },
     },
     rules: {
@@ -22,6 +25,8 @@ export default defineConfig([
       "semi"             : [1, "always"],
       "space-unary-ops"  : 2,
       "no-unused-vars"   : 1,
+      "no-undef"         : 2,
+      "no-redeclare"     : 2,
 
       "@stylistic/array-bracket-spacing": ["error", "never"],
       "@stylistic/object-curly-spacing": ["error", "never"],
