@@ -3,5 +3,10 @@
   "dustforceDirectory": "",
   "styling": {
     "opacity": 100
+  },
+  "levelMetadata": {
+    "lastSync": 0,
+    "version": "v0.0",
+    "rateLimitRemaining": 60
   }
 }

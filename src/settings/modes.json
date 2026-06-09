@@ -1,5 +1,6 @@
 {
   "classic": {
+    "settingsName": "classic",
     "seed": "",
     "startTime": 3600000,
     "minSSCount": 10,
@@ -10,10 +11,11 @@
     "freeSkipAfterXSolvedLevels": 10,
     "infiniteSkips": false,
     "CMPLevels": false,
-    "settingsName": "classic"
+    "chaos": false
   },
 
   "rapid": {
+    "settingsName": "rapid",
     "seed": "",
     "startTime": 1800000,
     "minSSCount": 10,
@@ -24,10 +26,11 @@
     "freeSkipAfterXSolvedLevels": 10,
     "infiniteSkips": false,
     "CMPLevels": false,
-    "settingsName": "rapid"
+    "chaos": false
   },
 
   "blitz": {
+    "settingsName": "blitz",
     "seed": "",
     "startTime": 900000,
     "minSSCount": 10,
@@ -38,6 +41,21 @@
     "freeSkipAfterXSolvedLevels": 0,
     "infiniteSkips": false,
     "CMPLevels": false,
-    "settingsName": "blitz"
+    "chaos": false
+  },
+
+  "chaos": {
+    "settingsName": "chaos",
+    "seed": "",
+    "startTime": 1800000,
+    "minSSCount": 10,
+    "maxSSCount": 500,
+    "fastestSSTime": 45000,
+    "skips": true,
+    "freeSkips": 1,
+    "freeSkipAfterXSolvedLevels": 10,
+    "infiniteSkips": false,
+    "CMPLevels": false,
+    "chaos": true
   }
 }

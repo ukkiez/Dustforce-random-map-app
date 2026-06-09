@@ -11,5 +11,6 @@
   "infiniteSkips": false,
   "CMPLevels": false,
   "settingsName": "classic",
-  "scoreCategory": "ss"
+  "scoreCategory": "ss",
+  "chaos": false
 }
