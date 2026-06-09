@@ -1,7 +1,7 @@
 import {getData} from "./util/data.js";
 import {formatTime, formatMSToHumanReadable} from "./util/time/format.js";
 import {addClass, removeClass} from "./util/dom.js";
-import {obscureMainWindow} from "./util/ui.js";
+import {switchPage} from "./util/routing.js";
 import {syncLevelData} from "./util/sync.js";
 import {log} from "./util/error.js";
 
@@ -14,63 +14,6 @@ let personalBests;
 
 let initialLoad = true;
 let syncing = false;
-
-export const switchPage = (currentPage, destination) => {
-  const split = destination.split("/");
-  if (split.length === 1) {
-    destination = split[ 0 ];
-  }
-  else {
-    destination = split[ split.length - 1 ];
-  }
-
-  if (destination === "settings.html") {
-    const disablePointerEvents = true;
-    const revertObscuration = obscureMainWindow(disablePointerEvents);
-
-    // open a new window with the settings configuration
-    nw.Window.open("views/settings.html", {
-      position: "center",
-      width: 360,
-      height: 470,
-      frame: false,
-      always_on_top: true,
-      transparent: true,
-      resizable: true,
-      // hide the window initially, and only show it after focusing the window;
-      // this way, we can e.g. resize / move the window without janky initial
-      // visuals; this may be causing an issue on Windows
-      show: false,
-    }, function(win) {
-      if (typeof win !== "undefined") {
-        win.on("closed", function() {
-          init();
-
-          revertObscuration();
-        });
-        win.on("loaded", function() {
-          // // move the settings window to the position of the main window
-          // win.moveTo( currentWindow.x, currentWindow.y - 100 );
-          win.show();
-          win.focus();
-        });
-      }
-    });
-
-    return;
-  }
-
-  switch (currentPage) {
-    case "settings.html": {
-      // close the external settings window
-      const settingsWindow = nw.Window.get();
-      settingsWindow.close();
-      break;
-    }
-  }
-
-  window.location.href = destination;
-};
 
 let iconAnimationTimeout;
 const initMainBody = async (userConfiguration) => {
@@ -104,7 +47,11 @@ const initMainBody = async (userConfiguration) => {
     document.getElementById("mode2").innerText = `${ settings.settingsName } ${ runType }`;
   }
 
-  if (settings.scoreCategory === "any") {
+
+  if (settings.chaos) {
+    document.getElementById("points-icon").src = "../assets/chaos-icon.png";
+  }
+  else if (settings.scoreCategory === "any") {
     document.getElementById("points-icon").src = "../assets/a-complete-icon.png";
     removeClass(document.getElementById("mode-any-percent-tag"), "hidden");
   }

@@ -179,13 +179,13 @@
   position: absolute;
   right: 8vw;
   bottom: 0.5rem;
-  width: 2.5rem;
+  width: 2.4rem;
 
   cursor: pointer;
 }
 #settings-icon {
-  width: 18vw;
-  height: 18vw;
+  width: 16vw;
+  height: 16vw;
   transition: 1s, width 0s, height 0s;
 }
 #settings-icon-container:hover #settings-icon {

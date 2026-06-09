@@ -915,7 +915,10 @@ export const initialize = async () => {
   });
 
   // swap out the points icon if necessary
-  if (settings.scoreCategory === "any") {
+  if (settings.chaos) {
+    document.getElementById("points-icon").src = "../assets/chaos-icon.png";
+  }
+  else if (settings.scoreCategory === "any") {
     document.getElementById("points-icon").src = "../assets/a-complete-icon.png";
   }
 
