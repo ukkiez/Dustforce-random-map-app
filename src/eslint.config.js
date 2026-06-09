@@ -33,6 +33,7 @@ export default defineConfig([
       "@stylistic/space-in-parens": ["error", "never"],
       "@stylistic/indent": ["error", 2],
       "@stylistic/padded-blocks": ["error", "never"],
+      "@stylistic/no-trailing-spaces": ["error"],
     }
   },
 
